@@ -41,6 +41,11 @@
   --chart-3: oklch(0.541 0.281 293.009);
   --chart-4: oklch(0.491 0.27 292.581);
   --chart-5: oklch(0.432 0.232 292.759);
+  --tropic-1: oklch(0.7311 0.1222 190.75);
+  --tropic-2: oklch(0.6863 0.1192 271.65);
+  --tropic-3: oklch(0.8358 0.1684 82.84);
+  --tropic-4: oklch(0.8558 0.0896 348.91);
+  --tropic-5: oklch(0.667 0.2169 5.93);
   --radius: 8px;
   --sidebar: oklch(0.985 0.002 247.839);
   --sidebar-foreground: oklch(0.13 0.028 261.692);
@@ -173,6 +178,11 @@ button:focus-visible {
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
+  --color-tropic-green: var(--tropic-1);
+  --color-tropic-blue: var(--tropic-2);
+  --color-tropic-yellow: var(--tropic-3);
+  --color-tropic-pink: var(--tropic-4);
+  --color-tropic-red: var(--tropic-5);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -233,9 +243,6 @@ button:focus-visible {
   }
   .cursor {
     @apply cursor-pointer;
-  }
-  .text-white {
-    @apply text-[#fff];
   }
   .text-dark {
     @apply text-[#333];

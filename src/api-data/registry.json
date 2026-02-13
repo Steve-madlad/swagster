@@ -3,7 +3,7 @@
     {
       "id": "subscription-api",
       "name": "Subscription Manager",
-      "description": "Subscription Management API",
+      "description": "A comprehensive lifecycle management service for recurring commitments. This API handles the creation, tracking, and modification of user subscriptions across diverse categories (e.g., entertainment, finance). It automatically computes renewal dates based on provided frequencies and supports multi-currency logic, acting as the central source of truth for active user services.",
       "version": "1.0",
       "baseUrl": "https://subscription-management-api.vercel.app/api/v1",
       "resources": [
@@ -11,7 +11,7 @@
           "groupName": "Subscription",
           "endpoints": [
             {
-              "description": "Create Subscription",
+              "description": "Creates a new subscription for a user",
               "path": "/subscriptions",
               "method": "POST",
               "authenticated": true,
@@ -39,22 +39,13 @@
                   "paymentMethod": {
                     "required": true,
                     "type": "string",
-                    "enum": ["card","debit"],
+                    "enum": ["card", "debit"],
                     "description": "The Payment Method"
                   },
                   "category": {
                     "required": true,
                     "type": "string",
-                    "enum": [
-                      "sports",
-                      "news",
-                      "politics",
-                      "entertainment",
-                      "lifestyle",
-                      "technology",
-                      "finance",
-                      "other"
-                    ],            
+                    "enum": ["sports", "news", "politics", "entertainment", "lifestyle", "technology", "finance", "other"],
                     "description": "The Subscription Category"
                   },
                   "price": {
@@ -68,26 +59,26 @@
                 "success": true,
                 "message": "subscription created successfully",
                 "data": {
-                    "name": "Netflix",
-                    "price": 20,
-                    "currency": "ETB",
-                    "frequency": "daily",
-                    "category": "finance",
-                    "paymentMethod": "card",
-                    "status": "active",
-                    "startDate": "2026-02-10T20:50:37.461Z",
-                    "user": "698c7dcb4b15387eda7fd204",
-                    "_id": "698dae231fa4f252610cfebc",
-                    "createdAt": "2026-02-12T10:40:35.364Z",
-                    "updatedAt": "2026-02-12T10:40:35.364Z",
-                    "renewalDate": "2026-02-11T20:50:37.461Z",
-                    "__v": 0
+                  "name": "Netflix",
+                  "price": 20,
+                  "currency": "ETB",
+                  "frequency": "daily",
+                  "category": "finance",
+                  "paymentMethod": "card",
+                  "status": "active",
+                  "startDate": "2026-02-10T20:50:37.461Z",
+                  "user": "698c7dcb4b15387eda7fd204",
+                  "_id": "698dae231fa4f252610cfebc",
+                  "createdAt": "2026-02-12T10:40:35.364Z",
+                  "updatedAt": "2026-02-12T10:40:35.364Z",
+                  "renewalDate": "2026-02-11T20:50:37.461Z",
+                  "__v": 0
                 },
                 "workflowRunId": "wfr_p6vm8hS1wthVJXcoQb7xp"
-              } 
+              }
             },
             {
-              "description": "Update Subscription",
+              "description": "Updates a user subscription",
               "path": "/subscriptions",
               "method": "PUT",
               "authenticated": true,
@@ -120,16 +111,7 @@
                   "category": {
                     "required": true,
                     "type": "string",
-                    "enum": [
-                      "sports",
-                      "news",
-                      "politics",
-                      "entertainment",
-                      "lifestyle",
-                      "technology",
-                      "finance",
-                      "other"
-                    ],            
+                    "enum": ["sports", "news", "politics", "entertainment", "lifestyle", "technology", "finance", "other"],
                     "description": "The Subscription Category"
                   },
                   "price": {
@@ -142,20 +124,371 @@
               "responseSample": {
                 "success": true,
                 "data": {
-                    "_id": "698c7e014b15387eda7fd207",
-                    "name": "Only Tribe",
-                    "price": 100,
+                  "_id": "698c7e014b15387eda7fd207",
+                  "name": "Only Tribe",
+                  "price": 100,
+                  "currency": "USD",
+                  "frequency": "daily",
+                  "category": "politics",
+                  "paymentMethod": "card",
+                  "status": "active",
+                  "startDate": "2026-02-10T13:55:51.316Z",
+                  "user": "698c7dcb4b15387eda7fd204",
+                  "createdAt": "2026-02-11T13:02:57.291Z",
+                  "updatedAt": "2026-02-12T11:42:38.105Z",
+                  "renewalDate": "2026-02-11T13:55:51.316Z",
+                  "__v": 0
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "authentication": {
+        "type": "Bearer",
+        "headerName": "Authorization"
+      }
+    },
+    {
+      "id": "billing-api",
+      "name": "Billing Service",
+      "description": "The financial processing hub for the platform. This service handles the generation of invoices, real-time payment tracking, and automated refund processing. It bridges the gap between active subscriptions and ledger entries, ensuring all transactions are compliant and recorded for audit purposes.",
+      "version": "1.0",
+      "baseUrl": "https://billing-service.example.com/api/v1",
+      "resources": [
+        {
+          "groupName": "Invoices",
+          "endpoints": [
+            {
+              "description": "List Invoices",
+              "path": "/invoices",
+              "method": "GET",
+              "authenticated": true,
+              "request": {
+                "queryParams": {
+                  "status": {
+                    "description": "Filter by invoice status (e.g., paid, pending, void)",
+                    "required": false
+                  },
+                  "customerId": {
+                    "description": "Filter by specific customer identifier",
+                    "required": false
+                  }
+                },
+                "headers": null,
+                "body": null
+              },
+              "responseSample": {
+                "success": true,
+                "data": [
+                  {
+                    "id": "inv_123",
+                    "customerId": "cus_456",
+                    "amount": 9900,
                     "currency": "USD",
-                    "frequency": "daily",
-                    "category": "politics",
-                    "paymentMethod": "card",
-                    "status": "active",
-                    "startDate": "2026-02-10T13:55:51.316Z",
-                    "user": "698c7dcb4b15387eda7fd204",
-                    "createdAt": "2026-02-11T13:02:57.291Z",
-                    "updatedAt": "2026-02-12T11:42:38.105Z",
-                    "renewalDate": "2026-02-11T13:55:51.316Z",
-                    "__v": 0
+                    "status": "paid",
+                    "createdAt": "2026-02-10T10:00:00.000Z"
+                  }
+                ]
+              }
+            },
+            {
+              "description": "Create Invoice",
+              "path": "/invoices",
+              "method": "POST",
+              "authenticated": true,
+              "request": {
+                "queryParams": null,
+                "headers": null,
+                "body": {
+                  "customerId": {
+                    "required": true,
+                    "type": "string",
+                    "description": "The customer identifier"
+                  },
+                  "amount": {
+                    "required": true,
+                    "type": "number",
+                    "description": "Invoice amount in minor units (e.g., cents)"
+                  },
+                  "currency": {
+                    "required": true,
+                    "type": "string",
+                    "enum": ["USD", "EUR"],
+                    "description": "Currency code"
+                  }
+                }
+              },
+              "responseSample": {
+                "success": true,
+                "data": {
+                  "id": "inv_789",
+                  "customerId": "cus_456",
+                  "amount": 9900,
+                  "currency": "USD",
+                  "status": "pending",
+                  "createdAt": "2026-02-13T09:30:00.000Z"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "authentication": {
+        "type": "Bearer",
+        "headerName": "Authorization"
+      }
+    },
+    {
+      "id": "notification-api",
+      "name": "Notification Center",
+      "description": "A centralized gateway for multi-channel user communication. It abstracts the complexity of SMTP and SMS providers, allowing for templated notifications that support dynamic variable injection. It ensures that critical alerts, like renewal reminders or payment failures, reach users via their preferred channels.",
+      "version": "1.0",
+      "baseUrl": "https://notification-center.example.com/api/v1",
+      "resources": [
+        {
+          "groupName": "Notifications",
+          "endpoints": [
+            {
+              "description": "Send Email Notification",
+              "path": "/notifications/email",
+              "method": "POST",
+              "authenticated": true,
+              "request": {
+                "queryParams": null,
+                "headers": null,
+                "body": {
+                  "to": {
+                    "required": true,
+                    "type": "string",
+                    "description": "Recipient email address"
+                  },
+                  "subject": {
+                    "required": true,
+                    "type": "string",
+                    "description": "Email subject"
+                  },
+                  "templateId": {
+                    "required": false,
+                    "type": "string",
+                    "description": "Template identifier to render"
+                  },
+                  "variables": {
+                    "required": false,
+                    "type": "object",
+                    "description": "Key-value pairs for template variables"
+                  }
+                }
+              },
+              "responseSample": {
+                "success": true,
+                "message": "email queued",
+                "data": {
+                  "notificationId": "ntf_123",
+                  "channel": "email",
+                  "status": "queued"
+                }
+              }
+            },
+            {
+              "description": "Send SMS Notification",
+              "path": "/notifications/sms",
+              "method": "POST",
+              "authenticated": true,
+              "request": {
+                "queryParams": null,
+                "headers": null,
+                "body": {
+                  "to": {
+                    "required": true,
+                    "type": "string",
+                    "description": "Recipient phone number in E.164 format"
+                  },
+                  "message": {
+                    "required": true,
+                    "type": "string",
+                    "description": "Text message content"
+                  }
+                }
+              },
+              "responseSample": {
+                "success": true,
+                "message": "sms queued",
+                "data": {
+                  "notificationId": "ntf_456",
+                  "channel": "sms",
+                  "status": "queued"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "authentication": {
+        "type": "API_KEY",
+        "headerName": "X-Api-Key"
+      }
+    },
+    {
+      "id": "analytics-api",
+      "name": "Event Analytics",
+      "description": "An event-driven data ingestion and querying engine. This service captures granular user interactions and system events, providing a high-throughput path for real-time tracking. It allows developers and data analysts to query historical trends to optimize user retention and platform performance.",
+      "version": "1.0",
+      "baseUrl": "https://analytics.example.com/api/v1",
+      "resources": [
+        {
+          "groupName": "Events",
+          "endpoints": [
+            {
+              "description": "Ingest Event",
+              "path": "/events",
+              "method": "POST",
+              "authenticated": false,
+              "request": {
+                "queryParams": null,
+                "headers": null,
+                "body": {
+                  "type": {
+                    "required": true,
+                    "type": "string",
+                    "description": "The event type identifier (e.g., page_view)"
+                  },
+                  "userId": {
+                    "required": false,
+                    "type": "string",
+                    "description": "The user identifier"
+                  },
+                  "properties": {
+                    "required": false,
+                    "type": "object",
+                    "description": "Additional event properties/metadata"
+                  },
+                  "timestamp": {
+                    "required": false,
+                    "type": "string",
+                    "description": "ISO8601 timestamp; defaults to now"
+                  }
+                }
+              },
+              "responseSample": {
+                "success": true,
+                "data": {
+                  "eventId": "evt_123",
+                  "receivedAt": "2026-02-13T09:45:00.000Z"
+                }
+              }
+            },
+            {
+              "description": "Query Events",
+              "path": "/events",
+              "method": "GET",
+              "authenticated": true,
+              "request": {
+                "queryParams": {
+                  "type": {
+                    "description": "Filter by event type",
+                    "required": false
+                  },
+                  "from": {
+                    "description": "Start of time range (ISO8601)",
+                    "required": false
+                  },
+                  "to": {
+                    "description": "End of time range (ISO8601)",
+                    "required": false
+                  }
+                },
+                "headers": null,
+                "body": null
+              },
+              "responseSample": {
+                "success": true,
+                "data": [
+                  {
+                    "id": "evt_123",
+                    "type": "page_view",
+                    "userId": "user_1",
+                    "properties": {
+                      "path": "/pricing"
+                    },
+                    "timestamp": "2026-02-13T09:45:00.000Z"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "authentication": {
+        "type": "Bearer",
+        "headerName": "Authorization"
+      }
+    },
+    {
+      "id": "user-profile-api",
+      "name": "User Profile Service",
+      "description": "The identity and personalization engine for the platform. It manages deep profile data, user-specific UI preferences, and localization settings. Additionally, it stores compliance-related data such as marketing consent and language settings to ensure personalized user experiences.",
+      "version": "1.0",
+      "baseUrl": "https://user-profile.example.com/api/v1",
+      "resources": [
+        {
+          "groupName": "Profiles",
+          "endpoints": [
+            {
+              "description": "Get User Profile",
+              "path": "/profiles/:id",
+              "method": "GET",
+              "authenticated": true,
+              "request": {
+                "queryParams": null,
+                "headers": null,
+                "body": null
+              },
+              "responseSample": {
+                "success": true,
+                "data": {
+                  "id": "user_1",
+                  "email": "user@example.com",
+                  "name": "Jane Doe",
+                  "timezone": "UTC",
+                  "createdAt": "2026-01-01T12:00:00.000Z"
+                }
+              }
+            },
+            {
+              "description": "Update User Preferences",
+              "path": "/profiles/:id/preferences",
+              "method": "PATCH",
+              "authenticated": true,
+              "request": {
+                "queryParams": null,
+                "headers": null,
+                "body": {
+                  "language": {
+                    "required": false,
+                    "type": "string",
+                    "description": "Preferred language (ISO code)"
+                  },
+                  "theme": {
+                    "required": false,
+                    "type": "string",
+                    "enum": ["light", "dark", "system"],
+                    "description": "UI theme preference"
+                  },
+                  "marketingOptIn": {
+                    "required": false,
+                    "type": "boolean",
+                    "description": "Whether the user consents to marketing emails"
+                  }
+                }
+              },
+              "responseSample": {
+                "success": true,
+                "data": {
+                  "id": "user_1",
+                  "language": "en",
+                  "theme": "dark",
+                  "marketingOptIn": true
                 }
               }
             }
