@@ -1,0 +1,171 @@
+{
+  "apis": [
+    {
+      "id": "subscription-api",
+      "name": "Subscription Manager",
+      "description": "Subscription Management API",
+      "version": "1.0",
+      "baseUrl": "https://subscription-management-api.vercel.app/api/v1",
+      "resources": [
+        {
+          "groupName": "Subscription",
+          "endpoints": [
+            {
+              "description": "Create Subscription",
+              "path": "/subscriptions",
+              "method": "POST",
+              "authenticated": true,
+              "request": {
+                "queryParams": null,
+                "headers": null,
+                "body": {
+                  "name": {
+                    "required": true,
+                    "type": "string",
+                    "description": "The Subscription Name"
+                  },
+                  "frequency": {
+                    "required": true,
+                    "type": "string",
+                    "enum": ["daily", "weekly", "monthly", "yearly"],
+                    "description": "The Subscription Frequency"
+                  },
+                  "currency": {
+                    "required": false,
+                    "type": "string",
+                    "enum": ["USD", "ETB"],
+                    "description": "The Payment Currency"
+                  },
+                  "paymentMethod": {
+                    "required": true,
+                    "type": "string",
+                    "enum": ["card","debit"],
+                    "description": "The Payment Method"
+                  },
+                  "category": {
+                    "required": true,
+                    "type": "string",
+                    "enum": [
+                      "sports",
+                      "news",
+                      "politics",
+                      "entertainment",
+                      "lifestyle",
+                      "technology",
+                      "finance",
+                      "other"
+                    ],            
+                    "description": "The Subscription Category"
+                  },
+                  "price": {
+                    "required": true,
+                    "type": "number",
+                    "description": "The Subscription Price"
+                  }
+                }
+              },
+              "responseSample": {
+                "success": true,
+                "message": "subscription created successfully",
+                "data": {
+                    "name": "Netflix",
+                    "price": 20,
+                    "currency": "ETB",
+                    "frequency": "daily",
+                    "category": "finance",
+                    "paymentMethod": "card",
+                    "status": "active",
+                    "startDate": "2026-02-10T20:50:37.461Z",
+                    "user": "698c7dcb4b15387eda7fd204",
+                    "_id": "698dae231fa4f252610cfebc",
+                    "createdAt": "2026-02-12T10:40:35.364Z",
+                    "updatedAt": "2026-02-12T10:40:35.364Z",
+                    "renewalDate": "2026-02-11T20:50:37.461Z",
+                    "__v": 0
+                },
+                "workflowRunId": "wfr_p6vm8hS1wthVJXcoQb7xp"
+              } 
+            },
+            {
+              "description": "Update Subscription",
+              "path": "/subscriptions",
+              "method": "PUT",
+              "authenticated": true,
+              "request": {
+                "queryParams": {
+                  "id": {
+                    "description": "The Subscription Id",
+                    "required": true
+                  }
+                },
+                "headers": null,
+                "body": {
+                  "name": {
+                    "required": false,
+                    "type": "string",
+                    "description": "The Subscription Name"
+                  },
+                  "frequency": {
+                    "required": true,
+                    "type": "string",
+                    "enum": ["daily", "weekly", "monthly", "yearly"],
+                    "description": "The Subscription Frequency"
+                  },
+                  "currency": {
+                    "required": false,
+                    "type": "string",
+                    "enum": ["USD", "ETB"],
+                    "description": "The Payment Currency"
+                  },
+                  "category": {
+                    "required": true,
+                    "type": "string",
+                    "enum": [
+                      "sports",
+                      "news",
+                      "politics",
+                      "entertainment",
+                      "lifestyle",
+                      "technology",
+                      "finance",
+                      "other"
+                    ],            
+                    "description": "The Subscription Category"
+                  },
+                  "price": {
+                    "required": true,
+                    "type": "number",
+                    "description": "The Subscription Price"
+                  }
+                }
+              },
+              "responseSample": {
+                "success": true,
+                "data": {
+                    "_id": "698c7e014b15387eda7fd207",
+                    "name": "Only Tribe",
+                    "price": 100,
+                    "currency": "USD",
+                    "frequency": "daily",
+                    "category": "politics",
+                    "paymentMethod": "card",
+                    "status": "active",
+                    "startDate": "2026-02-10T13:55:51.316Z",
+                    "user": "698c7dcb4b15387eda7fd204",
+                    "createdAt": "2026-02-11T13:02:57.291Z",
+                    "updatedAt": "2026-02-12T11:42:38.105Z",
+                    "renewalDate": "2026-02-11T13:55:51.316Z",
+                    "__v": 0
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "authentication": {
+        "type": "Bearer",
+        "headerName": "Authorization"
+      }
+    }
+  ]
+}
