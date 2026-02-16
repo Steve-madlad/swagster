@@ -95,7 +95,7 @@ export default function FormBuilder({ formConfig, onSubmit, isLoading }: FormBui
   isLoading(isSubmitting);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 col grow">
+    <form onSubmit={handleSubmit(onSubmit)} className="col grow space-y-6">
       {formConfig.map((field) => {
         const hasError = !!errors[field.name];
         const fieldOptions = field?.enum;
@@ -108,7 +108,7 @@ export default function FormBuilder({ formConfig, onSubmit, isLoading }: FormBui
 
         return (
           <div key={field.name} className="space-y-2">
-            <Label htmlFor={field.name} className="text-base! capitalize text-black/60 mb-1">
+            <Label htmlFor={field.name} className="mb-1 text-base! text-black/60 capitalize">
               {field.name} <b className="text-destructive">{field.required ? '*' : ''}</b>
             </Label>
 
@@ -132,12 +132,12 @@ export default function FormBuilder({ formConfig, onSubmit, isLoading }: FormBui
                 id={field.name}
                 step={field.type === 'number' ? '0.01' : undefined}
                 {...register(field.name as never)}
-                className={`${hasError ? 'border-red-500 focus-visible:ring-red-500' : ''} text-sm! pl-4`}
+                className={`${hasError ? 'border-red-500 focus-visible:ring-red-500' : ''} pl-4 text-sm!`}
               />
             )}
 
             {hasError && (
-              <p className="text-base font-medium  text-red-500">
+              <p className="text-base font-medium text-red-500">
                 {errors[field.name]?.message?.toString()}
               </p>
             )}
@@ -148,7 +148,7 @@ export default function FormBuilder({ formConfig, onSubmit, isLoading }: FormBui
       <Button
         type="submit"
         size={'icon-xl'}
-        className="w-full align-center gap-3 bg-primary! text-lg! py-6! mt-auto border-3! border-transparent hover:border-primary! hover:bg-white! hover:text-primary!"
+        className="align-center bg-primary! hover:border-primary! hover:text-primary! mt-auto w-full gap-3 border-3! border-transparent py-6! text-lg! hover:bg-white!"
         disabled={isSubmitting}
       >
         {isSubmitting ? (

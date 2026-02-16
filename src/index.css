@@ -1,7 +1,7 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@import "@fontsource-variable/jetbrains-mono";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@import '@fontsource-variable/jetbrains-mono';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -190,7 +190,7 @@ button:focus-visible {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply font-sans bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
   html {
     @apply font-sans;
@@ -199,7 +199,7 @@ button:focus-visible {
 
 @layer utilities {
   .flex-center {
-    @apply flex items-center justify-center
+    @apply flex items-center justify-center;
   }
   .flex-between {
     @apply flex items-center justify-between;
@@ -247,10 +247,10 @@ button:focus-visible {
     @apply absolute left-1/2 -translate-x-1/2;
   }
   .size-screen {
-    @apply w-screen h-screen
+    @apply h-screen w-screen;
   }
   .min-size-screen {
-    @apply min-w-screen min-h-screen
+    @apply min-h-screen min-w-screen;
   }
   .card-shadow {
     box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;

@@ -1,28 +1,28 @@
-import axios from "axios";
+import axios from 'axios';
 
 export const httpClient = axios.create({
   timeout: 15000,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
 type AuthProps = {
-  type: string,
-  headerName: string
-  token: string
-}
+  type: string;
+  headerName: string;
+  token: string;
+};
 
 export interface RequestProps {
-  url: string,
-  method: 'GET' | 'POST'| 'PUT' | 'DELETE'
-  queryParams?: string,
-  body: Record<string, any>,
-  headers?: Record<string, any>,
+  url: string;
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  queryParams?: string;
+  body: Record<string, any>;
+  headers?: Record<string, any>;
 }
 
-interface ExecuteHttpRequestProps extends RequestProps{
-  auth?: AuthProps
+interface ExecuteHttpRequestProps extends RequestProps {
+  auth?: AuthProps;
 }
 
 export async function executeHttpRequest({
@@ -34,7 +34,7 @@ export async function executeHttpRequest({
   queryParams,
   body,
   headers,
-  auth
+  auth,
 }: ExecuteHttpRequestProps) {
   // const url = baseUrl + resolvePath(path, pathParams);
 
@@ -43,12 +43,12 @@ export async function executeHttpRequest({
   };
 
   // Handle authentication if provided
-  if (auth?.type === "Bearer" && auth?.token) {
-    finalHeaders[auth.headerName || "Authorization"] = `Bearer ${auth.token}`;
+  if (auth?.type === 'Bearer' && auth?.token) {
+    finalHeaders[auth.headerName || 'Authorization'] = `Bearer ${auth.token}`;
   }
 
-  if (auth?.type === "API_KEY" && auth?.token) {
-    finalHeaders[auth.headerName || "X-Api-Key"] = auth.token;
+  if (auth?.type === 'API_KEY' && auth?.token) {
+    finalHeaders[auth.headerName || 'X-Api-Key'] = auth.token;
   }
 
   try {
@@ -66,7 +66,6 @@ export async function executeHttpRequest({
       data: response.data,
       headers: response.headers,
     };
-
   } catch (error: any) {
     if (error.response) {
       return {
@@ -89,8 +88,7 @@ export function generateCurl({ url, method, body, headers }: RequestProps) {
 curl -X ${method.toUpperCase()} "${url}" \
 ${Object.entries(headers || {})
   .map(([k, v]) => `-H "${k}: ${v}"`)
-  .join(" \\\n")} \
-${body ? `-d '${JSON.stringify(body)}'` : ""}
+  .join(' \\\n')} \
+${body ? `-d '${JSON.stringify(body)}'` : ''}
 `;
 }
-

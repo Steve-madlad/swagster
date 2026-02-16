@@ -8,7 +8,7 @@ import {
   MoveLeft,
   SendHorizontal,
   Server,
-  ShieldCheck
+  ShieldCheck,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
@@ -103,18 +103,18 @@ export default function ApiDoc() {
   }
 
   return (
-    <div className="min-h-screen ">
-      <nav className="bg-black px-10 py-4 text-white justify-center col">
-        <Link to={'/'} className="font-medium text-white! text-2xl">
+    <div className="min-h-screen">
+      <nav className="col justify-center bg-black px-10 py-4 text-white">
+        <Link to={'/'} className="text-2xl font-medium text-white!">
           Swagster
         </Link>
         <span>By Steeve</span>
       </nav>
       <div>
         <div className="p-10">
-          <div className="flex gap-2 mb-3">
+          <div className="mb-3 flex gap-2">
             <h1>{api?.name}</h1>
-            <p className="bg-accent border border-black/20 mt-2 text-primary rounded-full size-fit px-2">
+            <p className="bg-accent text-primary mt-2 size-fit rounded-full border border-black/20 px-2">
               v{api?.version}
             </p>
           </div>
@@ -122,33 +122,28 @@ export default function ApiDoc() {
           <Link
             to={api?.baseUrl as string}
             target="_blank"
-            className="text-black! hover:underline! hover:text-blue-500!"
+            className="text-black! hover:text-blue-500! hover:underline!"
           >
             {api?.baseUrl}
           </Link>
         </div>
 
-        <div className="p-10 min-h-screen mt-3 bg-accent">
+        <div className="bg-accent mt-3 min-h-screen p-10">
           {api?.resources.map((group) => {
             return (
               <div className="space-y-5">
                 <a
                   href={`#${group.groupName.toLowerCase()}`}
                   id={group.groupName.toLowerCase()}
-                  className="text-2xl group hover:text-primary align-center cursor gap-3"
+                  className="group hover:text-primary align-center cursor gap-3 text-2xl"
                 >
                   {group.groupName}
-                  <LincIcon className={`opacity-0 group-hover:opacity-100 duration-300`} />
+                  <LincIcon className={`opacity-0 duration-300 group-hover:opacity-100`} />
                 </a>
-                <div className="col w-fit space-y-4 col">
+                <div className="col col w-fit space-y-4">
                   {group.endpoints.map((endpoint: Record<string, any>) => (
                     <button
-                      className={`
-                        relative flex-between gap-4 px-4 py-3 cursor sm:min-w-2xl
-                        ${getMethodClasses(endpoint.method, { variant: 'light', hover: true })}
-                        after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5
-                        after:bg-primary after:transition-all after:duration-200 hover:after:h-1 focus-visible:after:h-1
-                        `}
+                      className={`flex-between cursor relative gap-4 px-4 py-3 sm:min-w-2xl ${getMethodClasses(endpoint.method, { variant: 'light', hover: true })} after:bg-primary after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:transition-all after:duration-200 after:content-[''] hover:after:h-1 focus-visible:after:h-1`}
                       tabIndex={0}
                       onClick={() => {
                         setApiPanelOpen(true);
@@ -181,14 +176,14 @@ export default function ApiDoc() {
       </div>
 
       <div
-        className={`fixed h-screen w-screen bg-black/30 inset-0 hidden ${apiPanelOpen ? 'flex-center' : 'hidden'}`}
+        className={`fixed inset-0 hidden h-screen w-screen bg-black/30 ${apiPanelOpen ? 'flex-center' : 'hidden'}`}
         onClick={() => setApiPanelOpen(false)}
       >
         <div
-          className="rounded-md overflow-hidden col bg-white min-h-3/5 min-w-4/5 max-h-176 max-w-5xl"
+          className="col max-h-176 min-h-3/5 max-w-5xl min-w-4/5 overflow-hidden rounded-md bg-white"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="align-center gap-3 border-b-3 border-gray-200 py-4 px-7">
+          <div className="align-center gap-3 border-b-3 border-gray-200 px-7 py-4">
             <div className="bg-primary/15 text-primary flex-center rounded-lg p-2">
               <Computer size={35} />
             </div>
@@ -196,27 +191,27 @@ export default function ApiDoc() {
               <h2 className="text-primary text-2xl font-semibold">
                 {selectedEndpoint.name} Endpoint
               </h2>
-              <div className="flex text-muted-foreground">
+              <div className="text-muted-foreground flex">
                 <p>{api?.name}</p>•<p>V{api?.version}</p>
               </div>
             </div>
           </div>
 
           <div className="flex grow">
-            <div className="flex-1 max-h-[calc(44rem-90.13px)] overflow-hidden relative">
+            <div className="relative max-h-[calc(44rem-90.13px)] flex-1 overflow-hidden">
               <div
                 className={`flex h-full transition-transform duration-500 ease-in-out ${
                   showSecondPanel ? '-translate-x-full' : 'translate-x-0'
                 }`}
               >
                 <div className="w-full shrink-0 overflow-y-auto">
-                  <div className="space-y-6 col p-7 min-h-full">
+                  <div className="col min-h-full space-y-6 p-7">
                     <div>
                       <p className="text-xl">Resouce Path</p>
-                      <div className="bg-muted border mt-2 border-gray-200 flex-between text-black px-4 py-3 rounded-xl">
+                      <div className="bg-muted flex-between mt-2 rounded-xl border border-gray-200 px-4 py-3 text-black">
                         <div className="flex gap-6">
                           <div
-                            className={`px-3 py-1 w-fit text-white! rounded-lg ${modalMethodColorMap[selectedEndpoint.method as HttpMethod]}`}
+                            className={`w-fit rounded-lg px-3 py-1 text-white! ${modalMethodColorMap[selectedEndpoint.method as HttpMethod]}`}
                           >
                             {selectedEndpoint.method}
                           </div>
@@ -225,7 +220,7 @@ export default function ApiDoc() {
                         <Button
                           onClick={() => copyToClipboard(selectedEndpoint.path)}
                           size={'icon-xl'}
-                          className="border-gray-400! text-primary bg-white! hover:bg-white/20! p-5!"
+                          className="text-primary border-gray-400! bg-white! p-5! hover:bg-white/20!"
                         >
                           <Copy />
                         </Button>
@@ -234,15 +229,15 @@ export default function ApiDoc() {
                     <div>
                       <p className="text-xl">Description</p>
                       <p className="text-muted-foreground">{selectedEndpoint.description}</p>
-                      <div className="flex gap-4 mt-2">
-                        <div className="bg-muted border border-gray-200 flex-1 col gap-1  text-black px-4 py-3 rounded-xl mt-1">
-                          <p className="align-center gap-4 text-primary text-lg">
+                      <div className="mt-2 flex gap-4">
+                        <div className="bg-muted col mt-1 flex-1 gap-1 rounded-xl border border-gray-200 px-4 py-3 text-black">
+                          <p className="align-center text-primary gap-4 text-lg">
                             <ShieldCheck /> Authentication
                           </p>
                           <p className="pl-10">Required (Bearer Token)</p>
                         </div>
-                        <div className="bg-muted border border-gray-200 flex-1 col gap-1  text-black px-4 py-3 rounded-xl mt-1">
-                          <p className="align-center gap-4 text-primary text-lg">
+                        <div className="bg-muted col mt-1 flex-1 gap-1 rounded-xl border border-gray-200 px-4 py-3 text-black">
+                          <p className="align-center text-primary gap-4 text-lg">
                             <Server size={19} /> Rate Limit
                           </p>
                           <p className="pl-10">100req/min</p>
@@ -252,8 +247,8 @@ export default function ApiDoc() {
                     {selectedEndpoint.method !== 'GET' && (
                       <div>
                         <p className="text-xl">Path Parameters</p>
-                        <div className="mt-2 border border-slate-200 rounded-sm overflow-x-auto overflow-y-hidden">
-                          <table className="w-full ">
+                        <div className="mt-2 overflow-x-auto overflow-y-hidden rounded-sm border border-slate-200">
+                          <table className="w-full">
                             <thead className="bg-muted">
                               <tr className="text-primary">
                                 <td className="px-4 py-2">Name</td>
@@ -263,7 +258,7 @@ export default function ApiDoc() {
                                 {selectedEndpoint?.request?.body?.find(
                                   (field: Record<string, any>) => field.enum !== undefined,
                                 ) && (
-                                  <td className="px-4 py-2 border-r border-slate-200 ">Options</td>
+                                  <td className="border-r border-slate-200 px-4 py-2">Options</td>
                                 )}
                               </tr>
                             </thead>
@@ -271,20 +266,20 @@ export default function ApiDoc() {
                               {selectedEndpoint?.request?.body?.map(
                                 (field: Record<string, any>) => (
                                   <tr>
-                                    <td className="px-4 py-2 border-r border-slate-200 ">
+                                    <td className="border-r border-slate-200 px-4 py-2">
                                       {field.name}
                                     </td>
-                                    <td className="px-4 py-2 border-r border-slate-200 ">
+                                    <td className="border-r border-slate-200 px-4 py-2">
                                       {field.type}
                                     </td>
-                                    <td className="px-4 py-2 text-center border-r border-slate-200 ">
+                                    <td className="border-r border-slate-200 px-4 py-2 text-center">
                                       {field.required ? 'yes' : 'no'}
                                     </td>
-                                    <td className="px-4 py-2 border-r border-slate-200 ">
+                                    <td className="border-r border-slate-200 px-4 py-2">
                                       {field.description}
                                     </td>
                                     {field.enum && (
-                                      <td className="px-4 py-2 border-r border-slate-200 ">
+                                      <td className="border-r border-slate-200 px-4 py-2">
                                         {field.enum.join(', ')}
                                       </td>
                                     )}
@@ -299,17 +294,17 @@ export default function ApiDoc() {
                     <Button
                       size={'icon-xl'}
                       onClick={() => setShowSecondPanel(true)}
-                      className="bg-primary! border-3! mt-auto border-transparent hover:bg-white! hover:border-primary! hover:text-primary duration-300 flex gap-3 text-white text-xl! py-6! font-semibold w-full"
+                      className="bg-primary! hover:border-primary! hover:text-primary mt-auto flex w-full gap-3 border-3! border-transparent py-6! text-xl! font-semibold text-white duration-300 hover:bg-white!"
                     >
                       Send Request <SendHorizontal />
                     </Button>
                   </div>
                 </div>
 
-                <div className="w-full col shrink-0 bg-muted overflow-y-auto p-7">
+                <div className="col bg-muted w-full shrink-0 overflow-y-auto p-7">
                   <Button
                     size={'icon-xl'}
-                    className="bg-transparent! flex gap-2 text-base text-black pl-0! mb-4 w-fit hover:gap-3 duration-300"
+                    className="mb-4 flex w-fit gap-2 bg-transparent! pl-0! text-base text-black duration-300 hover:gap-3"
                     onClick={() => setShowSecondPanel(false)}
                   >
                     <MoveLeft /> Back
@@ -327,16 +322,16 @@ export default function ApiDoc() {
             </div>
 
             <div
-              className={`flex-1 py-7 bg-[#0f172a] max-h-[calc(44rem-90.13px)] max-w-1/2 ${executionLoading && 'col-full-center'}`}
+              className={`max-h-[calc(44rem-90.13px)] max-w-1/2 flex-1 bg-[#0f172a] py-7 ${executionLoading && 'col-full-center'}`}
             >
               {!executionLoading && (
                 <div className="flex-between px-7">
-                  <p className="border-b-4 border-primary text-white w-fit text-xl font-semibold">
+                  <p className="border-primary w-fit border-b-4 text-xl font-semibold text-white">
                     Response Example
                   </p>
                   <div className="flex gap-3">
-                    <div className="rounded-full flex gap-3 align-center w-fit bg-[#10b981]/40  text-white! px-3">
-                      <div className="size-2 rounded-full bg-[#10b981] animate-pulse"></div>
+                    <div className="align-center flex w-fit gap-3 rounded-full bg-[#10b981]/40 px-3 text-white!">
+                      <div className="size-2 animate-pulse rounded-full bg-[#10b981]"></div>
                       200 OK
                     </div>
                     <Button
@@ -344,7 +339,7 @@ export default function ApiDoc() {
                         copyToClipboard(JSON.stringify(selectedEndpoint.responseSample, null, 2))
                       }
                       size={'icon-lg'}
-                      className="border-gray-400! text-primary bg-white! hover:bg-white/60! p-2!"
+                      className="text-primary border-gray-400! bg-white! p-2! hover:bg-white/60!"
                     >
                       <Copy />
                     </Button>
@@ -352,9 +347,9 @@ export default function ApiDoc() {
                 </div>
               )}
 
-              <div className={`rounded-md ${executionLoading && 'bg-transparent flex-center'}`}>
+              <div className={`rounded-md ${executionLoading && 'flex-center bg-transparent'}`}>
                 {executionLoading ? (
-                  <Loader2 size={35} className="animate-spin text-primary!" />
+                  <Loader2 size={35} className="text-primary! animate-spin" />
                 ) : (
                   <SyntaxHighlighter
                     language="json"
