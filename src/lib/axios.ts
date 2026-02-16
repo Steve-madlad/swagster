@@ -13,16 +13,16 @@ type AuthProps = {
   token: string
 }
 
-interface RequestProps {
+export interface RequestProps {
   url: string,
   method: 'GET' | 'POST'| 'PUT' | 'DELETE'
-  queryParams: string,
+  queryParams?: string,
   body: Record<string, any>,
-  headers: Record<string, any>,
+  headers?: Record<string, any>,
 }
 
 interface ExecuteHttpRequestProps extends RequestProps{
-  auth: AuthProps
+  auth?: AuthProps
 }
 
 export async function executeHttpRequest({

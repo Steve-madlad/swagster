@@ -18,42 +18,57 @@
               "request": {
                 "queryParams": null,
                 "headers": null,
-                "body": {
-                  "name": {
-                    "required": true,
+                "body": [
+                  {
+                    "name": "name",
                     "type": "string",
+                    "required": true,
                     "description": "The Subscription Name"
                   },
-                  "frequency": {
-                    "required": true,
+                  {
+                    "name": "frequency",
                     "type": "string",
+                    "required": true,
                     "enum": ["daily", "weekly", "monthly", "yearly"],
                     "description": "The Subscription Frequency"
                   },
-                  "currency": {
-                    "required": false,
+                  {
+                    "name": "currency",
                     "type": "string",
+                    "required": false,
                     "enum": ["USD", "ETB"],
                     "description": "The Payment Currency"
                   },
-                  "paymentMethod": {
-                    "required": true,
+                  {
+                    "name": "paymentMethod",
                     "type": "string",
+                    "required": true,
                     "enum": ["card", "debit"],
                     "description": "The Payment Method"
                   },
-                  "category": {
-                    "required": true,
+                  {
+                    "name": "category",
                     "type": "string",
-                    "enum": ["sports", "news", "politics", "entertainment", "lifestyle", "technology", "finance", "other"],
+                    "required": true,
+                    "enum": [
+                      "sports",
+                      "news",
+                      "politics",
+                      "entertainment",
+                      "lifestyle",
+                      "technology",
+                      "finance",
+                      "other"
+                    ],
                     "description": "The Subscription Category"
                   },
-                  "price": {
-                    "required": true,
+                  {
+                    "name": "price",
                     "type": "number",
+                    "required": true,
                     "description": "The Subscription Price"
                   }
-                }
+                ]
               },
               "responseSample": {
                 "success": true,
@@ -90,36 +105,50 @@
                   }
                 },
                 "headers": null,
-                "body": {
-                  "name": {
-                    "required": false,
+                "body": [
+                  {
+                    "name": "name",
                     "type": "string",
+                    "required": false,
                     "description": "The Subscription Name"
                   },
-                  "frequency": {
-                    "required": true,
+                  {
+                    "name": "frequency",
                     "type": "string",
+                    "required": true,
                     "enum": ["daily", "weekly", "monthly", "yearly"],
                     "description": "The Subscription Frequency"
                   },
-                  "currency": {
-                    "required": false,
+                  {
+                    "name": "currency",
                     "type": "string",
+                    "required": false,
                     "enum": ["USD", "ETB"],
                     "description": "The Payment Currency"
                   },
-                  "category": {
-                    "required": true,
+                  {
+                    "name": "category",
                     "type": "string",
-                    "enum": ["sports", "news", "politics", "entertainment", "lifestyle", "technology", "finance", "other"],
+                    "required": true,
+                    "enum": [
+                      "sports",
+                      "news",
+                      "politics",
+                      "entertainment",
+                      "lifestyle",
+                      "technology",
+                      "finance",
+                      "other"
+                    ],
                     "description": "The Subscription Category"
                   },
-                  "price": {
-                    "required": true,
+                  {
+                    "name": "price",
                     "type": "number",
+                    "required": true,
                     "description": "The Subscription Price"
                   }
-                }
+                ]
               },
               "responseSample": {
                 "success": true,
@@ -200,24 +229,27 @@
               "request": {
                 "queryParams": null,
                 "headers": null,
-                "body": {
-                  "customerId": {
-                    "required": true,
+                "body": [
+                  {
+                    "name": "customerId",
                     "type": "string",
+                    "required": true,
                     "description": "The customer identifier"
                   },
-                  "amount": {
-                    "required": true,
+                  {
+                    "name": "amount",
                     "type": "number",
+                    "required": true,
                     "description": "Invoice amount in minor units (e.g., cents)"
                   },
-                  "currency": {
-                    "required": true,
+                  {
+                    "name": "currency",
                     "type": "string",
+                    "required": true,
                     "enum": ["USD", "EUR"],
                     "description": "Currency code"
                   }
-                }
+                ]
               },
               "responseSample": {
                 "success": true,
@@ -257,28 +289,32 @@
               "request": {
                 "queryParams": null,
                 "headers": null,
-                "body": {
-                  "to": {
-                    "required": true,
+                "body": [
+                  {
+                    "name": "to",
                     "type": "string",
+                    "required": true,
                     "description": "Recipient email address"
                   },
-                  "subject": {
-                    "required": true,
+                  {
+                    "name": "subject",
                     "type": "string",
+                    "required": true,
                     "description": "Email subject"
                   },
-                  "templateId": {
-                    "required": false,
+                  {
+                    "name": "templateId",
                     "type": "string",
+                    "required": false,
                     "description": "Template identifier to render"
                   },
-                  "variables": {
-                    "required": false,
+                  {
+                    "name": "variables",
                     "type": "object",
+                    "required": false,
                     "description": "Key-value pairs for template variables"
                   }
-                }
+                ]
               },
               "responseSample": {
                 "success": true,
@@ -298,18 +334,20 @@
               "request": {
                 "queryParams": null,
                 "headers": null,
-                "body": {
-                  "to": {
-                    "required": true,
+                "body": [
+                  {
+                    "name": "to",
                     "type": "string",
+                    "required": true,
                     "description": "Recipient phone number in E.164 format"
                   },
-                  "message": {
-                    "required": true,
+                  {
+                    "name": "message",
                     "type": "string",
+                    "required": true,
                     "description": "Text message content"
                   }
-                }
+                ]
               },
               "responseSample": {
                 "success": true,
@@ -347,28 +385,32 @@
               "request": {
                 "queryParams": null,
                 "headers": null,
-                "body": {
-                  "type": {
-                    "required": true,
+                "body": [
+                  {
+                    "name": "type",
                     "type": "string",
+                    "required": true,
                     "description": "The event type identifier (e.g., page_view)"
                   },
-                  "userId": {
-                    "required": false,
+                  {
+                    "name": "userId",
                     "type": "string",
+                    "required": false,
                     "description": "The user identifier"
                   },
-                  "properties": {
-                    "required": false,
+                  {
+                    "name": "properties",
                     "type": "object",
+                    "required": false,
                     "description": "Additional event properties/metadata"
                   },
-                  "timestamp": {
-                    "required": false,
+                  {
+                    "name": "timestamp",
                     "type": "string",
+                    "required": false,
                     "description": "ISO8601 timestamp; defaults to now"
                   }
-                }
+                ]
               },
               "responseSample": {
                 "success": true,
@@ -463,24 +505,27 @@
               "request": {
                 "queryParams": null,
                 "headers": null,
-                "body": {
-                  "language": {
-                    "required": false,
+                "body": [
+                  {
+                    "name": "language",
                     "type": "string",
+                    "required": false,
                     "description": "Preferred language (ISO code)"
                   },
-                  "theme": {
-                    "required": false,
+                  {
+                    "name": "theme",
                     "type": "string",
+                    "required": false,
                     "enum": ["light", "dark", "system"],
                     "description": "UI theme preference"
                   },
-                  "marketingOptIn": {
-                    "required": false,
+                  {
+                    "name": "marketingOptIn",
                     "type": "boolean",
+                    "required": false,
                     "description": "Whether the user consents to marketing emails"
                   }
-                }
+                ]
               },
               "responseSample": {
                 "success": true,
