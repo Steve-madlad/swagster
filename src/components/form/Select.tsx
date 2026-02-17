@@ -9,7 +9,7 @@ import {
 
 interface SelectProps {
   placeholder: string;
-  id: string;
+  id?: string;
   options?: { label: string; value: string }[];
   value: string;
   onChange: (value: string | null) => void;

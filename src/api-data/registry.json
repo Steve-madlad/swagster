@@ -94,31 +94,33 @@
             },
             {
               "description": "Updates a user subscription",
-              "path": "/subscriptions",
+              "path": "/subscriptions/{id}",
               "method": "PUT",
               "authenticated": true,
               "request": {
-                "queryParams": {
-                  "id": {
-                    "description": "The Subscription Id",
-                    "required": true
-                  }
-                },
-                "headers": null,
-                "body": [
+                "pathParams": [
                   {
-                    "name": "name",
-                    "type": "string",
-                    "required": false,
-                    "description": "The Subscription Name"
-                  },
-                  {
-                    "name": "frequency",
+                    "name": "id",
                     "type": "string",
                     "required": true,
-                    "enum": ["daily", "weekly", "monthly", "yearly"],
-                    "description": "The Subscription Frequency"
-                  },
+                    "description": "The Subscription Id"
+                  }
+                ],
+                "headers": null,
+                "body": [
+                    {
+                      "name": "name",
+                      "type": "string",
+                      "required": false,
+                      "description": "The Subscription Name"
+                    },
+                    {
+                      "name": "frequency",
+                      "type": "string",
+                      "required": true,
+                      "enum": ["daily", "weekly", "monthly", "yearly"],
+                      "description": "The Subscription Frequency"
+                    },
                   {
                     "name": "currency",
                     "type": "string",
@@ -194,16 +196,21 @@
               "method": "GET",
               "authenticated": true,
               "request": {
-                "queryParams": {
-                  "status": {
+                "queryParams": [
+                  {
+                    "name": "status",
                     "description": "Filter by invoice status (e.g., paid, pending, void)",
-                    "required": false
+                    "required": false,
+                    "enum": ["paid", "pending", "void"],
+                    "type": "string"
                   },
-                  "customerId": {
+                  {
+                    "name": "customerId",
                     "description": "Filter by specific customer identifier",
-                    "required": false
+                    "required": false,
+                    "type": "string"
                   }
-                },
+                ],
                 "headers": null,
                 "body": null
               },

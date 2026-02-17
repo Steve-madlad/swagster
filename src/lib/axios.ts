@@ -17,6 +17,7 @@ export interface RequestProps {
   url: string;
   method: 'GET' | 'POST' | 'PUT' | 'DELETE';
   queryParams?: string;
+  pathParams?: string;
   body: Record<string, any>;
   headers?: Record<string, any>;
 }
@@ -36,7 +37,7 @@ export async function executeHttpRequest({
   headers,
   auth,
 }: ExecuteHttpRequestProps) {
-  // const url = baseUrl + resolvePath(path, pathParams);
+  // const url = baseUrl + pathParams;
 
   const finalHeaders = {
     ...headers,
@@ -69,16 +70,30 @@ export async function executeHttpRequest({
   } catch (error: any) {
     if (error.response) {
       return {
-        success: false,
-        status: error.response.status,
-        data: error.response.data,
-        headers: error.response.headers,
+        error: error.response.data,
+        SwagsterStatusCode: error.response.status || 'UNKNOWN ERROR'
       };
     }
 
+    const isCrossOrigin = new URL(error.config?.url || url).origin !== window.location.origin;
+    let message = '';
+
+    if (
+      isCrossOrigin &&
+      error?.isAxiosError &&
+      !error?.response &&
+      error?.request &&
+      error?.code === 'ERR_NETWORK'
+    ) {
+      message =
+        'Request failed. This might be due to CORS restrictions. Please check the browser console for more details.';
+    } else {
+      message = error.message;
+    }
+
     return {
-      success: false,
-      error: error.message,
+      error: { success: false, message },
+      SwagsterStatusCode: error?.code || 'UNKNOWN ERROR',
     };
   }
 }

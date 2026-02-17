@@ -1,7 +1,7 @@
 import { Select } from '@components/form/Select';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, SendHorizontal } from 'lucide-react';
-import { useMemo, type Dispatch, type SetStateAction } from 'react';
+import { useEffect, useMemo, type Dispatch, type SetStateAction } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Button } from '../ui/button';
@@ -14,6 +14,7 @@ export interface FieldProps {
   required: boolean;
   enum?: string[];
   description: string;
+  source: string;
 }
 
 const generateZodSchema = (config: FieldProps[]) => {
@@ -67,10 +68,16 @@ const generateZodSchema = (config: FieldProps[]) => {
 interface FormBuilderProps {
   formConfig: FieldProps[];
   onSubmit: (data: Record<string, any>) => void;
-  isLoading: Dispatch<SetStateAction<boolean>>;
+  isLoading?: Dispatch<SetStateAction<boolean>>;
+  returnValues?: Dispatch<SetStateAction<Record<string, unknown>>>;
 }
 
-export default function FormBuilder({ formConfig, onSubmit, isLoading }: FormBuilderProps) {
+export default function FormBuilder({
+  formConfig,
+  onSubmit,
+  isLoading,
+  returnValues,
+}: FormBuilderProps) {
   const schema = useMemo(() => generateZodSchema(formConfig), [formConfig]);
 
   const {
@@ -90,60 +97,87 @@ export default function FormBuilder({ formConfig, onSubmit, isLoading }: FormBui
     ),
   });
 
+  useEffect(() => {
+    const subscription = watch((values) => {
+      returnValues?.(values);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, returnValues]);
+
+  useEffect(() => {
+    isLoading && isLoading(isSubmitting);
+  }, [isSubmitting]);
+
   console.log(formConfig);
   console.log(watch());
-  isLoading(isSubmitting);
+
+  const groupedData = formConfig.reduce((acc: Record<string, FieldProps[]>, field) => {
+    const key = field.source; 
+
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+
+    acc[key].push(field);
+    return acc;
+  }, {});
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="col grow space-y-6">
-      {formConfig.map((field) => {
-        const hasError = !!errors[field.name];
-        const fieldOptions = field?.enum;
-        const options = field.enum
-          ? fieldOptions?.map((option) => ({
-              label: option,
-              value: option,
-            }))
-          : undefined;
+      {Object.entries(groupedData).map(([source, fields]) => (
+        <section key={source} className="mb-8 space-y-4">
+          <h3 className="mb-4 text-base font-bold uppercase">{source} Parameters</h3>
 
-        return (
-          <div key={field.name} className="space-y-2">
-            <Label htmlFor={field.name} className="mb-1 text-base! text-black/60 capitalize">
-              {field.name} <b className="text-destructive">{field.required ? '*' : ''}</b>
-            </Label>
+          {fields.map((field) => {
+            const hasError = !!errors[field.name];
+            const fieldOptions = field?.enum;
+            const options = field.enum
+              ? fieldOptions?.map((option) => ({
+                  label: option,
+                  value: option,
+                }))
+              : undefined;
 
-            {field.enum ? (
-              <Controller
-                name={field.name}
-                control={control}
-                render={({ field: controlField }) => (
-                  <Select
-                    {...controlField}
+            return (
+              <div key={field.name}>
+                <Label htmlFor={field.name} className="mb-1 text-base! text-black/60 capitalize">
+                  {field.name} <b className="text-destructive">{field.required ? '*' : ''}</b>
+                </Label>
+
+                {field.enum ? (
+                  <Controller
+                    name={field.name}
+                    control={control}
+                    render={({ field: controlField }) => (
+                      <Select
+                        {...controlField}
+                        placeholder={`Select ${field.name}`}
+                        options={options}
+                      />
+                    )}
+                  />
+                ) : (
+                  <Input
+                    type={field.type === 'number' ? 'number' : 'text'}
+                    placeholder={field.description}
                     id={field.name}
-                    placeholder={`Select ${field.name}`}
-                    options={options}
+                    step={field.type === 'number' ? '0.01' : undefined}
+                    {...register(field.name as never)}
+                    className={`${hasError ? 'border-red-500 focus-visible:ring-red-500' : ''} pl-4 text-sm!`}
                   />
                 )}
-              />
-            ) : (
-              <Input
-                type={field.type === 'number' ? 'number' : 'text'}
-                placeholder={field.description}
-                id={field.name}
-                step={field.type === 'number' ? '0.01' : undefined}
-                {...register(field.name as never)}
-                className={`${hasError ? 'border-red-500 focus-visible:ring-red-500' : ''} pl-4 text-sm!`}
-              />
-            )}
 
-            {hasError && (
-              <p className="text-base font-medium text-red-500">
-                {errors[field.name]?.message?.toString()}
-              </p>
-            )}
-          </div>
-        );
-      })}
+                {hasError && (
+                  <p className="text-sm pl-2 font-medium mt-2 text-red-500">
+                    {errors[field.name]?.message?.toString()}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+        </section>
+      ))}
 
       <Button
         type="submit"

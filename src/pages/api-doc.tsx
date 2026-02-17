@@ -1,5 +1,5 @@
 import FormBuilder from '@/components/form/FormBuilder';
-import { executeHttpRequest, type RequestProps } from '@/lib/axios';
+import { executeHttpRequest, generateCurl, type RequestProps } from '@/lib/axios';
 import {
   Computer,
   Copy,
@@ -27,6 +27,17 @@ export default function ApiDoc() {
 
   const [showSecondPanel, setShowSecondPanel] = useState(false);
   const [executionLoading, setExecutionLoading] = useState(false);
+
+  const [selectedTab, setSelectedTab] = useState<'response' | 'curl'>('response');
+  const [formValues, setFormValues] = useState<Record<string, unknown>>({});
+
+  type ExecutionError = {
+    SwagsterStatusCode: string | number;
+  } & Record<string, unknown>;
+
+  const [executionError, setExecutionError] = useState<ExecutionError | undefined>();
+
+  console.log({ executionError });
 
   type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -92,15 +103,59 @@ export default function ApiDoc() {
     }
   }
 
+  const extractResourceUrl = (vals: any) => {
+    const formattedConfig = formattedFormConfig();
+    const pathParams = formattedConfig.filter((field) => field.source === 'path');
+    
+    let resourceUrl = pathParams.reduce((acc, param) => {
+      return (acc = acc.replace(`{${param.name}}`, vals[param.name]));
+    }, selectedEndpoint.path);
+    
+    return resourceUrl
+  };
+  
   async function submitRequest(vals: Record<string, string | number>) {
+    const resourceUrl = extractResourceUrl(vals)
+    // const formattedConfig = formattedFormConfig();
+    // const queryParams = formattedConfig.filter((field) => field.source === 'query');
+
     const props: RequestProps = {
-      url: api?.baseUrl + selectedEndpoint.path,
+      url: api?.baseUrl + resourceUrl,
       method: selectedEndpoint.method,
       body: vals,
     };
 
-    await executeHttpRequest(props);
+    const response = await executeHttpRequest(props);
+
+    if (response.success) {
+      setExecutionError(undefined);
+    } else {
+      setExecutionError({ ...response.error, SwagsterStatusCode: response.SwagsterStatusCode });
+    }
   }
+
+  const formattedError = () => {
+    if (!executionError) return undefined;
+
+    const { SwagsterStatusCode, ...rest } = executionError;
+    return rest;
+  };
+
+  const formattedFormConfig = () => {
+    return [
+      ...(selectedEndpoint.request?.pathParams || []).map((field: any) => ({
+        ...field,
+        source: 'path',
+      })),
+      ...(selectedEndpoint.request?.queryParams || []).map((field: any) => ({
+        ...field,
+        source: 'query',
+      })),
+      ...(selectedEndpoint.request?.body || []).map((field: any) => ({ ...field, source: 'body' })),
+    ];
+  };
+
+  console.log({ formValues });
 
   return (
     <div className="min-h-screen">
@@ -143,8 +198,7 @@ export default function ApiDoc() {
                 <div className="col col w-fit space-y-4">
                   {group.endpoints.map((endpoint: Record<string, any>) => (
                     <button
-                      className={`flex-between cursor relative gap-4 px-4 py-3 sm:min-w-2xl ${getMethodClasses(endpoint.method, { variant: 'light', hover: true })} after:bg-primary after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:transition-all after:duration-200 after:content-[''] hover:after:h-1 focus-visible:after:h-1`}
-                      tabIndex={0}
+                      className={`flex-between cursor relative gap-4 overflow-hidden px-4 py-3 sm:min-w-2xl ${getMethodClasses(endpoint.method, { variant: 'light', hover: true })} after:bg-primary after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:transition-all after:duration-100 after:content-[''] hover:after:h-1 focus-visible:after:h-1`}
                       onClick={() => {
                         setApiPanelOpen(true);
                         setSelectedEndpoint({
@@ -164,7 +218,7 @@ export default function ApiDoc() {
                       </div>
 
                       {endpoint.authenticated && (
-                        <ShieldCheck className="fill-tropic-blue text-black/70" />
+                        <ShieldCheck size={28} className="fill-primary/70 text-black/70" />
                       )}
                     </button>
                   ))}
@@ -312,9 +366,10 @@ export default function ApiDoc() {
 
                   {selectedEndpoint?.request?.body && (
                     <FormBuilder
-                      formConfig={selectedEndpoint.request.body}
+                      formConfig={formattedFormConfig()}
                       onSubmit={(vals) => submitRequest(vals)}
                       isLoading={setExecutionLoading}
+                      returnValues={setFormValues}
                     />
                   )}
                 </div>
@@ -326,17 +381,49 @@ export default function ApiDoc() {
             >
               {!executionLoading && (
                 <div className="flex-between px-7">
-                  <p className="border-primary w-fit border-b-4 text-xl font-semibold text-white">
-                    Response Example
-                  </p>
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => setSelectedTab('response')}
+                      className={`${selectedTab === 'response' ? 'border-primary' : 'border-transparent'} w-fit rounded-none! border-b-4! p-1! text-xl font-semibold text-white`}
+                    >
+                      {executionError ? 'Server Response' : 'Response Example'}
+                    </button>
+                    <button
+                      onClick={() => setSelectedTab('curl')}
+                      className={`${selectedTab === 'curl' ? 'border-primary' : 'border-transparent'} w-fit rounded-none! border-b-4 p-1! text-xl font-semibold text-white`}
+                    >
+                      Curl
+                    </button>
+                  </div>
+
                   <div className="flex gap-3">
-                    <div className="align-center flex w-fit gap-3 rounded-full bg-[#10b981]/40 px-3 text-white!">
-                      <div className="size-2 animate-pulse rounded-full bg-[#10b981]"></div>
-                      200 OK
-                    </div>
+                    {selectedTab !== 'curl' && (
+                      <div
+                        className={`align-center flex w-fit gap-3 rounded-full ${executionError ? 'bg-destructive/40' : 'bg-[#10b981]/40'} px-3 text-white!`}
+                      >
+                        <div
+                          className={`size-2 animate-pulse rounded-full ${executionError ? 'bg-destructive' : 'bg-[#10b981]'}`}
+                        ></div>
+                        {executionError
+                          ? executionError?.SwagsterStatusCode || 'Unknown Error'
+                          : '200 OK'}
+                      </div>
+                    )}
                     <Button
                       onClick={() =>
-                        copyToClipboard(JSON.stringify(selectedEndpoint.responseSample, null, 2))
+                        copyToClipboard(
+                          selectedTab === 'curl'
+                            ? generateCurl({
+                                url: api?.baseUrl + extractResourceUrl(formValues),
+                                method: selectedEndpoint.method,
+                                body: { ...formValues },
+                              })
+                            : JSON.stringify(
+                                executionError ? formattedError() : selectedEndpoint.responseSample,
+                                null,
+                                2,
+                              ),
+                        )
                       }
                       size={'icon-lg'}
                       className="text-primary border-gray-400! bg-white! p-2! hover:bg-white/60!"
@@ -351,21 +438,36 @@ export default function ApiDoc() {
                 {executionLoading ? (
                   <Loader2 size={35} className="text-primary! animate-spin" />
                 ) : (
-                  <SyntaxHighlighter
-                    language="json"
-                    style={nightOwl}
-                    customStyle={{
-                      background: '#0a101d',
-                      borderRadius: 8,
-                      padding: '1rem 2.75rem ',
-                      marginTop: '1rem',
-                      overflow: 'auto',
-                      maxHeight: 'calc(44rem - 184.13px)',
-                      colorScheme: 'dark',
-                    }}
-                  >
-                    {JSON.stringify(selectedEndpoint.responseSample, null, 2)}
-                  </SyntaxHighlighter>
+                  <div>
+                    <SyntaxHighlighter
+                      language={selectedTab === 'curl' ? 'bash' : 'json'}
+                      style={nightOwl}
+                      customStyle={{
+                        background: '#0a101d',
+                        borderRadius: 8,
+                        padding: '1rem 2.75rem ',
+                        marginTop: '1rem',
+                        overflow: 'auto',
+                        minHeight: '18.75rem',
+                        maxHeight: 'calc(44rem - 184.13px)',
+                        colorScheme: 'dark',
+                      }}
+                    >
+                      {selectedTab === 'curl'
+                        ? generateCurl({
+                            url: api?.baseUrl + extractResourceUrl(formValues),
+                            method: selectedEndpoint.method,
+                            body: { ...formValues },
+                          })
+                        : JSON.stringify(
+                            executionError
+                              ? (({ SwagsterStatusCode, ...rest }) => rest)(executionError)
+                              : selectedEndpoint.responseSample,
+                            null,
+                            2,
+                          )}
+                    </SyntaxHighlighter>
+                  </div>
                 )}
               </div>
             </div>
