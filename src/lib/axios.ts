@@ -1,4 +1,4 @@
-import axios from 'axios';
+﻿import axios from 'axios';
 
 export const httpClient = axios.create({
   timeout: 15000,
@@ -8,7 +8,7 @@ export const httpClient = axios.create({
 });
 
 type AuthProps = {
-  type: string;
+  type?: string;
   headerName: string;
   token: string;
 };
@@ -16,13 +16,13 @@ type AuthProps = {
 export interface RequestProps {
   url: string;
   method: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  queryParams?: string;
+  queryParams?: string | Record<string, any>;
   pathParams?: string;
-  body: Record<string, any>;
+  body?: Record<string, any>;
   headers?: Record<string, any>;
 }
 
-interface ExecuteHttpRequestProps extends RequestProps {
+export interface ExecuteHttpRequestProps extends RequestProps {
   auth?: AuthProps;
 }
 
@@ -41,37 +41,43 @@ export async function executeHttpRequest({
 
   const finalHeaders = {
     ...headers,
-  };
+  } as Record<string, any>;
 
   // Handle authentication if provided
-  if (auth?.type === 'Bearer' && auth?.token) {
-    finalHeaders[auth.headerName || 'Authorization'] = `Bearer ${auth.token}`;
+  if (auth?.type === 'Bearer' || auth?.token) {
+    finalHeaders[auth.headerName || 'Authorization'] =
+      `${auth?.type === 'Bearer' ? 'Bearer ' : ''}${auth.token}`;
   }
 
   if (auth?.type === 'API_KEY' && auth?.token) {
     finalHeaders[auth.headerName || 'X-Api-Key'] = auth.token;
   }
 
+  console.log({ finalHeaders });
+
+  const axiosParams: any = queryParams && typeof queryParams === 'object' ? queryParams : undefined;
+
   try {
     const response = await httpClient({
       url,
       method: method.toLowerCase(),
-      params: queryParams,
+      params: axiosParams,
       data: body,
       headers: finalHeaders,
     });
 
+    console.log({ response });
+
     return {
-      success: true,
-      status: response.status,
       data: response.data,
       headers: response.headers,
+      SwagsterStatusCode: response.status || 'UNKNOWN ERROR',
     };
   } catch (error: any) {
     if (error.response) {
       return {
         error: error.response.data,
-        SwagsterStatusCode: error.response.status || 'UNKNOWN ERROR'
+        SwagsterStatusCode: error.response.status || 'UNKNOWN ERROR',
       };
     }
 
@@ -98,12 +104,21 @@ export async function executeHttpRequest({
   }
 }
 
-export function generateCurl({ url, method, body, headers }: RequestProps) {
+export function generateCurl({ url, method, body, headers, queryParams }: RequestProps) {
+  console.log({ body });
+
+  // Only accept queryParams as string
+  let finalUrl = url;
+  if (queryParams && typeof queryParams === 'string') {
+    finalUrl +=
+      queryParams.startsWith('?') || queryParams.startsWith('&') ? queryParams : `?${queryParams}`;
+  }
+
   return `
-curl -X ${method.toUpperCase()} "${url}" \
-${Object.entries(headers || {})
-  .map(([k, v]) => `-H "${k}: ${v}"`)
-  .join(' \\\n')} \
-${body ? `-d '${JSON.stringify(body)}'` : ''}
-`;
+  curl -X ${method.toUpperCase()} "${finalUrl}" \
+  ${Object.entries(headers || {})
+    .map(([k, v]) => `-H "${k}: ${v}"`)
+    .join(' \\\n')} \
+  ${body ? `-d '${JSON.stringify(body)}'` : ''}
+  `;
 }

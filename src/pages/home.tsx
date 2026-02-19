@@ -41,7 +41,7 @@ export default function Home() {
                 >
                   <p className="text-lg font-medium">{api.name}</p>
                   <p className="text-muted-foreground group-hover:text-white/80">
-                    {api.description}
+                    {api.shortDescription}
                   </p>
                 </button>
               );
