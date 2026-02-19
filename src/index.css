@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
@@ -84,6 +85,7 @@ button {
   padding: 0.6em 1.2em;
   font-family: inherit;
   cursor: pointer;
+  transition: background-position 1s ease-in-out; /* Smooth transition of the background */
 }
 
 @media (prefers-color-scheme: light) {
@@ -134,7 +136,7 @@ button {
 }
 
 @theme inline {
-  --font-sans: 'JetBrains Mono Variable', monospace;
+  --font-sans: 'Google Sans', monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -254,3 +256,67 @@ button {
     display: none;
   }
 }
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(127, 34, 254, 0.35); /* Increased the glow size */
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(127, 34, 254, 0.7); /* Stronger pulse */
+  }
+}
+
+.hover\:animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease-in-out infinite;
+}
+/* Apply both animations together on hover */
+.hover\:animate-gradient-glow:hover {
+  animation:
+    gradient-shift 3s ease-in-out infinite,
+    glow-pulse 2.5s ease-in-out infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes bobbing {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px); /* Moves the logo up */
+  }
+  100% {
+    transform: translateY(0); /* Returns the logo to its original position */
+  }
+}
+
+@keyframes img-glow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 15px rgba(127, 34, 254, 0.35)); /* Subtle glow */
+  }
+  50% {
+    filter: drop-shadow(0 0 30px rgba(127, 34, 254, 0.7)); /* Stronger pulse */
+  }
+}
+
+.bobbing-animation {
+  animation: bobbing 3s ease-in-out infinite, img-glow-pulse 2.5s ease-in-out infinite;
+}
+
+img {
+  border-radius: 50%; /* Ensure the image is round if it's not already */
+}
+
