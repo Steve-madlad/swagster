@@ -1,8 +1,12 @@
+import { Alert } from '@/components/Alert';
+import { CommandBar } from '@/components/CommandBar';
 import FormBuilder, { type FieldProps } from '@/components/form/FormBuilder';
 import { executeHttpRequest, generateCurl, type ExecuteHttpRequestProps } from '@/lib/axios';
+import { isTokenExpired } from '@/lib/utils';
 import {
   AlertTriangle,
   BadgeCheck,
+  BadgeInfo,
   BrushCleaning,
   Computer,
   Copy,
@@ -22,9 +26,6 @@ import { nightOwl } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { toast } from 'sonner';
 import registry from '../api-data/registry.json';
 import { Button } from '../components/ui/button';
-import { Alert } from '@/components/Alert';
-import { isTokenExpired } from '@/lib/utils';
-import { CommandBar } from '@/components/CommandBar';
 
 export default function ApiDoc() {
   const params = useParams();
@@ -51,9 +52,8 @@ export default function ApiDoc() {
 
   const [executionError, setExecutionError] = useState<ExecutionError | undefined>();
   const [executionResponse, setExecutionResponse] = useState<any>(undefined);
-  const [authError, setAuthError] = useState<string | Record<string, unknown> | undefined>();
 
-  // token state & helpers (place near other useState)
+  const [authError, setAuthError] = useState<string | Record<string, unknown> | undefined>();
   const [authToken, setAuthToken] = useState<string | null>(null);
 
   useEffect(() => {
@@ -204,7 +204,7 @@ export default function ApiDoc() {
   };
 
   async function submitRequest(vals?: Record<string, unknown>, auth?: boolean) {
-    setExecutionLoading(true);
+    !auth && setExecutionLoading(true);
     const extractedData = extractResourceUrl(vals);
     const extractedPathUrl = extractedData?.resourceUrl;
     const extractedParams = extractedData?.queryParams;
@@ -229,12 +229,12 @@ export default function ApiDoc() {
       props.queryParams = extractedParams;
     }
 
-    if (vals) {
+    if (vals && Object.keys(vals).length) {
       // const filtered = Object.fromEntries(
       //   Object.entries(vals).filter(([_, value]) => value != null && value !== ''),
       // );
 
-      props.body = extractedBody;
+      props.body = auth ? vals : extractedBody;
     }
     console.log(props);
 
@@ -344,6 +344,15 @@ export default function ApiDoc() {
           >
             {api?.baseUrl}
           </Link>
+
+          {api?.isExampleApi && (
+            <div className="bg-tropic-blue/40 before:bg-primary relative mt-5 w-120 overflow-hidden rounded-md px-5 py-2 text-lg font-semibold before:absolute before:top-0 before:left-0 before:h-full before:w-1">
+              <p className="flex gap-2">
+                <BadgeInfo className="text-primary -translate-y-1.5" size={40} /> This is an example
+                API. It is not intended for real use. Check The Subscription API for testing.
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="bg-accent mt-3 min-h-screen space-y-10 p-10">
@@ -456,8 +465,8 @@ export default function ApiDoc() {
                               <ShieldCheck /> Authentication
                             </p>
                             <p className="pl-10">
-                              {api?.authentication ? 'Required' : 'Not Required'}{' '}
-                              {api?.authentication.type}
+                              {selectedEndpoint?.authenticated ? 'Required ' : 'Not Required'}
+                              {selectedEndpoint?.authenticated && `(${api?.authentication.type})`}
                             </p>
                           </div>
                           {api?.rateLimit && (
@@ -619,6 +628,7 @@ export default function ApiDoc() {
 
                       <Button
                         size={'icon-xl'}
+                        disabled={executionLoading}
                         onClick={() => {
                           if (
                             selectedEndpoint?.method === 'GET' &&
@@ -631,7 +641,15 @@ export default function ApiDoc() {
                         }}
                         className="bg-primary! hover:border-primary! hover:text-primary mt-auto flex w-full gap-3 border-3! border-transparent py-6! text-xl! font-semibold text-white duration-300 hover:bg-white!"
                       >
-                        Send Request <SendHorizontal />
+                        {executionLoading ? (
+                          <>
+                            Processing <Loader2 className="animate-spin"></Loader2>
+                          </>
+                        ) : (
+                          <>
+                            Send Request <SendHorizontal />
+                          </>
+                        )}
                       </Button>
                     </div>
                   </div>

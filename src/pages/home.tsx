@@ -1,6 +1,6 @@
 import { AnimatedGridPattern } from '@/components/ui/animated-grid-pattern';
 import { cn } from '@/lib/utils';
-import { BotMessageSquare, Sparkles } from 'lucide-react';
+import { BotMessageSquare, Github, MoveRight, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import registry from '../api-data/registry.json';
@@ -13,10 +13,10 @@ export default function Home() {
     <div className="min-size-screen col-full-center gap-3">
       <div className="relative flex h-200 w-screen items-center justify-center overflow-hidden rounded-lg p-20">
         <AnimatedGridPattern
-          numSquares={30}
-          maxOpacity={0.1}
-          duration={3}
-          repeatDelay={1}
+          numSquares={40}
+          maxOpacity={0.5}
+          duration={6}
+          repeatDelay={3}
           className={cn(
             'mask-[radial-gradient(1400px_circle_at_center,white,transparent)]',
             'inset-x-0 inset-y-[-30%] h-[200%] skew-y-12',
@@ -43,13 +43,23 @@ export default function Home() {
         >
           Explore api docs like never before
         </h2>
-        <button
-          key="create-docs-btn"
-          className="from-primary hover:animate-gradient hover:animate-glow mt-10 flex gap-5 rounded-full! bg-gradient-to-r via-indigo-500 to-violet-400 bg-[length:200%_200%] bg-left px-10 py-4 text-xl text-white transition-transform duration-300 hover:scale-105 focus:outline-none"
-          onClick={() => setPanelOpen(true)}
-        >
-          View Collection
-        </button>
+        <div className="flex gap-4">
+          <button
+            key="create-docs-btn"
+            className="from-primary group hover:animate-gradient hover:animate-glow bg-size[200%_200%] align-center mt-10 gap-4 rounded-full! bg-linear-to-r via-indigo-500 to-violet-400 bg-left px-10 py-4 text-xl text-white transition-all! duration-100! hover:scale-105 focus:outline-none"
+            onClick={() => setPanelOpen(true)}
+          >
+            View Collection{' '}
+            <MoveRight className="w-0 overflow-hidden duration-200 group-hover:w-5" size={20} />
+          </button>
+          <button
+            key="create-docs-btn"
+            className="align-center from-primary mt-10 gap-4 rounded-full! bg-linear-to-r to-violet-400 px-7 py-4 text-xl text-white transition-all! duration-100! hover:scale-105 hover:shadow-[0_2px_1px_#7e22fe17,0_4px_2px_#7e22fe17,0_8px_4px_#7e22fe17,0_16px_8px_#7e22fe17,0_32px_16px_#7e22fe17]"
+            // onClick={() => setPanelOpen(true)}
+          >
+            Star On Github <Github size={20} />
+          </button>
+        </div>
       </div>
 
       <div
