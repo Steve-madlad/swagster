@@ -150,7 +150,7 @@
                     "name": "frequency",
                     "type": "string",
                     "required": true,
-                    "enum": ["daily", "weekly", "monthly", "yearly"],
+                    "enum": ["daily", "weekly", "monthly"],
                     "description": "The Subscription Frequency"
                   },
                   {
