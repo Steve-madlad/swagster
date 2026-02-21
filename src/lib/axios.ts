@@ -73,7 +73,7 @@ export async function executeHttpRequest({
       headers: response.headers,
       SwagsterStatusCode: response.status || 'UNKNOWN ERROR',
     };
-  } catch (error: any) {    
+  } catch (error: any) {
     if (error.response) {
       return {
         error: error.response.data,

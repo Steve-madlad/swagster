@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useId, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useId, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 interface AnimatedGridPatternProps {
   width?: number;
@@ -99,25 +99,14 @@ export function AnimatedGridPattern({
       ref={containerRef}
       aria-hidden="true"
       className={cn(
-        "pointer-events-none absolute inset-0 h-full w-full fill-red/30 stroke-primary/30",
+        'fill-red/30 stroke-primary/30 pointer-events-none absolute inset-0 h-full w-full',
         className,
       )}
       {...props}
     >
       <defs>
-        <pattern
-          id={id}
-          width={width}
-          height={height}
-          patternUnits="userSpaceOnUse"
-          x={x}
-          y={y}
-        >
-          <path
-            d={`M.5 ${height}V.5H${width}`}
-            fill="none"
-            strokeDasharray={strokeDasharray}
-          />
+        <pattern id={id} width={width} height={height} patternUnits="userSpaceOnUse" x={x} y={y}>
+          <path d={`M.5 ${height}V.5H${width}`} fill="none" strokeDasharray={strokeDasharray} />
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill={`url(#${id})`} />
@@ -130,7 +119,7 @@ export function AnimatedGridPattern({
               duration,
               repeat: 1,
               delay: index * 0.1,
-              repeatType: "reverse",
+              repeatType: 'reverse',
             }}
             onAnimationComplete={() => updateSquarePosition(id)}
             key={`${x}-${y}-${index}`}
@@ -146,7 +135,3 @@ export function AnimatedGridPattern({
     </svg>
   );
 }
-
-
-
-

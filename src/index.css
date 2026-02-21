@@ -304,7 +304,8 @@ button {
 }
 
 @keyframes img-glow-pulse {
-  0%, 100% {
+  0%,
+  100% {
     filter: drop-shadow(0 0 15px rgba(127, 34, 254, 0.35)); /* Subtle glow */
   }
   50% {
@@ -313,10 +314,11 @@ button {
 }
 
 .bobbing-animation {
-  animation: bobbing 3s ease-in-out infinite, img-glow-pulse 2.5s ease-in-out infinite;
+  animation:
+    bobbing 3s ease-in-out infinite,
+    img-glow-pulse 2.5s ease-in-out infinite;
 }
 
 img {
   border-radius: 50%; /* Ensure the image is round if it's not already */
 }
-

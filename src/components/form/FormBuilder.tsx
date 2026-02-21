@@ -121,15 +121,14 @@ export default function FormBuilder({
 
   useEffect(() => {
     returnValues?.(getValues());
-  }, [])
+  }, []);
 
   console.log(formConfig);
-  
 
   useEffect(() => {
     const subscription = watch((values) => {
       console.log(values);
-      
+
       returnValues?.(values);
     });
 
