@@ -105,7 +105,34 @@
               "method": "GET",
               "authenticated": true,
               "request": {
-                "queryParams": null,
+                "queryParams": [
+                  {
+                    "name": "minPrice",
+                    "type": "number",
+                    "required": false,
+                    "description": "Minimum Subscription Price"
+                  },
+                  {
+                    "name": "maxPrice",
+                    "type": "number",
+                    "required": false,
+                    "description": "Maximum Subscription Price"
+                  },
+                  {
+                    "name": "frequency",
+                    "type": "string",
+                    "enum": ["daily", "weekly", "monthly", "yearly"],
+                    "required": false,
+                    "description": "The Subscription Frequency"
+                  },
+                  {
+                    "name": "status",
+                    "type": "string",
+                    "required": false,
+                    "enum": ["active", "cancelled", "expired"],
+                    "description": "The Subscription Status"
+                  }
+                ],
                 "headers": null,
                 "body": null
               },
@@ -150,7 +177,7 @@
                     "name": "frequency",
                     "type": "string",
                     "required": true,
-                    "enum": ["daily", "weekly", "monthly"],
+                    "enum": ["daily", "weekly", "monthly", "yearly"],
                     "description": "The Subscription Frequency"
                   },
                   {
