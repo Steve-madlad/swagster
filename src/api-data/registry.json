@@ -16,7 +16,7 @@
           "groupName": "Authentication",
           "endpoints": [
             {
-              "description": "Login",
+              "description": "Login user",
               "path": "/auth/sign-in",
               "method": "POST",
               "authenticated": false,

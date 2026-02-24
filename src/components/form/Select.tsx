@@ -17,13 +17,13 @@ interface SelectProps {
 export function Select({ placeholder, id, options, value, onChange }: SelectProps) {
   return (
     <SelectInput value={value} onValueChange={onChange}>
-      <SelectTrigger aria-placeholder="bro" id={id} className="w-full bg-white! py-5! capitalize">
+      <SelectTrigger aria-placeholder="bro" id={id} className="w-full bg-white! py-3! text-xs rounded-md! capitalize">
         {!value ? placeholder : <SelectValue />}
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           {options?.map((option) => (
-            <SelectItem className={'capitalize'} key={option.value} value={option.value}>
+            <SelectItem className={'capitalize text-xs'} key={option.value} value={option.value}>
               {option.label}
             </SelectItem>
           ))}

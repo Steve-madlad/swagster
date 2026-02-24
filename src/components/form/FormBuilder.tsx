@@ -158,11 +158,11 @@ export default function FormBuilder({
   }, {});
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="col grow space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="col grow space-y-6 w-full">
       {!disableGroupuing ? (
         Object.entries(groupedData).map(([source, fields]) => (
           <section key={source} className="mb-8 space-y-4">
-            <h3 className="mb-4 text-base font-bold uppercase">{source} Parameters</h3>
+            <h3 className="mb-4 text-sm font-semibold capitalize">{source} Parameters</h3>
             <Fields fields={fields} errors={errors} control={control} register={register} />
           </section>
         ))
@@ -173,7 +173,7 @@ export default function FormBuilder({
       {alertText && (
         <Alert
           variant="destructive"
-          className="border-destructive bg-destructive/20 w-full"
+          className="border-destructive bg-destructive/20 overflow-x-auto"
           title={'Authorization Failed'}
         >
           {typeof alertText === 'string' ? (
@@ -186,10 +186,10 @@ export default function FormBuilder({
 
       <Button
         type="submit"
-        size={'icon-xl'}
+        size={'icon-lg'}
         className={cn(
           buttonStyles,
-          'align-center bg-primary! hover:border-primary! hover:text-primary! mt-auto w-full gap-3 border-3! border-transparent py-6! text-lg! hover:bg-white!',
+          'bg-primary! hover:border-primary! hover:text-primary mt-auto flex w-full gap-3 border-3! border-transparent py-4.5! text-sm! font-semibold text-white duration-300 hover:bg-white!',
         )}
         disabled={isSubmitting}
       >
@@ -227,7 +227,7 @@ export const Fields = ({ fields, errors, control, register }: FieldsProps) => {
 
     return (
       <div key={field.name}>
-        <Label htmlFor={field.name} className="mb-1 text-base! text-black/60 capitalize">
+        <Label htmlFor={field.name} className="mb-1 text-sm! text-black/60 capitalize">
           {field.name} <b className="text-destructive">{field.required ? '*' : ''}</b>
         </Label>
 
@@ -252,12 +252,12 @@ export const Fields = ({ fields, errors, control, register }: FieldsProps) => {
             id={field.name}
             step={field.type === 'number' ? '0.01' : undefined}
             {...register(field.name as never)}
-            className={`${hasError ? 'border-red-500 focus-visible:ring-red-500' : ''} pl-4 text-sm!`}
+            className={`${hasError ? 'border-red-500 focus-visible:ring-red-500' : ''} pl-4 text-xs!`}
           />
         )}
 
         {hasError && (
-          <p className="mt-2 pl-2 text-sm font-medium text-red-500 first-letter:uppercase">
+          <p className="mt-1 pl-2 text-xs font-medium text-red-500 first-letter:uppercase">
             {errors[field.name]?.message?.toString()}
           </p>
         )}

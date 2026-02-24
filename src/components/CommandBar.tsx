@@ -1,5 +1,6 @@
 'use client';
 
+import registry from '@/api-data/registry.json';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -12,11 +13,10 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from '@/components/ui/command';
-import { Bot, HomeIcon, InboxIcon, Info, Search } from 'lucide-react';
+import { Bot, HomeIcon, Info, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Kbd, KbdGroup } from './ui/kbd';
-import registry from '@/api-data/registry.json';
 import { useNavigate } from 'react-router-dom';
+import { Kbd } from './ui/kbd';
 
 export function CommandBar() {
   const [open, setOpen] = useState(false);
@@ -55,12 +55,12 @@ export function CommandBar() {
       <Button
         onClick={() => setOpen(true)}
         variant="outline"
-        className="hover:border-primary! w-90 justify-between border-[#ffffff58]! bg-[#1f1f1f] py-4.5! text-start! hover:bg-[#282828] hover:text-white focus-visible:bg-[#282828] focus-visible:text-white"
+        className="hover:border-primary! w-70 justify-between border-[#ffffff58]! bg-[#1f1f1f] py-4! text-start! text-xs hover:bg-[#282828] hover:text-white focus-visible:bg-[#282828] focus-visible:text-white"
       >
         <span className="align-center gap-2">
           <Search className="mb-0.5" /> Search Documentation
         </span>
-        <Kbd className="bg-[#3b3b3b] px-2 text-white">Ctrl + K</Kbd>
+        <Kbd className="bg-[#3b3b3b] px-2 text-white">⌘ + K</Kbd>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <Command>
@@ -103,7 +103,7 @@ export function CommandBar() {
                     navigate(`/api/docs/${api.id}`);
                   }}
                 >
-                  <Bot className="" />
+                  <Bot />
                   {api.name}
                 </CommandItem>
               ))}

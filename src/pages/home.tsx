@@ -11,42 +11,43 @@ export default function Home() {
 
   return (
     <div className="min-size-screen col-full-center gap-3">
-      <div className="relative flex h-200 w-screen items-center justify-center overflow-hidden rounded-lg p-20">
+      <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded-lg p-20">
         <AnimatedGridPattern
           numSquares={40}
           maxOpacity={0.5}
           duration={6}
           repeatDelay={3}
           className={cn(
-            'mask-[radial-gradient(1400px_circle_at_center,white,transparent)]',
+            'mask-[radial-gradient(900px_circle_at_center,white,transparent)]',
             'inset-x-0 inset-y-[-30%] h-[200%] skew-y-12',
           )}
         />
       </div>
+
       <div className="col-center absolute z-0 px-5">
-        <img src="/logo.png" width={130} className="bobbing-animation mb-3" alt="swagster logo" />
+        <img src="/logo.png" width={97.5} className="bobbing-animation mb-3" alt="swagster logo" />
         <span
           key="latest-docs"
-          className="flex-center from-primary w-fit gap-3 rounded-full bg-linear-to-r to-violet-400 px-7 py-1 text-white shadow-md"
+          className="flex-center text-xs from-primary w-fit gap-3 rounded-full bg-linear-to-r to-violet-400 px-7 py-1 text-white shadow-md"
         >
-          Discover What's New <Sparkles size={16} />
+          Discover What's New <Sparkles size={14} />
         </span>
         <h1
           key="swagster-title"
-          className="from-primary to-primary mt-6 mb-3 bg-linear-to-r via-indigo-400 bg-clip-text pb-2.5 text-center text-7xl! font-semibold text-transparent lg:mt-0 lg:mb-6 lg:text-9xl!"
+          className="from-primary to-primary mt-6 mb-3 bg-linear-to-r via-indigo-400 bg-clip-text pb-2.5 text-center text-7xl! font-semibold text-transparent lg:mt-0 lg:mb-4 lg:text-8xl!"
         >
           Swagster Docs
         </h1>
         <h2
           key="swagster-subtitle"
-          className="from-primary to-primary gap-4 bg-linear-to-r via-indigo-400 bg-clip-text text-center text-3xl font-medium text-transparent"
+          className="from-primary to-primary gap-4 bg-linear-to-r via-indigo-400 bg-clip-text text-center text-2xl font-medium text-transparent"
         >
           Explore api docs like never before
         </h2>
         <div className="flex gap-4">
           <button
             key="create-docs-btn"
-            className="from-primary group hover:animate-gradient hover:animate-glow bg-size[200%_200%] align-center mt-10 gap-4 rounded-full! bg-linear-to-r via-indigo-500 to-violet-400 bg-left px-10 py-4 text-xl text-white transition-all! duration-100! hover:scale-105 focus:outline-none"
+            className="from-primary group hover:animate-gradient hover:animate-glow bg-size[200%_200%] align-center mt-10 gap-1 hover:gap-4 rounded-full! bg-linear-to-r via-indigo-500 to-violet-400 bg-left px-10 py-4 text-white transition-all! duration-100! hover:scale-105 focus:outline-none"
             onClick={() => setPanelOpen(true)}
           >
             View Collection{' '}
@@ -54,7 +55,7 @@ export default function Home() {
           </button>
           <button
             key="create-docs-btn"
-            className="align-center from-primary mt-10 gap-4 rounded-full! bg-linear-to-r to-violet-400 px-7 py-4 text-xl text-white transition-all! duration-100! hover:scale-105 hover:shadow-[0_2px_1px_#7e22fe17,0_4px_2px_#7e22fe17,0_8px_4px_#7e22fe17,0_16px_8px_#7e22fe17,0_32px_16px_#7e22fe17]"
+            className="align-center from-primary mt-10 gap-4 rounded-full! bg-linear-to-r to-violet-400 px-7 py-4 text-white transition-all! duration-100! hover:scale-105 hover:shadow-[0_2px_1px_#7e22fe17,0_4px_2px_#7e22fe17,0_8px_4px_#7e22fe17,0_16px_8px_#7e22fe17,0_32px_16px_#7e22fe17]"
             // onClick={() => setPanelOpen(true)}
           >
             Star On Github <Github size={20} />

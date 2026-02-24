@@ -6,7 +6,6 @@ import { isTokenExpired } from '@/lib/utils';
 import {
   AlertTriangle,
   BadgeCheck,
-  BadgeInfo,
   BrushCleaning,
   Computer,
   Copy,
@@ -312,14 +311,14 @@ export default function ApiDoc() {
 
   return (
     <div className="min-h-screen">
-      <nav className="flex bg-black px-10 py-4 text-white">
-        <div className="align-center gap-4">
-          <img src="/logo.png" width={50} alt="swagster logo" />
+      <nav className="flex bg-black px-12 py-3 text-white">
+        <div className="align-center gap-3">
+          <img src="/logo.png" width={40} alt="swagster logo" />
           <div className="col">
-            <Link to={'/'} className="text-2xl font-medium text-white!">
+            <Link to={'/'} className="text-lg font-medium text-white!">
               Swagster
             </Link>
-            <span>By Steeve</span>
+            <span className="text-xs">By Steeve</span>
           </div>
         </div>
 
@@ -329,48 +328,51 @@ export default function ApiDoc() {
       </nav>
 
       <div>
-        <div className="p-10">
+        <div className="p-6 px-12">
           <div className="mb-3 flex gap-2">
-            <h1>{api?.name}</h1>
-            <p className="bg-accent text-primary mt-2 size-fit rounded-full border border-black/20 px-2">
+            <h1 className="text-4xl!">{api?.name}</h1>
+            <p className="bg-accent text-primary mt-2 size-fit rounded-full border border-black/20 px-2 text-xs">
               v{api?.version}
             </p>
           </div>
-          <p className="mb-2 max-w-7xl">{api?.description}</p>
+          <p className="mb-2 max-w-6xl text-sm">{api?.description}</p>
           <Link
             to={api?.baseUrl as string}
             target="_blank"
-            className="text-black! hover:text-blue-500! hover:underline!"
+            className="text-sm text-black! hover:text-blue-500! hover:underline!"
           >
             {api?.baseUrl}
           </Link>
 
           {api?.isExampleApi && (
-            <div className="bg-tropic-blue/40 before:bg-primary relative mt-5 w-120 overflow-hidden rounded-md px-5 py-2 text-lg font-semibold before:absolute before:top-0 before:left-0 before:h-full before:w-1">
+            <div className="bg-tropic-blue/40 before:bg-primary relative mt-5 w-120 overflow-hidden rounded-md px-5 py-2 text-sm font-semibold before:absolute before:top-0 before:left-0 before:h-full before:w-1">
               <p className="flex gap-2">
-                <BadgeInfo className="text-primary -translate-y-1.5" size={40} /> This is an example
-                API. It is not intended for real use. Check The Subscription API for testing.
+                This is an example API. It is not intended for real use. <br />
+                Check The Subscription API for testing.
               </p>
             </div>
           )}
         </div>
 
-        <div className="bg-accent mt-3 min-h-screen space-y-10 p-10">
+        <div className="bg-accent min-h-screen space-y-7 p-6 px-12">
           {api?.resources.map((group) => {
             return (
-              <div className="space-y-5">
+              <div className="space-y-3">
                 <a
                   href={`#${group.groupName.toLowerCase()}`}
                   id={group.groupName.toLowerCase()}
-                  className="group hover:text-primary align-center cursor gap-3 text-2xl"
+                  className="group hover:text-primary align-center cursor gap-3 text-lg"
                 >
                   {group.groupName}
-                  <LincIcon className={`opacity-0 duration-300 group-hover:opacity-100`} />
+                  <LincIcon
+                    size={17}
+                    className={`opacity-0 duration-300 group-hover:opacity-100`}
+                  />
                 </a>
                 <div className="col col w-fit space-y-4">
                   {group.endpoints.map((endpoint: Record<string, any>) => (
                     <button
-                      className={`flex-between cursor relative gap-4 overflow-hidden px-4 py-3 sm:min-w-2xl ${getMethodClasses(endpoint.method, { variant: 'light', hover: true })} after:bg-primary after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:transition-all after:duration-100 after:content-[''] hover:after:h-1 focus-visible:after:h-1`}
+                      className={`flex-between cursor relative gap-4 overflow-hidden px-4 py-2! sm:min-w-xl ${getMethodClasses(endpoint.method, { variant: 'light', hover: true })} after:bg-primary after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:transition-all after:duration-100 after:content-[''] hover:after:h-1 focus-visible:after:h-1`}
                       onClick={() => {
                         setApiPanelOpen(true);
                         setSelectedEndpoint({
@@ -381,16 +383,16 @@ export default function ApiDoc() {
                     >
                       <div className="align-center gap-4">
                         <span
-                          className={`min-w-16 rounded-full py-1 text-center shadow-sm ${getMethodClasses(endpoint.method)}`}
+                          className={`min-w-14 rounded-full py-1 text-center text-xs! shadow-sm ${getMethodClasses(endpoint.method)}`}
                         >
                           {endpoint.method}
                         </span>
-                        <span className="text-lg font-bold">{endpoint.path}</span>
-                        <span className="text-base">{endpoint.description}</span>
+                        <span className="text-sm font-semibold">{endpoint.path}</span>
+                        <span className="text-sm">{endpoint.description}</span>
                       </div>
 
                       {endpoint.authenticated && (
-                        <ShieldCheck size={28} className="fill-primary/70 text-black/70" />
+                        <ShieldCheck size={20} className="fill-primary/70 text-black/70" />
                       )}
                     </button>
                   ))}
@@ -410,71 +412,76 @@ export default function ApiDoc() {
           }}
         >
           <div
-            className="col max-h-176 min-h-3/5 max-w-5xl min-w-4/5 overflow-hidden rounded-md bg-white"
+            className="col max-h-140 min-h-3/5 max-w-5xl min-w-4/5 overflow-hidden rounded-md bg-white"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="align-center gap-3 border-b-3 border-gray-200 px-7 py-4">
+            <div className="align-center gap-3 border-b-3 border-gray-200 px-7 py-3">
               <div className="bg-primary/15 text-primary flex-center rounded-lg p-2">
-                <Computer size={35} />
+                <Computer size={27} />
               </div>
               <div>
-                <h2 className="text-primary text-2xl font-semibold">
+                <h2 className="text-primary text-[18.5px] font-semibold">
                   {selectedEndpoint.name} Endpoint
                 </h2>
-                <div className="text-muted-foreground flex">
-                  <p>{api?.name}</p>•<p>V{api?.version}</p>
+                <div className="text-muted-foreground flex text-sm">
+                  <p>{api?.name}</p> • <p>V{api?.version}</p>
                 </div>
               </div>
             </div>
 
             <div className="flex grow">
-              <div className="relative max-h-[calc(44rem-90.13px)] flex-1 overflow-hidden">
+              <div className="relative max-h-[calc(35rem-74.4px)] flex-1 overflow-hidden">
                 <div
                   className={`flex h-full transition-transform duration-500 ease-in-out ${
                     showSecondPanel ? '-translate-x-full' : 'translate-x-0'
                   }`}
                 >
                   <div className="w-full shrink-0 overflow-y-auto">
-                    <div className="col min-h-full space-y-6 p-7">
+                    <div className="col min-h-full space-y-6 p-5">
                       <div>
-                        <p className="text-xl">Resouce Path</p>
-                        <div className="bg-muted flex-between mt-2 rounded-xl border border-gray-200 px-4 py-3 text-black">
-                          <div className="flex gap-6">
+                        <p>Resouce Path</p>
+                        <div className="bg-muted flex-between mt-2 rounded-md border border-gray-200 px-4 py-2 text-black">
+                          <div className="flex gap-4">
                             <div
-                              className={`w-fit rounded-lg px-3 py-1 text-white! ${modalMethodColorMap[selectedEndpoint.method as HttpMethod]}`}
+                              className={`w-fit rounded-md px-3 py-1 text-xs text-white! ${modalMethodColorMap[selectedEndpoint.method as HttpMethod]}`}
                             >
                               {selectedEndpoint.method}
                             </div>
-                            <p className="align-center gap-2 text-lg">{selectedEndpoint.path}</p>
+                            <p className="align-center gap-2 text-sm font-medium">
+                              {selectedEndpoint.path}
+                            </p>
                           </div>
+
                           <Button
                             onClick={() => copyToClipboard(selectedEndpoint.path)}
-                            size={'icon-xl'}
-                            className="text-primary border-gray-400! bg-white! p-5! hover:bg-white/20!"
+                            size={'icon-sm'}
+                            className="text-primary rounded-md! border-gray-400! bg-white! p-3! hover:bg-white/20!"
                           >
                             <Copy />
                           </Button>
                         </div>
                       </div>
                       <div>
-                        <p className="text-xl">Description</p>
-                        <p className="text-muted-foreground">{selectedEndpoint.description}</p>
+                        <p>Description</p>
+                        <p className="text-muted-foreground text-sm">
+                          {selectedEndpoint.description}
+                        </p>
                         <div className="mt-2 flex gap-4">
-                          <div className="bg-muted col mt-1 flex-1 gap-1 rounded-xl border border-gray-200 px-4 py-3 text-black">
-                            <p className="align-center text-primary gap-4 text-lg">
-                              <ShieldCheck /> Authentication
+                          <div className="bg-muted col mt-1 flex-1 gap-1 rounded-md border border-gray-200 px-4 py-2 text-black">
+                            <p className="align-center text-primary gap-2 text-sm">
+                              <ShieldCheck size={16} /> Authentication
                             </p>
-                            <p className="pl-10">
+                            <p className="pl-6 text-xs">
                               {selectedEndpoint?.authenticated ? 'Required ' : 'Not Required'}
                               {selectedEndpoint?.authenticated && `(${api?.authentication.type})`}
                             </p>
                           </div>
                           {api?.rateLimit && (
-                            <div className="bg-muted col mt-1 flex-1 gap-1 rounded-xl border border-gray-200 px-4 py-3 text-black">
-                              <p className="align-center text-primary gap-4 text-lg">
-                                <Server size={19} /> Rate Limit
+                            <div className="bg-muted col mt-1 flex-1 gap-1 rounded-md border border-gray-200 px-4 py-2 text-black">
+                              <p className="align-center text-primary gap-2 text-sm">
+                                <Server size={14} /> Rate Limit
                               </p>
-                              <p className="pl-10">
+                              <p className="pl-5.5 text-xs">
                                 {api?.rateLimit.limit} Requests/{api?.rateLimit.window}
                               </p>
                             </div>
@@ -484,40 +491,38 @@ export default function ApiDoc() {
 
                       {selectedEndpoint?.request?.pathParams && (
                         <div>
-                          <p className="text-xl">Path Parameters</p>
+                          <p>Path Parameters</p>
                           <div className="mt-2 overflow-x-auto overflow-y-hidden rounded-sm border border-slate-200">
                             <table className="w-full">
                               <thead className="bg-muted">
                                 <tr className="text-primary">
-                                  <td className="px-4 py-2">Name</td>
-                                  <td className="px-4 py-2">Type</td>
-                                  <td className="px-4 py-2">Required</td>
-                                  <td className="px-4 py-2">Description</td>
+                                  <td className="px-4 py-2 text-sm font-medium">Name</td>
+                                  <td className="px-4 py-2 text-sm font-medium">Type</td>
+                                  <td className="px-4 py-2 text-sm font-medium">Required</td>
+                                  <td className="px-4 py-2 text-sm font-medium">Description</td>
                                   {selectedEndpoint?.request?.pathParams?.find(
                                     (field: Record<string, any>) => field.enum !== undefined,
-                                  ) && (
-                                    <td className="border-r border-slate-200 px-4 py-2">Options</td>
-                                  )}
+                                  ) && <td className="px-4 py-2 text-sm font-medium">Options</td>}
                                 </tr>
                               </thead>
                               <tbody>
                                 {selectedEndpoint?.request?.pathParams?.map(
                                   (field: Record<string, any>) => (
                                     <tr>
-                                      <td className="border-r border-slate-200 px-4 py-2">
+                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
                                         {field.name}
                                       </td>
-                                      <td className="border-r border-slate-200 px-4 py-2">
+                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
                                         {field.type}
                                       </td>
-                                      <td className="border-r border-slate-200 px-4 py-2 text-center">
+                                      <td className="border-r border-slate-200 px-4 py-2 text-center text-sm">
                                         {field.required ? 'yes' : 'no'}
                                       </td>
-                                      <td className="border-r border-slate-200 px-4 py-2">
+                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
                                         {field.description}
                                       </td>
                                       {field.enum && (
-                                        <td className="border-r border-slate-200 px-4 py-2">
+                                        <td className="px-4 py-2 text-sm">
                                           {field.enum.join(', ')}
                                         </td>
                                       )}
@@ -532,40 +537,38 @@ export default function ApiDoc() {
 
                       {selectedEndpoint?.request?.queryParams && (
                         <div>
-                          <p className="text-xl">query Parameters</p>
+                          <p>Query Parameters</p>
                           <div className="mt-2 overflow-x-auto overflow-y-hidden rounded-sm border border-slate-200">
                             <table className="w-full">
                               <thead className="bg-muted">
                                 <tr className="text-primary">
-                                  <td className="px-4 py-2">Name</td>
-                                  <td className="px-4 py-2">Type</td>
-                                  <td className="px-4 py-2">Required</td>
-                                  <td className="px-4 py-2">Description</td>
+                                  <td className="px-4 py-2 text-sm font-medium">Name</td>
+                                  <td className="px-4 py-2 text-sm font-medium">Type</td>
+                                  <td className="px-4 py-2 text-sm font-medium">Required</td>
+                                  <td className="px-4 py-2 text-sm font-medium">Description</td>
                                   {selectedEndpoint?.request?.queryParams?.find(
                                     (field: Record<string, any>) => field.enum !== undefined,
-                                  ) && (
-                                    <td className="border-r border-slate-200 px-4 py-2">Options</td>
-                                  )}
+                                  ) && <td className="px-4 py-2 text-sm font-medium">Options</td>}
                                 </tr>
                               </thead>
                               <tbody>
                                 {selectedEndpoint?.request?.queryParams?.map(
                                   (field: Record<string, any>) => (
                                     <tr>
-                                      <td className="border-r border-slate-200 px-4 py-2">
+                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
                                         {field.name}
                                       </td>
-                                      <td className="border-r border-slate-200 px-4 py-2">
+                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
                                         {field.type}
                                       </td>
-                                      <td className="border-r border-slate-200 px-4 py-2 text-center">
+                                      <td className="border-r border-slate-200 px-4 py-2 text-center text-sm">
                                         {field.required ? 'yes' : 'no'}
                                       </td>
-                                      <td className="border-r border-slate-200 px-4 py-2">
+                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
                                         {field.description}
                                       </td>
                                       {field.enum && (
-                                        <td className="border-r border-slate-200 px-4 py-2">
+                                        <td className="px-4 py-2 text-sm">
                                           {field.enum.join(', ')}
                                         </td>
                                       )}
@@ -580,40 +583,38 @@ export default function ApiDoc() {
 
                       {selectedEndpoint?.request?.body && (
                         <div>
-                          <p className="text-xl">Body Parameters</p>
+                          <p>Body Parameters</p>
                           <div className="mt-2 overflow-x-auto overflow-y-hidden rounded-sm border border-slate-200">
                             <table className="w-full">
                               <thead className="bg-muted">
                                 <tr className="text-primary">
-                                  <td className="px-4 py-2">Name</td>
-                                  <td className="px-4 py-2">Type</td>
-                                  <td className="px-4 py-2">Required</td>
-                                  <td className="px-4 py-2">Description</td>
+                                  <td className="px-4 py-2 text-sm font-medium">Name</td>
+                                  <td className="px-4 py-2 text-sm font-medium">Type</td>
+                                  <td className="px-4 py-2 text-sm font-medium">Required</td>
+                                  <td className="px-4 py-2 text-sm font-medium">Description</td>
                                   {selectedEndpoint?.request?.body?.find(
                                     (field: Record<string, any>) => field.enum !== undefined,
-                                  ) && (
-                                    <td className="border-r border-slate-200 px-4 py-2">Options</td>
-                                  )}
+                                  ) && <td className="px-4 py-2 text-sm font-medium">Options</td>}
                                 </tr>
                               </thead>
                               <tbody>
                                 {selectedEndpoint?.request?.body?.map(
                                   (field: Record<string, any>) => (
                                     <tr>
-                                      <td className="border-r border-slate-200 px-4 py-2">
+                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
                                         {field.name}
                                       </td>
-                                      <td className="border-r border-slate-200 px-4 py-2">
+                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
                                         {field.type}
                                       </td>
-                                      <td className="border-r border-slate-200 px-4 py-2 text-center">
+                                      <td className="border-r border-slate-200 px-4 py-2 text-center text-sm">
                                         {field.required ? 'yes' : 'no'}
                                       </td>
-                                      <td className="border-r border-slate-200 px-4 py-2">
+                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
                                         {field.description}
                                       </td>
                                       {field.enum && (
-                                        <td className="border-r border-slate-200 px-4 py-2">
+                                        <td className="px-4 py-2 text-sm">
                                           {field.enum.join(', ')}
                                         </td>
                                       )}
@@ -627,7 +628,7 @@ export default function ApiDoc() {
                       )}
 
                       <Button
-                        size={'icon-xl'}
+                        size={'icon-lg'}
                         disabled={executionLoading}
                         onClick={() => {
                           if (
@@ -639,7 +640,7 @@ export default function ApiDoc() {
                             setExecutionLoading(true);
                           } else setShowSecondPanel(true);
                         }}
-                        className="bg-primary! hover:border-primary! hover:text-primary mt-auto flex w-full gap-3 border-3! border-transparent py-6! text-xl! font-semibold text-white duration-300 hover:bg-white!"
+                        className="bg-primary! hover:border-primary! hover:text-primary mt-auto flex w-full gap-3 border-3! border-transparent py-4.5! text-sm! font-semibold text-white duration-300 hover:bg-white!"
                       >
                         {executionLoading ? (
                           <>
@@ -654,10 +655,10 @@ export default function ApiDoc() {
                     </div>
                   </div>
 
-                  <div className="col bg-muted w-full shrink-0 overflow-y-auto p-7">
+                  <div className="col bg-muted w-full shrink-0 overflow-y-auto p-5">
                     <Button
-                      size={'icon-xl'}
-                      className="mb-4 flex w-fit gap-2 bg-transparent! pl-0! text-base text-black duration-300 hover:gap-3"
+                      size={'icon-lg'}
+                      className="mb-4 flex w-fit gap-2 bg-transparent! pl-0! text-sm text-black transition-all! duration-100 hover:gap-3"
                       onClick={() => setShowSecondPanel(false)}
                     >
                       <MoveLeft /> Back
@@ -677,32 +678,32 @@ export default function ApiDoc() {
               </div>
 
               <div
-                className={`max-h-[calc(44rem-90.13px)] max-w-1/2 flex-1 bg-[#0f172a] py-7 ${executionLoading && 'col-full-center'}`}
+                className={`max-h-[calc(35rem-74.4px)] max-w-1/2 flex-1 bg-[#0f172a] py-5 ${executionLoading && 'col-full-center'}`}
               >
                 {!executionLoading && (
                   <div className="flex-between px-7">
                     <div className="flex gap-4">
                       <button
                         onClick={() => setSelectedTab('response')}
-                        className={`${selectedTab === 'response' ? 'border-primary' : 'border-transparent'} w-fit rounded-none! border-b-4! p-1! text-xl font-semibold text-white`}
+                        className={`${selectedTab === 'response' ? 'border-primary' : 'border-transparent'} w-fit rounded-none! border-b-3! p-1! text-sm font-semibold text-white`}
                       >
                         {executionError ? 'Server Response' : 'Response Example'}
                       </button>
                       <button
                         onClick={() => setSelectedTab('curl')}
-                        className={`${selectedTab === 'curl' ? 'border-primary' : 'border-transparent'} w-fit rounded-none! border-b-4 p-1! text-xl font-semibold text-white`}
+                        className={`${selectedTab === 'curl' ? 'border-primary' : 'border-transparent'} w-fit rounded-none! border-b-3 p-1! text-sm font-semibold text-white`}
                       >
                         Curl
                       </button>
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="align-center gap-3">
                       {selectedTab !== 'curl' && (
                         <div
-                          className={`align-center flex w-fit gap-3 rounded-full ${executionError ? 'bg-destructive/40' : 'bg-[#10b981]/40'} px-3 text-white!`}
+                          className={`align-center flex w-fit gap-2 rounded-full py-1.5 text-xs/snug ${executionError ? 'bg-destructive/40' : 'bg-[#10b981]/40'} px-3 text-white!`}
                         >
                           <div
-                            className={`size-2 animate-pulse rounded-full ${executionError ? 'bg-destructive' : 'bg-[#10b981]'}`}
+                            className={`size-1.5 animate-pulse rounded-full ${executionError ? 'bg-destructive' : 'bg-[#10b981]'}`}
                           ></div>
                           {executionError
                             ? executionError?.SwagsterStatusCode || 'Unknown Error'
@@ -735,8 +736,8 @@ export default function ApiDoc() {
                                 ),
                           )
                         }
-                        size={'icon-lg'}
-                        className="text-primary border-gray-400! bg-white! p-2! hover:bg-white/60!"
+                        size={'icon-sm'}
+                        className="text-primary rounded-md! border-gray-400! bg-white! p-2! hover:bg-white/60!"
                       >
                         <Copy />
                       </Button>
@@ -755,11 +756,12 @@ export default function ApiDoc() {
                         customStyle={{
                           background: '#0a101d',
                           borderRadius: 8,
-                          padding: '1rem 2.75rem ',
+                          padding: '1rem 1.75rem ',
                           marginTop: '1rem',
                           overflow: 'auto',
                           minHeight: '18.75rem',
-                          maxHeight: 'calc(44rem - 184.13px)',
+                          maxHeight: 'calc(34.98rem - 11.9rem)',
+                          fontSize: '13px',
                           colorScheme: 'dark',
                         }}
                       >
@@ -802,15 +804,15 @@ export default function ApiDoc() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="col min-h-200 min-w-2xl rounded-md bg-white"
+            className="col min-h-120 w-2xl rounded-md bg-white"
           >
             <header className="flex gap-4 border-b border-gray-200 px-7 py-4">
-              <div className="bg-primary/15 text-primary flex-center rounded-lg px-3">
-                <FingerprintPattern size={35} />
+              <div className="bg-primary/15 text-primary flex-center rounded-lg px-2.5">
+                <FingerprintPattern size={28} />
               </div>
               <div>
-                <h2 className="text-primary text-2xl font-semibold">Authorization</h2>
-                <p className="text-muted-foreground">
+                <h2 className="text-primary text-lg font-semibold">Authorization</h2>
+                <p className="text-muted-foreground text-sm">
                   Enter your credentials to authorize requests
                 </p>
               </div>
@@ -822,7 +824,7 @@ export default function ApiDoc() {
                   <div className="w-full">
                     <Alert
                       icon={AlertTriangle}
-                      className="bg-destructive/40"
+                      className="bg-destructive/20"
                       variant="destructive"
                       title="Unauthorized"
                     >
@@ -830,8 +832,8 @@ export default function ApiDoc() {
                     </Alert>
                     <Button
                       onClick={clearAuth}
-                      size={'icon-xl'}
-                      className="mt-4 flex w-full gap-4 py-6! text-lg"
+                      size={'icon-lg'}
+                      className="hover:border-primary hover:text-primary mt-4 flex w-full gap-4 border-2 border-transparent py-5! text-sm transition-all! duration-100 hover:bg-transparent"
                     >
                       Clear Auth Token <BrushCleaning className="mb-1" />
                     </Button>
@@ -840,7 +842,7 @@ export default function ApiDoc() {
                   <div className="w-full">
                     <Alert
                       icon={BadgeCheck}
-                      className="bg-[#10b981]/40"
+                      className="bg-[#10b981]/20"
                       variant="success"
                       title="Authorized"
                     >
@@ -848,8 +850,8 @@ export default function ApiDoc() {
                     </Alert>
                     <Button
                       onClick={clearAuth}
-                      size={'icon-xl'}
-                      className="mt-4 flex w-full gap-4 py-6! text-lg"
+                      size={'icon-lg'}
+                      className="hover:border-primary hover:text-primary mt-4 flex w-full gap-4 border-2 border-transparent py-5! text-sm transition-all! duration-100 hover:bg-transparent"
                     >
                       Clear Auth Token <BrushCleaning className="mb-1" />
                     </Button>
@@ -860,7 +862,7 @@ export default function ApiDoc() {
                   formConfig={api?.resources[0].endpoints?.[0].request.body as FieldProps[]}
                   onSubmit={(vals) => submitRequest(vals, true)}
                   alertText={authError}
-                  buttonStyles="mt-auto"
+                  buttonStyles="mt-auto text-md"
                   buttonText="Authorize"
                   buttonIcon={<KeySquare />}
                   disableGroupuing
@@ -873,9 +875,9 @@ export default function ApiDoc() {
 
       {api?.authentication && (
         <Button
-          size={'icon-xl'}
+          size={'icon-lg'}
           onClick={() => setAuthModalOpen(true)}
-          className="bg-primary align-center fixed right-10 bottom-12 z-1 w-fit gap-4 rounded-full! px-8! py-6! text-xl text-white hover:scale-110 hover:scale-3d"
+          className="bg-primary align-center fixed right-7 bottom-7 z-1 w-fit gap-3 rounded-full! px-6! py-5! text-sm text-white hover:scale-110 hover:scale-3d"
         >
           Authorize <KeySquare size={50} />
         </Button>
