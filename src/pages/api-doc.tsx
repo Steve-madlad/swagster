@@ -311,7 +311,7 @@ export default function ApiDoc() {
 
   return (
     <div className="min-h-screen">
-      <nav className="flex bg-black px-12 py-3 text-white">
+      <nav className="flex bg-black px-6 md:px-12 py-3 text-white">
         <div className="align-center gap-3">
           <img src="/logo.png" width={40} alt="swagster logo" />
           <div className="col">
@@ -328,7 +328,7 @@ export default function ApiDoc() {
       </nav>
 
       <div>
-        <div className="p-6 px-12">
+        <div className="p-6 px-6 md:px-12">
           <div className="mb-3 flex gap-2">
             <h1 className="text-4xl!">{api?.name}</h1>
             <p className="bg-accent text-primary mt-2 size-fit rounded-full border border-black/20 px-2 text-xs">
@@ -354,52 +354,55 @@ export default function ApiDoc() {
           )}
         </div>
 
-        <div className="bg-accent min-h-screen space-y-7 p-6 px-12">
-          {api?.resources.map((group) => {
-            return (
-              <div className="space-y-3">
-                <a
-                  href={`#${group.groupName.toLowerCase()}`}
-                  id={group.groupName.toLowerCase()}
-                  className="group hover:text-primary align-center cursor gap-3 text-lg"
-                >
-                  {group.groupName}
-                  <LincIcon
-                    size={17}
-                    className={`opacity-0 duration-300 group-hover:opacity-100`}
-                  />
-                </a>
-                <div className="col col w-fit space-y-4">
-                  {group.endpoints.map((endpoint: Record<string, any>) => (
-                    <button
-                      className={`flex-between cursor relative gap-4 overflow-hidden px-4 py-2! sm:min-w-xl ${getMethodClasses(endpoint.method, { variant: 'light', hover: true })} after:bg-primary after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:transition-all after:duration-100 after:content-[''] hover:after:h-1 focus-visible:after:h-1`}
-                      onClick={() => {
-                        setApiPanelOpen(true);
-                        setSelectedEndpoint({
-                          name: group.groupName,
-                          ...endpoint,
-                        });
-                      }}
-                    >
-                      <div className="align-center gap-4">
-                        <span
-                          className={`min-w-14 rounded-full py-1 text-center text-xs! shadow-sm ${getMethodClasses(endpoint.method)}`}
-                        >
-                          {endpoint.method}
-                        </span>
-                        <span className="text-sm font-semibold">{endpoint.path}</span>
-                        <span className="text-sm">{endpoint.description}</span>
-                      </div>
-
-                      {endpoint.authenticated && (
-                        <ShieldCheck size={20} className="fill-primary/70 text-black/70" />
-                      )}
-                    </button>
-                  ))}
+        <div className="bg-accent min-h-screen  p-6 px-6 md:px-12">
+          <div className='md:w-fit space-y-7'>
+            {api?.resources.map((group) => {
+              return (
+                <div className="space-y-3">
+                  <a
+                    href={`#${group.groupName.toLowerCase()}`}
+                    id={group.groupName.toLowerCase()}
+                    className="group hover:text-primary align-center cursor gap-3 text-lg"
+                  >
+                    {group.groupName}
+                    <LincIcon
+                      size={17}
+                      className={`opacity-0 duration-300 group-hover:opacity-100`}
+                    />
+                  </a>
+                  <div className="col w-full space-y-4">
+                    {group.endpoints.map((endpoint: Record<string, any>) => (
+                      <button
+                        className={`flex-between cursor relative gap-4 overflow-hidden px-4 py-2! w-full sm:min-w-xl ${getMethodClasses(endpoint.method, { variant: 'light', hover: true })} after:bg-primary after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:transition-all after:duration-100 after:content-[''] hover:after:h-1 focus-visible:after:h-1`}
+                        onClick={() => {
+                          setApiPanelOpen(true);
+                          setSelectedEndpoint({
+                            name: group.groupName,
+                            ...endpoint,
+                          });
+                        }}
+                      >
+                        <div className="align-center gap-4">
+                          <span
+                            className={`min-w-14 rounded-full py-1 text-center text-xs! shadow-sm ${getMethodClasses(endpoint.method)}`}
+                          >
+                            {endpoint.method}
+                          </span>
+                          <div className="col-start md:flex-row! md:align-center gap-1 md:gap-4">
+                            <span className="text-sm font-semibold text-start">{endpoint.path}</span>
+                            <span className="text-sm text-start">{endpoint.description}</span>
+                          </div>
+                        </div>
+                        {endpoint.authenticated && (
+                          <ShieldCheck size={20} className="fill-primary/70 text-black/70" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -408,38 +411,42 @@ export default function ApiDoc() {
           className={`fixed inset-0 hidden h-screen w-screen bg-black/30 ${apiPanelOpen ? 'flex-center' : 'hidden'}`}
           onClick={() => {
             setApiPanelOpen(false);
+
             setFormValues(undefined);
           }}
         >
           <div
-            className="col max-h-140 min-h-3/5 max-w-5xl min-w-4/5 overflow-hidden rounded-md bg-white"
+            className="col max-h-140 min-h-3/5 max-w-11/12 min-w-4/5 rounded-md bg-white lg:max-h-140 lg:max-w-5xl lg:overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="align-center gap-3 border-b-3 border-gray-200 px-7 py-3">
               <div className="bg-primary/15 text-primary flex-center rounded-lg p-2">
                 <Computer size={27} />
               </div>
+
               <div>
                 <h2 className="text-primary text-[18.5px] font-semibold">
                   {selectedEndpoint.name} Endpoint
                 </h2>
+
                 <div className="text-muted-foreground flex text-sm">
                   <p>{api?.name}</p> • <p>V{api?.version}</p>
                 </div>
               </div>
             </div>
 
-            <div className="flex grow">
-              <div className="relative max-h-[calc(35rem-74.4px)] flex-1 overflow-hidden">
+            <div className="col min-h-0 gap-5 overflow-y-auto overflow-x-hidden lg:flex! lg:grow lg:flex-row! lg:gap-0 lg:overflow-y-visible">
+              <div className="relative flex-1 gap-5 lg:overflow-x-hidden lg:max-h-[calc(35rem-74.4px)] lg:min-h-0 lg:gap-0">
                 <div
-                  className={`flex h-full transition-transform duration-500 ease-in-out ${
+                  className={`flex h-auto transition-transform duration-500 ease-in-out lg:h-full ${
                     showSecondPanel ? '-translate-x-full' : 'translate-x-0'
                   }`}
                 >
-                  <div className="w-full shrink-0 overflow-y-auto">
-                    <div className="col min-h-full space-y-6 p-5">
+                  <div className="w-full shrink-0 lg:overflow-y-auto">
+                    <div className="col h-auto space-y-6 p-5 lg:min-h-full">
                       <div>
                         <p>Resouce Path</p>
+
                         <div className="bg-muted flex-between mt-2 rounded-md border border-gray-200 px-4 py-2 text-black">
                           <div className="flex gap-4">
                             <div
@@ -447,6 +454,7 @@ export default function ApiDoc() {
                             >
                               {selectedEndpoint.method}
                             </div>
+
                             <p className="align-center gap-2 text-sm font-medium">
                               {selectedEndpoint.path}
                             </p>
@@ -461,26 +469,33 @@ export default function ApiDoc() {
                           </Button>
                         </div>
                       </div>
+
                       <div>
                         <p>Description</p>
+
                         <p className="text-muted-foreground text-sm">
                           {selectedEndpoint.description}
                         </p>
+
                         <div className="mt-2 flex gap-4">
                           <div className="bg-muted col mt-1 flex-1 gap-1 rounded-md border border-gray-200 px-4 py-2 text-black">
                             <p className="align-center text-primary gap-2 text-sm">
                               <ShieldCheck size={16} /> Authentication
                             </p>
+
                             <p className="pl-6 text-xs">
                               {selectedEndpoint?.authenticated ? 'Required ' : 'Not Required'}
+
                               {selectedEndpoint?.authenticated && `(${api?.authentication.type})`}
                             </p>
                           </div>
+
                           {api?.rateLimit && (
                             <div className="bg-muted col mt-1 flex-1 gap-1 rounded-md border border-gray-200 px-4 py-2 text-black">
                               <p className="align-center text-primary gap-2 text-sm">
                                 <Server size={14} /> Rate Limit
                               </p>
+
                               <p className="pl-5.5 text-xs">
                                 {api?.rateLimit.limit} Requests/{api?.rateLimit.window}
                               </p>
@@ -492,6 +507,7 @@ export default function ApiDoc() {
                       {selectedEndpoint?.request?.pathParams && (
                         <div>
                           <p>Path Parameters</p>
+
                           <div className="mt-2 overflow-x-auto overflow-y-hidden rounded-sm border border-slate-200">
                             <table className="w-full">
                               <thead className="bg-muted">
@@ -505,6 +521,7 @@ export default function ApiDoc() {
                                   ) && <td className="px-4 py-2 text-sm font-medium">Options</td>}
                                 </tr>
                               </thead>
+
                               <tbody>
                                 {selectedEndpoint?.request?.pathParams?.map(
                                   (field: Record<string, any>) => (
@@ -538,6 +555,7 @@ export default function ApiDoc() {
                       {selectedEndpoint?.request?.queryParams && (
                         <div>
                           <p>Query Parameters</p>
+
                           <div className="mt-2 overflow-x-auto overflow-y-hidden rounded-sm border border-slate-200">
                             <table className="w-full">
                               <thead className="bg-muted">
@@ -551,6 +569,7 @@ export default function ApiDoc() {
                                   ) && <td className="px-4 py-2 text-sm font-medium">Options</td>}
                                 </tr>
                               </thead>
+
                               <tbody>
                                 {selectedEndpoint?.request?.queryParams?.map(
                                   (field: Record<string, any>) => (
@@ -558,15 +577,19 @@ export default function ApiDoc() {
                                       <td className="border-r border-slate-200 px-4 py-2 text-sm">
                                         {field.name}
                                       </td>
+
                                       <td className="border-r border-slate-200 px-4 py-2 text-sm">
                                         {field.type}
                                       </td>
+
                                       <td className="border-r border-slate-200 px-4 py-2 text-center text-sm">
                                         {field.required ? 'yes' : 'no'}
                                       </td>
+
                                       <td className="border-r border-slate-200 px-4 py-2 text-sm">
                                         {field.description}
                                       </td>
+
                                       {field.enum && (
                                         <td className="px-4 py-2 text-sm">
                                           {field.enum.join(', ')}
@@ -584,6 +607,7 @@ export default function ApiDoc() {
                       {selectedEndpoint?.request?.body && (
                         <div>
                           <p>Body Parameters</p>
+
                           <div className="mt-2 overflow-x-auto overflow-y-hidden rounded-sm border border-slate-200">
                             <table className="w-full">
                               <thead className="bg-muted">
@@ -597,6 +621,7 @@ export default function ApiDoc() {
                                   ) && <td className="px-4 py-2 text-sm font-medium">Options</td>}
                                 </tr>
                               </thead>
+
                               <tbody>
                                 {selectedEndpoint?.request?.body?.map(
                                   (field: Record<string, any>) => (
@@ -640,7 +665,7 @@ export default function ApiDoc() {
                             setExecutionLoading(true);
                           } else setShowSecondPanel(true);
                         }}
-                        className="bg-primary! hover:border-primary! hover:text-primary mt-auto flex w-full gap-3 border-3! border-transparent py-4.5! text-sm! font-semibold text-white duration-300 hover:bg-white!"
+                        className="bg-primary! hover:border-primary! hover:text-primary mt-10 flex w-full gap-3 border-3! border-transparent py-4.5! text-sm! font-semibold text-white duration-300 hover:bg-white! lg:mt-auto"
                       >
                         {executionLoading ? (
                           <>
@@ -655,7 +680,7 @@ export default function ApiDoc() {
                     </div>
                   </div>
 
-                  <div className="col bg-muted w-full shrink-0 overflow-y-auto p-5">
+                  <div className="col bg-muted h-full w-full shrink-0 p-5 lg:overflow-y-auto">
                     <Button
                       size={'icon-lg'}
                       className="mb-4 flex w-fit gap-2 bg-transparent! pl-0! text-sm text-black transition-all! duration-100 hover:gap-3"
@@ -677,8 +702,7 @@ export default function ApiDoc() {
                 </div>
               </div>
 
-              <div
-                className={`max-h-[calc(35rem-74.4px)] max-w-1/2 flex-1 bg-[#0f172a] py-5 ${executionLoading && 'col-full-center'}`}
+              <div className={`max-h-[calc(35rem-74.4px)] lg:min-h-0 flex-1 bg-[#0f172a] py-5 lg:max-w-1/2 ${executionLoading && 'col-full-center'}`}
               >
                 {!executionLoading && (
                   <div className="flex-between px-7">
@@ -689,6 +713,7 @@ export default function ApiDoc() {
                       >
                         {executionError ? 'Server Response' : 'Response Example'}
                       </button>
+
                       <button
                         onClick={() => setSelectedTab('curl')}
                         className={`${selectedTab === 'curl' ? 'border-primary' : 'border-transparent'} w-fit rounded-none! border-b-3 p-1! text-sm font-semibold text-white`}
@@ -705,11 +730,13 @@ export default function ApiDoc() {
                           <div
                             className={`size-1.5 animate-pulse rounded-full ${executionError ? 'bg-destructive' : 'bg-[#10b981]'}`}
                           ></div>
+
                           {executionError
                             ? executionError?.SwagsterStatusCode || 'Unknown Error'
-                            : '200 OK'}
+                            : '200'}
                         </div>
                       )}
+
                       <Button
                         onClick={() =>
                           copyToClipboard(
@@ -719,11 +746,14 @@ export default function ApiDoc() {
                                     url:
                                       api?.baseUrl +
                                       extractResourceUrl(formValues?.body)?.resourceUrl,
+
                                     method: selectedEndpoint.method,
+
                                     body:
                                       formValues?.body && Object?.keys(formValues?.body).length
                                         ? { ...formValues?.body }
                                         : undefined,
+
                                     queryParams: extractResourceUrl(formValues?.body)?.queryUrl,
                                   })
                                 : ''
@@ -731,7 +761,9 @@ export default function ApiDoc() {
                                   executionError
                                     ? formattedError()
                                     : executionResponse || selectedEndpoint.responseSample,
+
                                   null,
+
                                   2,
                                 ),
                           )
@@ -799,12 +831,12 @@ export default function ApiDoc() {
 
       {authModalOpen && (
         <div
-          className={`fixed inset-0 z-10 hidden h-screen w-screen bg-black/30 ${authModalOpen ? 'flex-center' : 'hidden'}`}
+          className={`fixed inset-0 z-10 pr-3 hidden h-screen w-screen bg-black/30 ${authModalOpen ? 'flex-center' : 'hidden'}`}
           onClick={() => setAuthModalOpen(false)}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="col min-h-120 w-2xl rounded-md bg-white"
+            className="col min-h-120 w-11/12 lg:w-2xl rounded-md bg-white"
           >
             <header className="flex gap-4 border-b border-gray-200 px-7 py-4">
               <div className="bg-primary/15 text-primary flex-center rounded-lg px-2.5">
@@ -877,7 +909,7 @@ export default function ApiDoc() {
         <Button
           size={'icon-lg'}
           onClick={() => setAuthModalOpen(true)}
-          className="bg-primary align-center fixed right-7 bottom-7 z-1 w-fit gap-3 rounded-full! px-6! py-5! text-sm text-white hover:scale-110 hover:scale-3d"
+          className="bg-primary align-center fixed right-7 bottom-4 lg:bottom-7 z-1 w-fit gap-3 rounded-full! px-6! py-5! text-sm text-white hover:scale-110 hover:scale-3d"
         >
           Authorize <KeySquare size={50} />
         </Button>

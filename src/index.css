@@ -219,6 +219,9 @@ button {
   .col {
     @apply flex flex-col;
   }
+  .col-start {
+    @apply flex flex-col items-start;
+  }
   .col-center {
     @apply flex flex-col items-center;
   }
