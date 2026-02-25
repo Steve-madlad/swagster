@@ -92,7 +92,7 @@ export async function executeHttpRequest({
       error?.code === 'ERR_NETWORK'
     ) {
       message =
-        'Request failed. This might be due to CORS restrictions. Please check the browser console for more details.';
+        'Request failed. This might be due to network issues or CORS restrictions. Please check the browser console for more details.';
     } else {
       message = error.message;
     }

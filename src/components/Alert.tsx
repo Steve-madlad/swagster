@@ -29,7 +29,7 @@ export function Alert({
 }: AlertCardProps) {
   return (
     <AlertCard variant={variant} className={cn(className, 'h-fit')}>
-      {Icon ? <Icon className="size-4   " /> : <AlertCircleIcon className="size-5" />}
+      {Icon ? <Icon className="size-4" /> : <AlertCircleIcon className="size-4.5 translate-y-0.5!" />}
       <AlertTitle className="text-base">{title}</AlertTitle>
       <AlertDescription className="text-xs">{children}</AlertDescription>
       {alertAction && (

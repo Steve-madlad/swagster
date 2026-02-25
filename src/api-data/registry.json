@@ -442,8 +442,8 @@
     },
     {
       "id": "billing-api",
-      "isExampleApi": true,
       "name": "Billing Service",
+      "isExampleApi": true,
       "shortDescription": "Invoice generation and payment tracking.",
       "description": "The financial processing hub for the platform. This service handles the generation of invoices, real-time payment tracking, and automated refund processing. It bridges the gap between active subscriptions and ledger entries, ensuring all transactions are compliant and recorded for audit purposes.",
       "version": "1.0",

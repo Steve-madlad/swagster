@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { Select } from '@components/form/Select';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, SendHorizontal } from 'lucide-react';
+import { SendHorizontal } from 'lucide-react';
 import { useEffect, useMemo, type Dispatch, type ReactNode, type SetStateAction } from 'react';
 import {
   Controller,
@@ -11,10 +11,10 @@ import {
   type UseFormRegister,
 } from 'react-hook-form';
 import * as z from 'zod';
-import { Button } from '../ui/button';
+import { Alert } from '../Alert';
+import PrimaryButton from '../PrimaryButton';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { Alert } from '../Alert';
 
 export interface FieldProps {
   name: string;
@@ -158,7 +158,7 @@ export default function FormBuilder({
   }, {});
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="col grow space-y-6 w-full">
+    <form onSubmit={handleSubmit(onSubmit)} className="col w-full grow space-y-6">
       {!disableGroupuing ? (
         Object.entries(groupedData).map(([source, fields]) => (
           <section key={source} className="mb-8 space-y-4">
@@ -173,7 +173,7 @@ export default function FormBuilder({
       {alertText && (
         <Alert
           variant="destructive"
-          className="border-destructive bg-destructive/20 overflow-x-auto"
+          className="border-destructive bg-destructive/10 overflow-x-auto"
           title={'Authorization Failed'}
         >
           {typeof alertText === 'string' ? (
@@ -184,25 +184,15 @@ export default function FormBuilder({
         </Alert>
       )}
 
-      <Button
+      <PrimaryButton
         type="submit"
         size={'icon-lg'}
-        className={cn(
-          buttonStyles,
-          'bg-primary! hover:border-primary! hover:text-primary mt-auto flex w-full gap-3 border-3! border-transparent py-4.5! text-sm! font-semibold text-white duration-300 hover:bg-white!',
-        )}
-        disabled={isSubmitting}
+        className={cn(buttonStyles, 'mt-auto py-4.5! font-semibold')}
+        loading={isSubmitting}
       >
-        {isSubmitting ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Processing
-          </>
-        ) : (
-          buttonText || 'Send Request'
-        )}
-        {!isSubmitting && (buttonIcon ? buttonIcon : <SendHorizontal />)}
-      </Button>
+        {buttonText || 'Send Request'}
+        {buttonIcon ?? <SendHorizontal />}
+      </PrimaryButton>
     </form>
   );
 }

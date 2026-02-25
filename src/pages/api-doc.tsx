@@ -1,8 +1,13 @@
 import { Alert } from '@/components/Alert';
-import { CommandBar } from '@/components/CommandBar';
+import ApiEndpointsSection from '@/components/ApiEndpointsSection';
+import { EndpointRequestDetails } from '@/components/EndpointRequestDetails';
 import FormBuilder, { type FieldProps } from '@/components/form/FormBuilder';
+import Navbar from '@/components/Navbar';
+import PrimaryButton from '@/components/PrimaryButton';
 import { executeHttpRequest, generateCurl, type ExecuteHttpRequestProps } from '@/lib/axios';
+import { methodColorMap } from '@/lib/constants';
 import { isTokenExpired } from '@/lib/utils';
+import type { ApiDefinition, HttpMethod } from '@/models/types';
 import {
   AlertTriangle,
   BadgeCheck,
@@ -11,7 +16,6 @@ import {
   Copy,
   FingerprintPattern,
   KeySquare,
-  Link as LincIcon,
   Loader2,
   MoveLeft,
   SendHorizontal,
@@ -33,8 +37,6 @@ export default function ApiDoc() {
   const [apiPanelOpen, setApiPanelOpen] = useState(false);
   const [selectedEndpoint, setSelectedEndpoint] = useState<Record<string, any>>({});
 
-  console.log({ selectedEndpoint });
-
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const [showSecondPanel, setShowSecondPanel] = useState(false);
@@ -42,8 +44,6 @@ export default function ApiDoc() {
 
   const [selectedTab, setSelectedTab] = useState<'response' | 'curl'>('response');
   const [formValues, setFormValues] = useState<Record<string, unknown> | undefined>();
-
-  console.log(formValues);
 
   type ExecutionError = {
     SwagsterStatusCode: string | number;
@@ -56,12 +56,10 @@ export default function ApiDoc() {
   const [authToken, setAuthToken] = useState<string | null>(null);
 
   useEffect(() => {
-    // initialize when api changes
     setAuthToken(localStorage.getItem('auth-' + api?.name));
   }, [api?.name]);
 
   useEffect(() => {
-    // listen for storage events (other tabs/windows)
     function handleStorage(e: StorageEvent) {
       if (e.key === 'auth-' + api?.name) setAuthToken(e.newValue);
     }
@@ -73,60 +71,6 @@ export default function ApiDoc() {
     localStorage.removeItem('auth-' + api?.name);
     setAuthToken(null);
   };
-
-  type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-
-  const methodColorMap = {
-    GET: {
-      solid: 'bg-tropic-green',
-      light: 'bg-tropic-green/30',
-      hoverLight: 'hover:bg-tropic-green/60 focus-visible:bg-tropic-green/60',
-    },
-    POST: {
-      solid: 'bg-tropic-blue',
-      light: 'bg-tropic-blue/30',
-      hoverLight: 'hover:bg-tropic-blue/60 focus-visible:bg-tropic-blue/60',
-    },
-    PUT: {
-      solid: 'bg-tropic-pink',
-      light: 'bg-tropic-pink/30',
-      hoverLight: 'hover:bg-tropic-pink/60 focus-visible:bg-tropic-pink/60',
-    },
-    PATCH: {
-      solid: 'bg-tropic-yellow',
-      light: 'bg-tropic-yellow/30',
-      hoverLight: 'hover:bg-tropic-yellow/60 focus-visible:bg-tropic-yellow/60',
-    },
-    DELETE: {
-      solid: 'bg-tropic-red',
-      light: 'bg-tropic-red/30',
-      hoverLight: 'hover:bg-tropic-red/60 focus-visible:bg-tropic-red/60',
-    },
-  } as const;
-
-  const modalMethodColorMap = {
-    GET: 'bg-[#10b981]',
-    POST: 'bg-tropic-blue',
-    PUT: 'bg-tropic-pink',
-    PATCH: 'bg-tropic-yellow',
-    DELETE: 'bg-tropic-red',
-  };
-
-  function getMethodClasses(
-    method: HttpMethod,
-    options?: {
-      variant?: 'solid' | 'light';
-      hover?: boolean;
-    },
-  ) {
-    const styles = methodColorMap?.[method];
-    const variant = options?.variant ?? 'solid';
-    const hover = options?.hover ?? false;
-
-    if (variant === 'solid') return styles.solid;
-
-    return `${styles?.light} ${hover ? styles.hoverLight : ''}`;
-  }
 
   async function copyToClipboard(text: string) {
     try {
@@ -142,13 +86,8 @@ export default function ApiDoc() {
     if (!vals && selectedEndpoint.method !== 'GET') return;
     const formattedConfig = formattedFormConfig();
 
-    console.log({ vals });
-    console.log({ formValues });
-    console.log({ formattedConfig });
-
     const pathParams = formattedConfig.filter((field) => field.source === 'path');
     const queryParams = formattedConfig.filter((field) => field.source === 'query');
-    console.log({ pathParams });
 
     const bodyVals = formattedConfig
       .filter((field) => field.source === 'body')
@@ -161,8 +100,6 @@ export default function ApiDoc() {
           ),
         );
 
-    console.log(body);
-
     const resourceUrl = pathParams?.reduce(
       (acc, param: { name: string }) =>
         acc.replace(
@@ -171,8 +108,6 @@ export default function ApiDoc() {
         ),
       selectedEndpoint.path,
     );
-
-    console.log(resourceUrl);
 
     const searchParams = new URLSearchParams();
     const paramsObj: undefined | Record<string, string | number> = queryParams.length
@@ -191,8 +126,6 @@ export default function ApiDoc() {
     }
 
     const queryUrl = searchParams.toString() ? `?${searchParams.toString()}` : '';
-
-    console.log(queryUrl);
 
     return {
       resourceUrl,
@@ -229,17 +162,10 @@ export default function ApiDoc() {
     }
 
     if (vals && Object.keys(vals).length) {
-      // const filtered = Object.fromEntries(
-      //   Object.entries(vals).filter(([_, value]) => value != null && value !== ''),
-      // );
-
       props.body = auth ? vals : extractedBody;
     }
-    console.log(props);
 
     const response = await executeHttpRequest(props);
-
-    console.log({ response });
 
     if (auth) {
       if (response.data?.success) {
@@ -309,23 +235,28 @@ export default function ApiDoc() {
     };
   };
 
+  const showRequestForm = () => {
+    return (
+      selectedEndpoint?.request?.body ||
+      selectedEndpoint?.request?.queryParams ||
+      selectedEndpoint?.request?.pathParams
+    );
+  };
+
+  const decideFirstPanelAction = () => {
+    if (
+      selectedEndpoint?.method === 'GET' &&
+      !selectedEndpoint?.request?.queryParams &&
+      !selectedEndpoint?.request?.pathParams
+    ) {
+      submitRequest();
+      setExecutionLoading(true);
+    } else setShowSecondPanel(true);
+  };
+
   return (
     <div className="min-h-screen">
-      <nav className="flex bg-black px-6 md:px-12 py-3 text-white">
-        <div className="align-center gap-3">
-          <img src="/logo.png" width={40} alt="swagster logo" />
-          <div className="col">
-            <Link to={'/'} className="text-lg font-medium text-white!">
-              Swagster
-            </Link>
-            <span className="text-xs">By Steeve</span>
-          </div>
-        </div>
-
-        <div className="just-end w-full items-center">
-          <CommandBar />
-        </div>
-      </nav>
+      <Navbar />
 
       <div>
         <div className="p-6 px-6 md:px-12">
@@ -335,6 +266,7 @@ export default function ApiDoc() {
               v{api?.version}
             </p>
           </div>
+
           <p className="mb-2 max-w-6xl text-sm">{api?.description}</p>
           <Link
             to={api?.baseUrl as string}
@@ -354,56 +286,11 @@ export default function ApiDoc() {
           )}
         </div>
 
-        <div className="bg-accent min-h-screen  p-6 px-6 md:px-12">
-          <div className='md:w-fit space-y-7'>
-            {api?.resources.map((group) => {
-              return (
-                <div className="space-y-3">
-                  <a
-                    href={`#${group.groupName.toLowerCase()}`}
-                    id={group.groupName.toLowerCase()}
-                    className="group hover:text-primary align-center cursor gap-3 text-lg"
-                  >
-                    {group.groupName}
-                    <LincIcon
-                      size={17}
-                      className={`opacity-0 duration-300 group-hover:opacity-100`}
-                    />
-                  </a>
-                  <div className="col w-full space-y-4">
-                    {group.endpoints.map((endpoint: Record<string, any>) => (
-                      <button
-                        className={`flex-between cursor relative gap-4 overflow-hidden px-4 py-2! w-full sm:min-w-xl ${getMethodClasses(endpoint.method, { variant: 'light', hover: true })} after:bg-primary after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:transition-all after:duration-100 after:content-[''] hover:after:h-1 focus-visible:after:h-1`}
-                        onClick={() => {
-                          setApiPanelOpen(true);
-                          setSelectedEndpoint({
-                            name: group.groupName,
-                            ...endpoint,
-                          });
-                        }}
-                      >
-                        <div className="align-center gap-4">
-                          <span
-                            className={`min-w-14 rounded-full py-1 text-center text-xs! shadow-sm ${getMethodClasses(endpoint.method)}`}
-                          >
-                            {endpoint.method}
-                          </span>
-                          <div className="col-start md:flex-row! md:align-center gap-1 md:gap-4">
-                            <span className="text-sm font-semibold text-start">{endpoint.path}</span>
-                            <span className="text-sm text-start">{endpoint.description}</span>
-                          </div>
-                        </div>
-                        {endpoint.authenticated && (
-                          <ShieldCheck size={20} className="fill-primary/70 text-black/70" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <ApiEndpointsSection
+          api={api as ApiDefinition}
+          setSelectedEndpoint={setSelectedEndpoint}
+          setApiPanelOpen={setApiPanelOpen}
+        />
       </div>
 
       {apiPanelOpen && (
@@ -435,8 +322,8 @@ export default function ApiDoc() {
               </div>
             </div>
 
-            <div className="col min-h-0 gap-5 overflow-y-auto overflow-x-hidden lg:flex! lg:grow lg:flex-row! lg:gap-0 lg:overflow-y-visible">
-              <div className="relative flex-1 gap-5 lg:overflow-x-hidden lg:max-h-[calc(35rem-74.4px)] lg:min-h-0 lg:gap-0">
+            <div className="col min-h-0 gap-5 overflow-x-hidden overflow-y-auto lg:flex! lg:grow lg:flex-row! lg:gap-0 lg:overflow-y-visible">
+              <div className="relative flex-1 gap-5 lg:max-h-[calc(35rem-74.4px)] lg:min-h-0 lg:gap-0 lg:overflow-x-hidden">
                 <div
                   className={`flex h-auto transition-transform duration-500 ease-in-out lg:h-full ${
                     showSecondPanel ? '-translate-x-full' : 'translate-x-0'
@@ -450,7 +337,7 @@ export default function ApiDoc() {
                         <div className="bg-muted flex-between mt-2 rounded-md border border-gray-200 px-4 py-2 text-black">
                           <div className="flex gap-4">
                             <div
-                              className={`w-fit rounded-md px-3 py-1 text-xs text-white! ${modalMethodColorMap[selectedEndpoint.method as HttpMethod]}`}
+                              className={`w-fit rounded-md px-3 py-1 text-xs text-white! ${methodColorMap[selectedEndpoint.method as HttpMethod].custom}`}
                             >
                               {selectedEndpoint.method}
                             </div>
@@ -504,179 +391,16 @@ export default function ApiDoc() {
                         </div>
                       </div>
 
-                      {selectedEndpoint?.request?.pathParams && (
-                        <div>
-                          <p>Path Parameters</p>
+                      <EndpointRequestDetails selectedEndpoint={selectedEndpoint} />
 
-                          <div className="mt-2 overflow-x-auto overflow-y-hidden rounded-sm border border-slate-200">
-                            <table className="w-full">
-                              <thead className="bg-muted">
-                                <tr className="text-primary">
-                                  <td className="px-4 py-2 text-sm font-medium">Name</td>
-                                  <td className="px-4 py-2 text-sm font-medium">Type</td>
-                                  <td className="px-4 py-2 text-sm font-medium">Required</td>
-                                  <td className="px-4 py-2 text-sm font-medium">Description</td>
-                                  {selectedEndpoint?.request?.pathParams?.find(
-                                    (field: Record<string, any>) => field.enum !== undefined,
-                                  ) && <td className="px-4 py-2 text-sm font-medium">Options</td>}
-                                </tr>
-                              </thead>
-
-                              <tbody>
-                                {selectedEndpoint?.request?.pathParams?.map(
-                                  (field: Record<string, any>) => (
-                                    <tr>
-                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
-                                        {field.name}
-                                      </td>
-                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
-                                        {field.type}
-                                      </td>
-                                      <td className="border-r border-slate-200 px-4 py-2 text-center text-sm">
-                                        {field.required ? 'yes' : 'no'}
-                                      </td>
-                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
-                                        {field.description}
-                                      </td>
-                                      {field.enum && (
-                                        <td className="px-4 py-2 text-sm">
-                                          {field.enum.join(', ')}
-                                        </td>
-                                      )}
-                                    </tr>
-                                  ),
-                                )}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      )}
-
-                      {selectedEndpoint?.request?.queryParams && (
-                        <div>
-                          <p>Query Parameters</p>
-
-                          <div className="mt-2 overflow-x-auto overflow-y-hidden rounded-sm border border-slate-200">
-                            <table className="w-full">
-                              <thead className="bg-muted">
-                                <tr className="text-primary">
-                                  <td className="px-4 py-2 text-sm font-medium">Name</td>
-                                  <td className="px-4 py-2 text-sm font-medium">Type</td>
-                                  <td className="px-4 py-2 text-sm font-medium">Required</td>
-                                  <td className="px-4 py-2 text-sm font-medium">Description</td>
-                                  {selectedEndpoint?.request?.queryParams?.find(
-                                    (field: Record<string, any>) => field.enum !== undefined,
-                                  ) && <td className="px-4 py-2 text-sm font-medium">Options</td>}
-                                </tr>
-                              </thead>
-
-                              <tbody>
-                                {selectedEndpoint?.request?.queryParams?.map(
-                                  (field: Record<string, any>) => (
-                                    <tr>
-                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
-                                        {field.name}
-                                      </td>
-
-                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
-                                        {field.type}
-                                      </td>
-
-                                      <td className="border-r border-slate-200 px-4 py-2 text-center text-sm">
-                                        {field.required ? 'yes' : 'no'}
-                                      </td>
-
-                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
-                                        {field.description}
-                                      </td>
-
-                                      {field.enum && (
-                                        <td className="px-4 py-2 text-sm">
-                                          {field.enum.join(', ')}
-                                        </td>
-                                      )}
-                                    </tr>
-                                  ),
-                                )}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      )}
-
-                      {selectedEndpoint?.request?.body && (
-                        <div>
-                          <p>Body Parameters</p>
-
-                          <div className="mt-2 overflow-x-auto overflow-y-hidden rounded-sm border border-slate-200">
-                            <table className="w-full">
-                              <thead className="bg-muted">
-                                <tr className="text-primary">
-                                  <td className="px-4 py-2 text-sm font-medium">Name</td>
-                                  <td className="px-4 py-2 text-sm font-medium">Type</td>
-                                  <td className="px-4 py-2 text-sm font-medium">Required</td>
-                                  <td className="px-4 py-2 text-sm font-medium">Description</td>
-                                  {selectedEndpoint?.request?.body?.find(
-                                    (field: Record<string, any>) => field.enum !== undefined,
-                                  ) && <td className="px-4 py-2 text-sm font-medium">Options</td>}
-                                </tr>
-                              </thead>
-
-                              <tbody>
-                                {selectedEndpoint?.request?.body?.map(
-                                  (field: Record<string, any>) => (
-                                    <tr>
-                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
-                                        {field.name}
-                                      </td>
-                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
-                                        {field.type}
-                                      </td>
-                                      <td className="border-r border-slate-200 px-4 py-2 text-center text-sm">
-                                        {field.required ? 'yes' : 'no'}
-                                      </td>
-                                      <td className="border-r border-slate-200 px-4 py-2 text-sm">
-                                        {field.description}
-                                      </td>
-                                      {field.enum && (
-                                        <td className="px-4 py-2 text-sm">
-                                          {field.enum.join(', ')}
-                                        </td>
-                                      )}
-                                    </tr>
-                                  ),
-                                )}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      )}
-
-                      <Button
+                      <PrimaryButton
                         size={'icon-lg'}
-                        disabled={executionLoading}
-                        onClick={() => {
-                          if (
-                            selectedEndpoint?.method === 'GET' &&
-                            !selectedEndpoint?.request?.queryParams &&
-                            !selectedEndpoint?.request?.pathParams
-                          ) {
-                            submitRequest();
-                            setExecutionLoading(true);
-                          } else setShowSecondPanel(true);
-                        }}
-                        className="bg-primary! hover:border-primary! hover:text-primary mt-10 flex w-full gap-3 border-3! border-transparent py-4.5! text-sm! font-semibold text-white duration-300 hover:bg-white! lg:mt-auto"
+                        onClick={decideFirstPanelAction}
+                        loading={executionLoading}
+                        className="mt-10 font-semibold lg:mt-auto"
                       >
-                        {executionLoading ? (
-                          <>
-                            Processing <Loader2 className="animate-spin"></Loader2>
-                          </>
-                        ) : (
-                          <>
-                            Send Request <SendHorizontal />
-                          </>
-                        )}
-                      </Button>
+                        Send Request <SendHorizontal />
+                      </PrimaryButton>
                     </div>
                   </div>
 
@@ -689,9 +413,7 @@ export default function ApiDoc() {
                       <MoveLeft /> Back
                     </Button>
 
-                    {(selectedEndpoint?.request?.body ||
-                      selectedEndpoint?.request?.queryParams ||
-                      selectedEndpoint?.request?.pathParams) && (
+                    {showRequestForm() && (
                       <FormBuilder
                         formConfig={formattedFormConfig()}
                         onSubmit={(vals) => submitRequest(vals)}
@@ -702,7 +424,8 @@ export default function ApiDoc() {
                 </div>
               </div>
 
-              <div className={`max-h-[calc(35rem-74.4px)] lg:min-h-0 flex-1 bg-[#0f172a] py-5 lg:max-w-1/2 ${executionLoading && 'col-full-center'}`}
+              <div
+                className={`max-h-[calc(35rem-74.4px)] flex-1 bg-[#0f172a] py-5 lg:min-h-0 lg:max-w-1/2 ${executionLoading && 'col-full-center'}`}
               >
                 {!executionLoading && (
                   <div className="flex-between px-7">
@@ -761,9 +484,7 @@ export default function ApiDoc() {
                                   executionError
                                     ? formattedError()
                                     : executionResponse || selectedEndpoint.responseSample,
-
                                   null,
-
                                   2,
                                 ),
                           )
@@ -831,12 +552,12 @@ export default function ApiDoc() {
 
       {authModalOpen && (
         <div
-          className={`fixed inset-0 z-10 pr-3 hidden h-screen w-screen bg-black/30 ${authModalOpen ? 'flex-center' : 'hidden'}`}
+          className={`fixed inset-0 z-10 hidden h-screen w-screen bg-black/30 pr-3 ${authModalOpen ? 'flex-center' : 'hidden'}`}
           onClick={() => setAuthModalOpen(false)}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="col min-h-120 w-11/12 lg:w-2xl rounded-md bg-white"
+            className="col min-h-120 w-11/12 rounded-md bg-white lg:w-2xl"
           >
             <header className="flex gap-4 border-b border-gray-200 px-7 py-4">
               <div className="bg-primary/15 text-primary flex-center rounded-lg px-2.5">
@@ -894,7 +615,7 @@ export default function ApiDoc() {
                   formConfig={api?.resources[0].endpoints?.[0].request.body as FieldProps[]}
                   onSubmit={(vals) => submitRequest(vals, true)}
                   alertText={authError}
-                  buttonStyles="mt-auto text-md"
+                  buttonStyles="mt-auto text-md text-base!"
                   buttonText="Authorize"
                   buttonIcon={<KeySquare />}
                   disableGroupuing
@@ -909,7 +630,7 @@ export default function ApiDoc() {
         <Button
           size={'icon-lg'}
           onClick={() => setAuthModalOpen(true)}
-          className="bg-primary align-center fixed right-7 bottom-4 lg:bottom-7 z-1 w-fit gap-3 rounded-full! px-6! py-5! text-sm text-white hover:scale-110 hover:scale-3d"
+          className="bg-primary align-center fixed right-7 bottom-4 z-1 w-fit gap-3 rounded-full! px-6! py-5! text-sm text-white hover:scale-110 hover:scale-3d lg:bottom-7"
         >
           Authorize <KeySquare size={50} />
         </Button>
@@ -917,3 +638,4 @@ export default function ApiDoc() {
     </div>
   );
 }
+
