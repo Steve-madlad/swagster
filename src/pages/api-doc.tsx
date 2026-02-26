@@ -55,7 +55,7 @@ export default function ApiDoc() {
     }
   }
 
-  const extractResourceUrl = (vals: any) => {
+  const extractResources = (vals: any) => {
     if (!vals && selectedEndpoint?.method !== 'GET') return;
 
     const formattedConfig = formattedFormConfig();
@@ -113,7 +113,7 @@ export default function ApiDoc() {
   async function submitRequest(vals?: Record<string, unknown>) {
     setExecutionLoading(true);
 
-    const extractedData = extractResourceUrl(vals);
+    const extractedData = extractResources(vals);
     const resourceUrl = vals ? extractedData?.resourceUrl : selectedEndpoint?.path;
 
     const props: ExecuteHttpRequestProps = {
@@ -254,8 +254,11 @@ export default function ApiDoc() {
           className={`fixed inset-0 hidden h-screen w-screen bg-black/30 ${apiPanelOpen ? 'flex-center' : 'hidden'}`}
           onClick={() => {
             setApiPanelOpen(false);
-
             setFormValues(undefined);
+            setSelectedTab('response');
+            setExecutionResponse(undefined);
+            setExecutionError(undefined);
+            setShowSecondPanel(false);
           }}
         >
           <div
@@ -390,7 +393,9 @@ export default function ApiDoc() {
                         onClick={() => setSelectedTab('response')}
                         className={`${selectedTab === 'response' ? 'border-primary' : 'border-transparent'} w-fit rounded-none! border-b-3! p-1! text-sm font-semibold text-white`}
                       >
-                        {executionError ? 'Server Response' : 'Response Example'}
+                        {executionError || executionResponse
+                          ? 'Server Response'
+                          : 'Response Example'}
                       </button>
 
                       <button
@@ -424,7 +429,7 @@ export default function ApiDoc() {
                                 ? generateCurl({
                                     url:
                                       api?.baseUrl +
-                                      extractResourceUrl(formValues?.body)?.resourceUrl,
+                                      extractResources(formValues?.body)?.resourceUrl,
 
                                     method: selectedEndpoint?.method,
 
@@ -433,7 +438,7 @@ export default function ApiDoc() {
                                         ? { ...formValues?.body }
                                         : undefined,
 
-                                    queryParams: extractResourceUrl(formValues?.body)?.queryUrl,
+                                    queryParams: extractResources(formValues?.body)?.queryUrl,
                                   })
                                 : ''
                               : JSON.stringify(
@@ -477,14 +482,13 @@ export default function ApiDoc() {
                         {selectedTab === 'curl'
                           ? formValues || selectedEndpoint?.method === 'GET'
                             ? generateCurl({
-                                url:
-                                  api?.baseUrl + extractResourceUrl(formValues?.body)?.resourceUrl,
+                                url: api?.baseUrl + extractResources(formValues?.body)?.resourceUrl,
                                 method: selectedEndpoint?.method,
                                 body:
                                   formValues?.body && Object?.keys(formValues.body).length
                                     ? { ...formValues.body }
                                     : undefined,
-                                queryParams: extractResourceUrl(formValues?.body)?.queryUrl,
+                                queryParams: extractResources(formValues?.body)?.queryUrl,
                               })
                             : ''
                           : JSON.stringify(

@@ -64,6 +64,7 @@ export interface ApiDefinition {
 
 export interface ModalProps {
   headerIcon?: LucideIcon;
+  headerContent?: ReactNode;
   title?: string;
   description?: string;
   triggerText?: string;

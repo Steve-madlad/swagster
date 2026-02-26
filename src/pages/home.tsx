@@ -1,13 +1,11 @@
+import ApiSearch from '@/components/modals/ApiSearch';
 import { AnimatedGridPattern } from '@/components/ui/animated-grid-pattern';
 import { cn } from '@/lib/utils';
-import { BotMessageSquare, Github, MoveRight, Sparkles } from 'lucide-react';
+import { Github, MoveRight, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import registry from '../api-data/registry.json';
 
 export default function Home() {
   const [panelOpen, setPanelOpen] = useState(false);
-  const navigate = useNavigate();
 
   return (
     <div className="min-size-screen col-full-center gap-3">
@@ -28,7 +26,7 @@ export default function Home() {
         <img src="/logo.png" width={97.5} className="bobbing-animation mb-3" alt="swagster logo" />
         <span
           key="latest-docs"
-          className="flex-center text-xs from-primary w-fit gap-3 rounded-full bg-linear-to-r to-violet-400 px-7 py-1 text-white shadow-md"
+          className="flex-center from-primary w-fit gap-3 rounded-full bg-linear-to-r to-violet-400 px-7 py-1 text-xs text-white shadow-md"
         >
           Discover What's New <Sparkles size={14} />
         </span>
@@ -47,49 +45,22 @@ export default function Home() {
         <div className="flex gap-4">
           <button
             key="create-docs-btn"
-            className="from-primary group hover:animate-gradient hover:animate-glow bg-size[200%_200%] align-center mt-10 gap-1 hover:gap-4 rounded-full! bg-linear-to-r via-indigo-500 to-violet-400 bg-left px-10 py-4 text-white transition-all! duration-100! hover:scale-105 focus:outline-none"
+            className="from-primary group hover:animate-gradient hover:animate-glow bg-size[200%_200%] align-center mt-10 gap-1 rounded-full! bg-linear-to-r via-indigo-500 to-violet-400 bg-left px-10 py-4 text-white transition-all! duration-100! hover:scale-105 focus-visible:gap-4 hover:gap-4 focus:outline-none"
             onClick={() => setPanelOpen(true)}
           >
             View Collection
-            <MoveRight className="w-0 overflow-hidden duration-200 group-hover:w-5" size={20} />
+            <MoveRight className="w-0 overflow-hidden duration-200 group-focus-visible:w-5 group-hover:w-5" size={20} />
           </button>
           <button
             key="create-docs-btn"
-            className="align-center from-primary mt-10 gap-4 rounded-full! bg-linear-to-r to-violet-400 px-7 py-4 text-white transition-all! duration-100! hover:scale-105 hover:shadow-[0_2px_1px_#7e22fe17,0_4px_2px_#7e22fe17,0_8px_4px_#7e22fe17,0_16px_8px_#7e22fe17,0_32px_16px_#7e22fe17]"
+            className="align-center from-primary mt-10 gap-4 rounded-full! bg-linear-to-r to-violet-400 px-7 py-4 text-white transition-all! duration-100! hover:scale-105 focus-visible:outline-0 focus-visible:scale-105 hover:shadow-[0_2px_1px_#7e22fe17,0_4px_2px_#7e22fe17,0_8px_4px_#7e22fe17,0_16px_8px_#7e22fe17,0_32px_16px_#7e22fe17] focus-visible:shadow-[0_2px_1px_#7e22fe17,0_4px_2px_#7e22fe17,0_8px_4px_#7e22fe17,0_16px_8px_#7e22fe17,0_32px_16px_#7e22fe17]"
           >
             Star On Github <Github size={20} />
           </button>
         </div>
       </div>
 
-      <div
-        className={`size-screen absolute bg-black/30 ${panelOpen ? 'flex-center' : 'hidden'}`}
-        onClick={() => setPanelOpen(false)}
-      >
-        <div
-          className="size-3/5 max-h-200 max-w-5xl rounded-[15px] bg-white p-5"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <p className="align-center text-primary gap-4 text-3xl font-medium">
-            Available APIs <BotMessageSquare size={35} />
-          </p>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {registry.apis.map((api) => {
-              return (
-                <button
-                  onClick={() => navigate(`/api/docs/${api.id}`)}
-                  className="border-primary! hover:bg-primary! hover:border-primary! group border bg-white! text-start text-black shadow-md duration-300 hover:text-white hover:shadow-md"
-                >
-                  <p className="text-lg font-medium">{api.name}</p>
-                  <p className="text-muted-foreground group-hover:text-white/80">
-                    {api.shortDescription}
-                  </p>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+      <ApiSearch open={panelOpen} onClose={() => setPanelOpen(false)} />
     </div>
   );
 }

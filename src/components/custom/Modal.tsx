@@ -12,6 +12,7 @@ import type { ModalProps } from '@/models/types';
 
 export default function Modal({
   headerIcon: HeaderIcon,
+  headerContent,
   title,
   description,
   triggerText,
@@ -28,6 +29,8 @@ export default function Modal({
     if (!value) onClose();
   };
 
+  console.log(headerContent);
+
   return (
     <Dialog open={open} onOpenChange={handleChange}>
       {!triggerElement
@@ -38,26 +41,33 @@ export default function Modal({
           )
         : triggerElement}
 
-      <DialogContent showCloseButton={false} className={cn(containerStyles, 'col gap-0 p-0 max-w-11/12!')}>
-        {(title || description) && (
+      <DialogContent
+        showCloseButton={false}
+        className={cn(containerStyles, 'col max-w-11/12! gap-0 p-0')}
+      >
+        {(title || description || headerContent) && (
           <DialogHeader className="h-fit border-b-2 border-gray-200 px-7 py-3">
-            <div className="align-center gap-4">
-              {HeaderIcon && (
-                <div className="bg-primary/15 text-primary flex-center h-full! rounded-lg p-2.5">
-                  <HeaderIcon />
-                </div>
-              )}
-              <div>
-                {title && (
-                  <DialogTitle className="text-primary text-xl font-semibold">{title}</DialogTitle>
+            {headerContent || (
+              <div className="align-center gap-4">
+                {HeaderIcon && (
+                  <div className="bg-primary/15 text-primary flex-center h-full! rounded-lg p-2.5">
+                    <HeaderIcon />
+                  </div>
                 )}
-                {description && <DialogDescription>{description}</DialogDescription>}
+                <div>
+                  {title && (
+                    <DialogTitle className="text-primary text-xl font-semibold">
+                      {title}
+                    </DialogTitle>
+                  )}
+                  {description && <DialogDescription>{description}</DialogDescription>}
+                </div>
               </div>
-            </div>
+            )}
           </DialogHeader>
         )}
 
-        <div className="h-full grow p-7">{children}</div>
+        <div className="h-full grow">{children}</div>
       </DialogContent>
     </Dialog>
   );
