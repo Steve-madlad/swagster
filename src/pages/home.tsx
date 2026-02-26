@@ -1,7 +1,8 @@
+import GithubStarButton from '@/components/GithubStarButton';
 import ApiSearch from '@/components/modals/ApiSearch';
 import { AnimatedGridPattern } from '@/components/ui/animated-grid-pattern';
 import { cn } from '@/lib/utils';
-import { Github, MoveRight, Sparkles } from 'lucide-react';
+import { MoveRight, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Home() {
@@ -54,12 +55,8 @@ export default function Home() {
               size={20}
             />
           </button>
-          <button
-            key="create-docs-btn"
-            className="align-center from-primary mt-10 gap-4 rounded-full! bg-linear-to-r to-violet-400 px-7 py-4 text-white transition-all! duration-100! hover:scale-105 hover:shadow-[0_2px_1px_#7e22fe17,0_4px_2px_#7e22fe17,0_8px_4px_#7e22fe17,0_16px_8px_#7e22fe17,0_32px_16px_#7e22fe17] focus-visible:scale-105 focus-visible:shadow-[0_2px_1px_#7e22fe17,0_4px_2px_#7e22fe17,0_8px_4px_#7e22fe17,0_16px_8px_#7e22fe17,0_32px_16px_#7e22fe17] focus-visible:outline-0"
-          >
-            Star On Github <Github size={20} />
-          </button>
+
+          <GithubStarButton/>
         </div>
       </div>
 

@@ -17,10 +17,13 @@ import { Bot, HomeIcon, Info, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Kbd } from '../ui/kbd';
+import * as LucideIcons from 'lucide-react';
 
 export function CommandBar() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+
+  const apis = registry.apis;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -49,6 +52,11 @@ export function CommandBar() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [open, navigate]);
+
+  const getIcon = (iconName?: string) => {
+    // Look up the icon, fallback to Bot if not found
+    return (LucideIcons as any)[iconName || ''] || LucideIcons.Bot;
+  };
 
   return (
     <div>
@@ -84,7 +92,9 @@ export function CommandBar() {
               >
                 <HomeIcon />
                 <span>Home</span>
-                <CommandShortcut>⌘H</CommandShortcut>
+                <CommandShortcut className='flex'>
+                  ⌘<b className="w-4! text-center">H</b>
+                </CommandShortcut>
               </CommandItem>
               <CommandItem
                 className="hover:bg-primary hover:text-white hover:*:text-white focus-visible:text-white focus-visible:*:text-white"
@@ -95,25 +105,32 @@ export function CommandBar() {
               >
                 <Info />
                 <span>About</span>
-                <CommandShortcut>⌘I</CommandShortcut>
+                <CommandShortcut className='flex'>
+                  ⌘<b className="w-4! text-center">I</b>
+                </CommandShortcut>
               </CommandItem>
             </CommandGroup>
 
             <CommandSeparator />
             <CommandGroup heading="APIs">
-              {registry.apis.map((api) => (
-                <CommandItem
-                  className="hover:bg-primary hover:text-white hover:*:text-white focus-visible:text-white focus-visible:*:text-white"
-                  key={api.id}
-                  onSelect={() => {
-                    setOpen(false);
-                    navigate(`/api/docs/${api.id}`);
-                  }}
-                >
-                  <Bot />
-                  {api.name}
-                </CommandItem>
-              ))}
+              {registry.apis.map((api) => {
+                const Icon = getIcon(api.icon);
+
+                return (
+                  <CommandItem
+                    key={api.id}
+                    className="..."
+                    onSelect={() => {
+                      setOpen(false);
+                      navigate(`/api/docs/${api.id}`);
+                    }}
+                  >
+                    {/* 3. Render it as a JSX tag */}
+                    <Icon className="mr-2 h-4 w-4" />
+                    <span>{api.name}</span>
+                  </CommandItem>
+                );
+              })}
             </CommandGroup>
           </CommandList>
         </Command>
