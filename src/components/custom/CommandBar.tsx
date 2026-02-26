@@ -16,7 +16,7 @@ import {
 import { Bot, HomeIcon, Info, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Kbd } from './ui/kbd';
+import { Kbd } from '../ui/kbd';
 
 export function CommandBar() {
   const [open, setOpen] = useState(false);
@@ -55,7 +55,7 @@ export function CommandBar() {
       <Button
         onClick={() => setOpen(true)}
         variant="outline"
-        className="hover:border-primary! hidden sm:flex w-70 justify-between border-[#ffffff58]! bg-[#1f1f1f] py-4! text-start! text-xs hover:bg-[#282828] hover:text-white focus-visible:bg-[#282828] focus-visible:text-white"
+        className="hover:border-primary! hidden w-70 justify-between border-[#ffffff58]! bg-[#1f1f1f] py-4! text-start! text-xs hover:bg-[#282828] hover:text-white focus-visible:bg-[#282828] focus-visible:text-white sm:flex"
       >
         <span className="align-center gap-2">
           <Search className="mb-0.5" /> Search Documentation
@@ -65,9 +65,9 @@ export function CommandBar() {
       <Button
         onClick={() => setOpen(true)}
         variant="outline"
-        className="hover:border-primary! flex sm:hidden text-white!  rounded-full! border-[#ffffff58]! bg-[#1f1f1f] p-2.5! size-fit! hover:bg-[#282828] focus-visible:bg-[#282828]"
+        className="hover:border-primary! flex size-fit! rounded-full! border-[#ffffff58]! bg-[#1f1f1f] p-2.5! text-white! hover:bg-[#282828] focus-visible:bg-[#282828] sm:hidden"
       >
-        <Search/>
+        <Search />
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <Command>

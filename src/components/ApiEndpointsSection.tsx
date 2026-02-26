@@ -1,11 +1,8 @@
 import { methodColorMap } from '@/lib/constants';
-import type { ApiDefinition, ApiEndpoint, HttpMethod } from '@/models/types';
+import type { ApiDefinition, ApiEndpoint, Endpoint, HttpMethod } from '@/models/types';
 import { LineChartIcon, ShieldCheck } from 'lucide-react';
 import type { Dispatch, SetStateAction } from 'react';
 
-interface Endpoint extends ApiEndpoint {
-  name: string;
-}
 
 function getMethodClasses(
   method: HttpMethod,
@@ -30,7 +27,7 @@ export default function ApiEndpointsSection({
 }: {
   api: ApiDefinition;
   setApiPanelOpen: Dispatch<SetStateAction<boolean>>;
-  setSelectedEndpoint: Dispatch<SetStateAction<Endpoint>>;
+  setSelectedEndpoint: Dispatch<SetStateAction<Endpoint | undefined>>;
 }) {
   return (
     <div className="bg-accent min-h-screen p-6 px-6 md:px-12">

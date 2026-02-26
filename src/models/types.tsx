@@ -1,3 +1,6 @@
+import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
+
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export type PrimitiveType = 'string' | 'number' | 'boolean';
@@ -27,6 +30,10 @@ export interface EndpointRequest {
   body?: RequestField[] | null;
 }
 
+export interface Endpoint extends ApiEndpoint {
+  name: string;
+}
+
 export interface ApiEndpoint {
   description: string;
   path: string;
@@ -34,7 +41,7 @@ export interface ApiEndpoint {
   authenticated: boolean;
   isLogin?: boolean;
   request: EndpointRequest;
-  responseSample: unknown; 
+  responseSample: unknown;
 }
 
 export interface ApiResourceGroup {
@@ -53,4 +60,18 @@ export interface ApiDefinition {
   rateLimit: RateLimit;
   resources: ApiResourceGroup[];
   authentication: AuthenticationConfig;
+}
+
+export interface ModalProps {
+  headerIcon?: LucideIcon;
+  title?: string;
+  description?: string;
+  triggerText?: string;
+  triggerStyles?: string;
+  triggerElement?: ReactNode;
+  containerStyles?: ReactNode;
+  children: ReactNode;
+  open: boolean;
+  onClose: () => void;
+  onOpenChange?: (value: boolean) => void;
 }

@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import { CommandBar } from "./CommandBar";
+import { Link } from 'react-router-dom';
+import { CommandBar } from './custom/CommandBar';
 
 export default function Navbar() {
   return (

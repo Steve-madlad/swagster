@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Select } from '@components/form/Select';
+import { Select } from '@/components/form/Select';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SendHorizontal } from 'lucide-react';
 import { useEffect, useMemo, type Dispatch, type ReactNode, type SetStateAction } from 'react';
@@ -11,7 +11,7 @@ import {
   type UseFormRegister,
 } from 'react-hook-form';
 import * as z from 'zod';
-import { Alert } from '../Alert';
+import { Alert } from '../custom/Alert';
 import PrimaryButton from '../PrimaryButton';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -123,12 +123,8 @@ export default function FormBuilder({
     returnValues?.(getValues());
   }, []);
 
-  console.log(formConfig);
-
   useEffect(() => {
     const subscription = watch((values) => {
-      console.log(values);
-
       returnValues?.(values);
     });
 

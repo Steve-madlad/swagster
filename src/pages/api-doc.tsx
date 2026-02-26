@@ -1,28 +1,22 @@
-import { Alert } from '@/components/Alert';
 import ApiEndpointsSection from '@/components/ApiEndpointsSection';
 import { EndpointRequestDetails } from '@/components/EndpointRequestDetails';
-import FormBuilder, { type FieldProps } from '@/components/form/FormBuilder';
+import FormBuilder from '@/components/form/FormBuilder';
+import AuthModal from '@/components/modals/AuthModal';
 import Navbar from '@/components/Navbar';
 import PrimaryButton from '@/components/PrimaryButton';
 import { executeHttpRequest, generateCurl, type ExecuteHttpRequestProps } from '@/lib/axios';
 import { methodColorMap } from '@/lib/constants';
-import { isTokenExpired } from '@/lib/utils';
-import type { ApiDefinition, HttpMethod } from '@/models/types';
+import { type ApiDefinition, type Endpoint, type HttpMethod } from '@/models/types';
 import {
-  AlertTriangle,
-  BadgeCheck,
-  BrushCleaning,
   Computer,
   Copy,
-  FingerprintPattern,
-  KeySquare,
   Loader2,
   MoveLeft,
   SendHorizontal,
   Server,
   ShieldCheck,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { nightOwl } from 'react-syntax-highlighter/dist/esm/styles/hljs';
@@ -35,9 +29,7 @@ export default function ApiDoc() {
   const api = registry.apis.find((api) => api.id === params.name);
 
   const [apiPanelOpen, setApiPanelOpen] = useState(false);
-  const [selectedEndpoint, setSelectedEndpoint] = useState<Record<string, any>>({});
-
-  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint>();
 
   const [showSecondPanel, setShowSecondPanel] = useState(false);
   const [executionLoading, setExecutionLoading] = useState(false);
@@ -52,27 +44,8 @@ export default function ApiDoc() {
   const [executionError, setExecutionError] = useState<ExecutionError | undefined>();
   const [executionResponse, setExecutionResponse] = useState<any>(undefined);
 
-  const [authError, setAuthError] = useState<string | Record<string, unknown> | undefined>();
-  const [authToken, setAuthToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    setAuthToken(localStorage.getItem('auth-' + api?.name));
-  }, [api?.name]);
-
-  useEffect(() => {
-    function handleStorage(e: StorageEvent) {
-      if (e.key === 'auth-' + api?.name) setAuthToken(e.newValue);
-    }
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
-  }, [api?.name]);
-
-  const clearAuth = () => {
-    localStorage.removeItem('auth-' + api?.name);
-    setAuthToken(null);
-  };
-
-  async function copyToClipboard(text: string) {
+  async function copyToClipboard(text?: string) {
+    if (!text) return;
     try {
       await navigator.clipboard.writeText(text);
       toast.success('Copied to clipboard!');
@@ -83,7 +56,8 @@ export default function ApiDoc() {
   }
 
   const extractResourceUrl = (vals: any) => {
-    if (!vals && selectedEndpoint.method !== 'GET') return;
+    if (!vals && selectedEndpoint?.method !== 'GET') return;
+
     const formattedConfig = formattedFormConfig();
 
     const pathParams = formattedConfig.filter((field) => field.source === 'path');
@@ -92,6 +66,7 @@ export default function ApiDoc() {
     const bodyVals = formattedConfig
       .filter((field) => field.source === 'body')
       .map((field) => field.name);
+
     const body = !vals
       ? undefined
       : Object.fromEntries(
@@ -106,7 +81,7 @@ export default function ApiDoc() {
           `{${param.name}}`,
           vals?.[param.name] ?? (formValues?.path as any)?.[param.name] ?? '',
         ),
-      selectedEndpoint.path,
+      selectedEndpoint?.path,
     );
 
     const searchParams = new URLSearchParams();
@@ -115,7 +90,7 @@ export default function ApiDoc() {
       : undefined;
 
     if (queryParams.length && paramsObj) {
-      queryParams?.forEach((param) => {
+      queryParams.forEach((param) => {
         const value = vals?.[param.name] ?? (formValues?.query as any)?.[param.name] ?? '';
 
         if (value === undefined || value === null || value === '') return;
@@ -135,64 +110,42 @@ export default function ApiDoc() {
     };
   };
 
-  async function submitRequest(vals?: Record<string, unknown>, auth?: boolean) {
-    !auth && setExecutionLoading(true);
-    const extractedData = extractResourceUrl(vals);
-    const extractedPathUrl = extractedData?.resourceUrl;
-    const extractedParams = extractedData?.queryParams;
-    const extractedBody = extractedData?.body;
+  async function submitRequest(vals?: Record<string, unknown>) {
+    setExecutionLoading(true);
 
-    const resourceUrl = auth
-      ? api?.resources[0].endpoints?.[0].path
-      : vals
-        ? extractedPathUrl
-        : selectedEndpoint.path;
+    const extractedData = extractResourceUrl(vals);
+    const resourceUrl = vals ? extractedData?.resourceUrl : selectedEndpoint?.path;
 
     const props: ExecuteHttpRequestProps = {
       url: api?.baseUrl + resourceUrl,
-      method: auth ? api?.resources[0].endpoints?.[0].method : selectedEndpoint.method,
+      method: selectedEndpoint?.method,
       auth: {
         headerName: api?.authentication.headerName || '',
         token: localStorage.getItem('auth-' + api?.name) || '',
       },
     };
 
-    if (extractedParams) {
-      props.queryParams = extractedParams;
+    if (extractedData?.queryParams) {
+      props.queryParams = extractedData.queryParams;
     }
 
     if (vals && Object.keys(vals).length) {
-      props.body = auth ? vals : extractedBody;
+      props.body = extractedData?.body;
     }
 
     const response = await executeHttpRequest(props);
 
-    if (auth) {
-      if (response.data?.success) {
-        setAuthError(undefined);
-        const token = response.data.data.token;
-        if (token) {
-          localStorage.setItem('auth-' + api?.name, token);
-          setAuthToken(token);
-        }
-        toast.success('Authorization Successful!');
-        setAuthModalOpen(false);
-        setExecutionLoading(false);
-        return;
-      } else {
-        setAuthError(response.error);
-        setExecutionLoading(false);
-        return;
-      }
-    }
     if (response?.data?.success) {
       setExecutionError(undefined);
       setExecutionResponse(response.data);
-      setExecutionLoading(false);
     } else {
-      setExecutionError({ ...response.error, SwagsterStatusCode: response.SwagsterStatusCode });
-      setExecutionLoading(false);
+      setExecutionError({
+        ...response.error,
+        SwagsterStatusCode: response.SwagsterStatusCode,
+      });
     }
+
+    setExecutionLoading(false);
   }
 
   const formattedError = () => {
@@ -204,24 +157,27 @@ export default function ApiDoc() {
 
   const formattedFormConfig = () => {
     return [
-      ...(selectedEndpoint.request?.pathParams || []).map((field: any) => ({
+      ...(selectedEndpoint?.request?.pathParams || []).map((field: any) => ({
         ...field,
         source: 'path',
       })),
-      ...(selectedEndpoint.request?.queryParams || []).map((field: any) => ({
+      ...(selectedEndpoint?.request?.queryParams || []).map((field: any) => ({
         ...field,
         source: 'query',
       })),
-      ...(selectedEndpoint.request?.body || []).map((field: any) => ({ ...field, source: 'body' })),
+      ...(selectedEndpoint?.request?.body || []).map((field: any) => ({
+        ...field,
+        source: 'body',
+      })),
     ];
   };
 
   const retriveBodyFields = (formValues: any) => {
     if (!formValues) return undefined;
-    const pathFields = selectedEndpoint.request?.pathParams?.map((field: any) => field.name) || [];
+    const pathFields = selectedEndpoint?.request?.pathParams?.map((field: any) => field.name) || [];
     const queryFields =
-      selectedEndpoint.request?.queryParams?.map((field: any) => field.name) || [];
-    const bodyFields = selectedEndpoint.request?.body?.map((field: any) => field.name) || [];
+      selectedEndpoint?.request?.queryParams?.map((field: any) => field.name) || [];
+    const bodyFields = selectedEndpoint?.request?.body?.map((field: any) => field.name) || [];
 
     const vals = (selectedFields: any) =>
       Object.fromEntries(
@@ -313,7 +269,7 @@ export default function ApiDoc() {
 
               <div>
                 <h2 className="text-primary text-[18.5px] font-semibold">
-                  {selectedEndpoint.name} Endpoint
+                  {selectedEndpoint?.name} Endpoint
                 </h2>
 
                 <div className="text-muted-foreground flex text-sm">
@@ -337,18 +293,18 @@ export default function ApiDoc() {
                         <div className="bg-muted flex-between mt-2 rounded-md border border-gray-200 px-4 py-2 text-black">
                           <div className="flex gap-4">
                             <div
-                              className={`w-fit rounded-md px-3 py-1 text-xs text-white! ${methodColorMap[selectedEndpoint.method as HttpMethod].custom}`}
+                              className={`w-fit rounded-md px-3 py-1 text-xs text-white! ${methodColorMap[selectedEndpoint?.method as HttpMethod].custom}`}
                             >
-                              {selectedEndpoint.method}
+                              {selectedEndpoint?.method}
                             </div>
 
                             <p className="align-center gap-2 text-sm font-medium">
-                              {selectedEndpoint.path}
+                              {selectedEndpoint?.path}
                             </p>
                           </div>
 
                           <Button
-                            onClick={() => copyToClipboard(selectedEndpoint.path)}
+                            onClick={() => copyToClipboard(selectedEndpoint?.path)}
                             size={'icon-sm'}
                             className="text-primary rounded-md! border-gray-400! bg-white! p-3! hover:bg-white/20!"
                           >
@@ -361,7 +317,7 @@ export default function ApiDoc() {
                         <p>Description</p>
 
                         <p className="text-muted-foreground text-sm">
-                          {selectedEndpoint.description}
+                          {selectedEndpoint?.description}
                         </p>
 
                         <div className="mt-2 flex gap-4">
@@ -464,13 +420,13 @@ export default function ApiDoc() {
                         onClick={() =>
                           copyToClipboard(
                             selectedTab === 'curl'
-                              ? formValues || selectedEndpoint.method === 'GET'
+                              ? formValues || selectedEndpoint?.method === 'GET'
                                 ? generateCurl({
                                     url:
                                       api?.baseUrl +
                                       extractResourceUrl(formValues?.body)?.resourceUrl,
 
-                                    method: selectedEndpoint.method,
+                                    method: selectedEndpoint?.method,
 
                                     body:
                                       formValues?.body && Object?.keys(formValues?.body).length
@@ -483,7 +439,7 @@ export default function ApiDoc() {
                               : JSON.stringify(
                                   executionError
                                     ? formattedError()
-                                    : executionResponse || selectedEndpoint.responseSample,
+                                    : executionResponse || selectedEndpoint?.responseSample,
                                   null,
                                   2,
                                 ),
@@ -519,11 +475,11 @@ export default function ApiDoc() {
                         }}
                       >
                         {selectedTab === 'curl'
-                          ? formValues || selectedEndpoint.method === 'GET'
+                          ? formValues || selectedEndpoint?.method === 'GET'
                             ? generateCurl({
                                 url:
                                   api?.baseUrl + extractResourceUrl(formValues?.body)?.resourceUrl,
-                                method: selectedEndpoint.method,
+                                method: selectedEndpoint?.method,
                                 body:
                                   formValues?.body && Object?.keys(formValues.body).length
                                     ? { ...formValues.body }
@@ -536,7 +492,7 @@ export default function ApiDoc() {
                                 ? (({ SwagsterStatusCode, ...rest }) => rest)(executionError)
                                 : executionResponse
                                   ? executionResponse
-                                  : selectedEndpoint.responseSample,
+                                  : selectedEndpoint?.responseSample,
                               null,
                               2,
                             )}
@@ -550,92 +506,7 @@ export default function ApiDoc() {
         </div>
       )}
 
-      {authModalOpen && (
-        <div
-          className={`fixed inset-0 z-10 hidden h-screen w-screen bg-black/30 pr-3 ${authModalOpen ? 'flex-center' : 'hidden'}`}
-          onClick={() => setAuthModalOpen(false)}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="col min-h-120 w-11/12 rounded-md bg-white lg:w-2xl"
-          >
-            <header className="flex gap-4 border-b border-gray-200 px-7 py-4">
-              <div className="bg-primary/15 text-primary flex-center rounded-lg px-2.5">
-                <FingerprintPattern size={28} />
-              </div>
-              <div>
-                <h2 className="text-primary text-lg font-semibold">Authorization</h2>
-                <p className="text-muted-foreground text-sm">
-                  Enter your credentials to authorize requests
-                </p>
-              </div>
-            </header>
-
-            <div className="flex grow p-7">
-              {authToken ? (
-                isTokenExpired(`auth-${api?.name}`) ? (
-                  <div className="w-full">
-                    <Alert
-                      icon={AlertTriangle}
-                      className="bg-destructive/20"
-                      variant="destructive"
-                      title="Unauthorized"
-                    >
-                      Token Expired
-                    </Alert>
-                    <Button
-                      onClick={clearAuth}
-                      size={'icon-lg'}
-                      className="hover:border-primary hover:text-primary mt-4 flex w-full gap-4 border-2 border-transparent py-5! text-sm transition-all! duration-100 hover:bg-transparent"
-                    >
-                      Clear Auth Token <BrushCleaning className="mb-1" />
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="w-full">
-                    <Alert
-                      icon={BadgeCheck}
-                      className="bg-[#10b981]/20"
-                      variant="success"
-                      title="Authorized"
-                    >
-                      Api Is Authorized
-                    </Alert>
-                    <Button
-                      onClick={clearAuth}
-                      size={'icon-lg'}
-                      className="hover:border-primary hover:text-primary mt-4 flex w-full gap-4 border-2 border-transparent py-5! text-sm transition-all! duration-100 hover:bg-transparent"
-                    >
-                      Clear Auth Token <BrushCleaning className="mb-1" />
-                    </Button>
-                  </div>
-                )
-              ) : (
-                <FormBuilder
-                  formConfig={api?.resources[0].endpoints?.[0].request.body as FieldProps[]}
-                  onSubmit={(vals) => submitRequest(vals, true)}
-                  alertText={authError}
-                  buttonStyles="mt-auto text-md text-base!"
-                  buttonText="Authorize"
-                  buttonIcon={<KeySquare />}
-                  disableGroupuing
-                />
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {api?.authentication && (
-        <Button
-          size={'icon-lg'}
-          onClick={() => setAuthModalOpen(true)}
-          className="bg-primary align-center fixed right-7 bottom-4 z-1 w-fit gap-3 rounded-full! px-6! py-5! text-sm text-white hover:scale-110 hover:scale-3d lg:bottom-7"
-        >
-          Authorize <KeySquare size={50} />
-        </Button>
-      )}
+      {api?.authentication && <AuthModal />}
     </div>
   );
 }
-

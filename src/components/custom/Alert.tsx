@@ -6,7 +6,7 @@ import {
 } from '@/components/ui/alert';
 import { AlertCircleIcon, type LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
 
 interface AlertCardProps {
@@ -29,7 +29,11 @@ export function Alert({
 }: AlertCardProps) {
   return (
     <AlertCard variant={variant} className={cn(className, 'h-fit')}>
-      {Icon ? <Icon className="size-4" /> : <AlertCircleIcon className="size-4.5 translate-y-0.5!" />}
+      {Icon ? (
+        <Icon className="size-4" />
+      ) : (
+        <AlertCircleIcon className="size-4.5 translate-y-0.5!" />
+      )}
       <AlertTitle className="text-base">{title}</AlertTitle>
       <AlertDescription className="text-xs">{children}</AlertDescription>
       {alertAction && (

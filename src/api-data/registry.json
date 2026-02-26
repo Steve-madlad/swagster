@@ -431,6 +431,28 @@
                   "__v": 0
                 }
               }
+            },
+            {
+              "description": "Fetches the current user",
+              "path": "/users/me",
+              "method": "GET",
+              "authenticated": true,
+              "request": {
+                "pathParams": null,
+                "headers": null,
+                "body": null
+              },
+              "responseSample": {
+                "success": true,
+                "data": {
+                  "_id": "68fe6f6df235kkd30ac33c923c2",
+                  "name": "Steve",
+                  "email": "bruh@mail.com",
+                  "createdAt": "2025-10-26T18:58:42.053Z",
+                  "updatedAt": "2025-10-26T18:58:42.053Z",
+                  "__v": 0
+                }
+              }
             }
           ]
         }

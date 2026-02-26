@@ -1,4 +1,5 @@
-﻿import axios from 'axios';
+﻿import type { HttpMethod } from '@/models/types';
+import axios from 'axios';
 
 export const httpClient = axios.create({
   timeout: 15000,
@@ -15,7 +16,7 @@ type AuthProps = {
 
 export interface RequestProps {
   url: string;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method?: HttpMethod
   queryParams?: string | Record<string, any>;
   pathParams?: string;
   body?: Record<string, any>;
@@ -60,7 +61,7 @@ export async function executeHttpRequest({
   try {
     const response = await httpClient({
       url,
-      method: method.toLowerCase(),
+      method: method?.toLowerCase(),
       params: axiosParams,
       data: body,
       headers: finalHeaders,
@@ -115,7 +116,7 @@ export function generateCurl({ url, method, body, headers, queryParams }: Reques
   }
 
   return `
-  curl -X ${method.toUpperCase()} "${finalUrl}" \
+  curl -X ${method?.toUpperCase()} "${finalUrl}" \
   ${Object.entries(headers || {})
     .map(([k, v]) => `-H "${k}: ${v}"`)
     .join(' \\\n')} \
