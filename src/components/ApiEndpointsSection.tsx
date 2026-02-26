@@ -1,6 +1,6 @@
 import { methodColorMap } from '@/lib/constants';
 import type { ApiDefinition, ApiEndpoint, Endpoint, HttpMethod } from '@/models/types';
-import { LineChartIcon, ShieldCheck } from 'lucide-react';
+import { Link, ShieldCheck } from 'lucide-react';
 import type { Dispatch, SetStateAction } from 'react';
 
 function getMethodClasses(
@@ -40,7 +40,7 @@ export default function ApiEndpointsSection({
                 className="group hover:text-primary align-center cursor gap-3 text-lg"
               >
                 {group.groupName}
-                <LineChartIcon
+                <Link
                   size={17}
                   className={`opacity-0 duration-300 group-hover:opacity-100`}
                 />
