@@ -13,17 +13,15 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from '@/components/ui/command';
-import { Bot, HomeIcon, Info, Search } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
+import { HomeIcon, Info, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Kbd } from '../ui/kbd';
-import * as LucideIcons from 'lucide-react';
 
 export function CommandBar() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-
-  const apis = registry.apis;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -54,7 +52,6 @@ export function CommandBar() {
   }, [open, navigate]);
 
   const getIcon = (iconName?: string) => {
-    // Look up the icon, fallback to Bot if not found
     return (LucideIcons as any)[iconName || ''] || LucideIcons.Bot;
   };
 
@@ -125,7 +122,6 @@ export function CommandBar() {
                       navigate(`/api/docs/${api.id}`);
                     }}
                   >
-                    {/* 3. Render it as a JSX tag */}
                     <Icon className="mr-2 h-4 w-4" />
                     <span>{api.name}</span>
                   </CommandItem>
