@@ -45,15 +45,18 @@ export default function Home() {
         <div className="flex gap-4">
           <button
             key="create-docs-btn"
-            className="from-primary group hover:animate-gradient hover:animate-glow bg-size[200%_200%] align-center mt-10 gap-1 rounded-full! bg-linear-to-r via-indigo-500 to-violet-400 bg-left px-10 py-4 text-white transition-all! duration-100! hover:scale-105 focus-visible:gap-4 hover:gap-4 focus:outline-none"
+            className="from-primary group hover:animate-gradient hover:animate-glow bg-size[200%_200%] align-center mt-10 gap-1 rounded-full! bg-linear-to-r via-indigo-500 to-violet-400 bg-left px-10 py-4 text-white transition-all! duration-100! hover:scale-105 hover:gap-4 focus:outline-none focus-visible:gap-4"
             onClick={() => setPanelOpen(true)}
           >
             View Collection
-            <MoveRight className="w-0 overflow-hidden duration-200 group-focus-visible:w-5 group-hover:w-5" size={20} />
+            <MoveRight
+              className="w-0 overflow-hidden duration-200 group-hover:w-5 group-focus-visible:w-5"
+              size={20}
+            />
           </button>
           <button
             key="create-docs-btn"
-            className="align-center from-primary mt-10 gap-4 rounded-full! bg-linear-to-r to-violet-400 px-7 py-4 text-white transition-all! duration-100! hover:scale-105 focus-visible:outline-0 focus-visible:scale-105 hover:shadow-[0_2px_1px_#7e22fe17,0_4px_2px_#7e22fe17,0_8px_4px_#7e22fe17,0_16px_8px_#7e22fe17,0_32px_16px_#7e22fe17] focus-visible:shadow-[0_2px_1px_#7e22fe17,0_4px_2px_#7e22fe17,0_8px_4px_#7e22fe17,0_16px_8px_#7e22fe17,0_32px_16px_#7e22fe17]"
+            className="align-center from-primary mt-10 gap-4 rounded-full! bg-linear-to-r to-violet-400 px-7 py-4 text-white transition-all! duration-100! hover:scale-105 hover:shadow-[0_2px_1px_#7e22fe17,0_4px_2px_#7e22fe17,0_8px_4px_#7e22fe17,0_16px_8px_#7e22fe17,0_32px_16px_#7e22fe17] focus-visible:scale-105 focus-visible:shadow-[0_2px_1px_#7e22fe17,0_4px_2px_#7e22fe17,0_8px_4px_#7e22fe17,0_16px_8px_#7e22fe17,0_32px_16px_#7e22fe17] focus-visible:outline-0"
           >
             Star On Github <Github size={20} />
           </button>

@@ -16,7 +16,7 @@ type AuthProps = {
 
 export interface RequestProps {
   url: string;
-  method?: HttpMethod
+  method?: HttpMethod;
   queryParams?: string | Record<string, any>;
   pathParams?: string;
   body?: Record<string, any>;

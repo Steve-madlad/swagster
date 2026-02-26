@@ -17,7 +17,7 @@ export default function PrimaryButton({
       disabled={loading}
       className={cn(
         className,
-        'bg-primary hover:text-primary text-sm w-full hover:bg-transparent hover:border-primary flex gap-4 border-2 border-transparent py-5! transition-all! duration-100',
+        'bg-primary hover:text-primary hover:border-primary flex w-full gap-4 border-2 border-transparent py-5! text-sm transition-all! duration-100 hover:bg-transparent',
       )}
     >
       {loading ? (

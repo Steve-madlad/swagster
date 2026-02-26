@@ -3,7 +3,6 @@ import type { ApiDefinition, ApiEndpoint, Endpoint, HttpMethod } from '@/models/
 import { LineChartIcon, ShieldCheck } from 'lucide-react';
 import type { Dispatch, SetStateAction } from 'react';
 
-
 function getMethodClasses(
   method: HttpMethod,
   options?: {

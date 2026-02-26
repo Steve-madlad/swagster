@@ -159,10 +159,10 @@ export const ApiLink = ({
         className={`flex-between w-full duration-200 group-hover:pl-5 ${isActive ? 'pl-5' : ''} group-focus-visible:pl-5`}
       >
         <div className="col">
-            <p className="text-primary flex gap-2 text-base font-medium">
-              {name} {IconComponent && <IconComponent size={18} className="text-primary mt-0.75" />}
-            </p>
-            <p className="text-gray-700">{description}</p>
+          <p className="text-primary flex gap-2 text-base font-medium">
+            {name} {IconComponent && <IconComponent size={18} className="text-primary mt-0.75" />}
+          </p>
+          <p className="text-gray-700">{description}</p>
         </div>
 
         <ChevronRight
