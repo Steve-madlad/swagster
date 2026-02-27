@@ -145,7 +145,7 @@ export default function AuthModal() {
         <Button
           size={'icon-lg'}
           onClick={() => setOpen(true)}
-          className="bg-primary align-center fixed right-7 bottom-4 z-1 w-fit gap-3 rounded-full! px-6! py-5! text-sm text-white hover:scale-110 hover:scale-3d lg:bottom-7"
+          className="bg-primary align-center fixed right-4 md:right-7 bottom-4 z-1 w-fit gap-3 rounded-full! px-6! py-5! text-sm text-white hover:scale-110 hover:scale-3d lg:bottom-7"
         >
           Authorize <KeySquare size={50} />
         </Button>
