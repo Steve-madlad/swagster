@@ -4,11 +4,13 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import './index.css';
 import App from './App.tsx';
 import { Toaster } from 'sonner';
+import { Analytics } from '@vercel/analytics/next';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Router>
       <App />
+      <Analytics />
       <Toaster
         toastOptions={{
           style: {

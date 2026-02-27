@@ -40,10 +40,7 @@ export default function ApiEndpointsSection({
                 className="group hover:text-primary align-center cursor gap-3 text-lg"
               >
                 {group.groupName}
-                <Link
-                  size={17}
-                  className={`opacity-0 duration-300 group-hover:opacity-100`}
-                />
+                <Link size={17} className={`opacity-0 duration-300 group-hover:opacity-100`} />
               </a>
 
               <div className="col w-full space-y-4">

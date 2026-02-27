@@ -35,7 +35,7 @@ export async function executeHttpRequest({
   headers,
   auth,
 }: ExecuteHttpRequestProps) {
-  const startTime = performance.now(); 
+  const startTime = performance.now();
 
   const finalHeaders = {
     ...headers,
@@ -61,7 +61,7 @@ export async function executeHttpRequest({
       headers: finalHeaders,
     });
 
-    const endTime = performance.now(); 
+    const endTime = performance.now();
     const executionTime = endTime - startTime;
 
     return {
@@ -71,7 +71,7 @@ export async function executeHttpRequest({
       SwagsterexecutionTimeMs: Number(executionTime.toFixed(2)),
     };
   } catch (error: any) {
-    const endTime = performance.now(); 
+    const endTime = performance.now();
     const executionTime = endTime - startTime;
 
     if (error.response) {

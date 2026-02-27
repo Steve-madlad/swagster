@@ -56,7 +56,7 @@ export default function Home() {
             />
           </button>
 
-          <GithubStarButton/>
+          <GithubStarButton />
         </div>
       </div>
 

@@ -1,7 +1,7 @@
-import { Routes, Route } from 'react-router-dom';
-import Home from './pages/home';
+import { Route, Routes } from 'react-router-dom';
 import About from './pages/about';
 import ApiDoc from './pages/api-doc';
+import Home from './pages/home';
 
 export default function App() {
   return (
