@@ -35,7 +35,7 @@ export function Alert({
         <AlertCircleIcon className="size-4.5 translate-y-0.5!" />
       )}
       <AlertTitle className="text-base">{title}</AlertTitle>
-      <AlertDescription className="text-xs">{children}</AlertDescription>
+      <AlertDescription className="text-xs overflow-x-auto w-full">{children}</AlertDescription>
       {alertAction && (
         <AlertAction>
           <Button onClick={() => alertAction()}>{alertActionText}</Button>

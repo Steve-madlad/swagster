@@ -29,8 +29,6 @@ export default function Modal({
     if (!value) onClose();
   };
 
-  console.log(headerContent);
-
   return (
     <Dialog open={open} onOpenChange={handleChange}>
       {!triggerElement
