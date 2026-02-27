@@ -1,6 +1,6 @@
 'use client';
 
-import registry from '@/api-data/registry.json';
+import registry from '@/api-data/registry';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -89,7 +89,7 @@ export function CommandBar() {
               >
                 <HomeIcon />
                 <span>Home</span>
-                <CommandShortcut className='flex'>
+                <CommandShortcut className="flex">
                   ⌘<b className="w-4! text-center">H</b>
                 </CommandShortcut>
               </CommandItem>
@@ -102,7 +102,7 @@ export function CommandBar() {
               >
                 <Info />
                 <span>About</span>
-                <CommandShortcut className='flex'>
+                <CommandShortcut className="flex">
                   ⌘<b className="w-4! text-center">I</b>
                 </CommandShortcut>
               </CommandItem>

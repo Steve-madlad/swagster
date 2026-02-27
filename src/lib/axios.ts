@@ -28,23 +28,19 @@ export interface ExecuteHttpRequestProps extends RequestProps {
 }
 
 export async function executeHttpRequest({
-  // baseUrl,
   url,
   method,
-  // path,
-  // pathParams,
   queryParams,
   body,
   headers,
   auth,
 }: ExecuteHttpRequestProps) {
-  // const url = baseUrl + pathParams;
+  const startTime = performance.now(); 
 
   const finalHeaders = {
     ...headers,
   } as Record<string, any>;
 
-  // Handle authentication if provided
   if (auth?.type === 'Bearer' || auth?.token) {
     finalHeaders[auth.headerName || 'Authorization'] =
       `${auth?.type === 'Bearer' ? 'Bearer ' : ''}${auth.token}`;
@@ -54,9 +50,7 @@ export async function executeHttpRequest({
     finalHeaders[auth.headerName || 'X-Api-Key'] = auth.token;
   }
 
-  console.log({ finalHeaders });
-
-  const axiosParams: any = queryParams && typeof queryParams === 'object' ? queryParams : undefined;
+  const axiosParams = queryParams && typeof queryParams === 'object' ? queryParams : undefined;
 
   try {
     const response = await httpClient({
@@ -67,18 +61,24 @@ export async function executeHttpRequest({
       headers: finalHeaders,
     });
 
-    console.log({ response });
+    const endTime = performance.now(); 
+    const executionTime = endTime - startTime;
 
     return {
       data: response.data,
       headers: response.headers,
       SwagsterStatusCode: response.status || 'UNKNOWN ERROR',
+      SwagsterexecutionTimeMs: Number(executionTime.toFixed(2)),
     };
   } catch (error: any) {
+    const endTime = performance.now(); 
+    const executionTime = endTime - startTime;
+
     if (error.response) {
       return {
         error: error.response.data,
         SwagsterStatusCode: error.response.status || 'UNKNOWN ERROR',
+        SwagsterexecutionTimeMs: Number(executionTime.toFixed(2)),
       };
     }
 
@@ -101,6 +101,7 @@ export async function executeHttpRequest({
     return {
       error: { success: false, message },
       SwagsterStatusCode: error?.code || 'UNKNOWN ERROR',
+      SwagsterexecutionTimeMs: Number(executionTime.toFixed(2)),
     };
   }
 }

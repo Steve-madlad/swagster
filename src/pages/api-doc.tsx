@@ -8,6 +8,7 @@ import { executeHttpRequest, generateCurl, type ExecuteHttpRequestProps } from '
 import { methodColorMap } from '@/lib/constants';
 import { type ApiDefinition, type Endpoint, type HttpMethod } from '@/models/types';
 import {
+  BrushCleaning,
   Computer,
   Copy,
   Loader2,
@@ -15,13 +16,14 @@ import {
   SendHorizontal,
   Server,
   ShieldCheck,
+  Timer,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { nightOwl } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { toast } from 'sonner';
-import registry from '../api-data/registry.json';
+import registry from '../api-data/registry';
 import { Button } from '../components/ui/button';
 
 export default function ApiDoc() {
@@ -43,6 +45,20 @@ export default function ApiDoc() {
 
   const [executionError, setExecutionError] = useState<ExecutionError | undefined>();
   const [executionResponse, setExecutionResponse] = useState<any>(undefined);
+  const [executionTime, setExecutionTime] = useState<number | undefined>();
+
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (apiPanelOpen) {
+      const previousFocus = document.activeElement as HTMLElement;
+      modalRef.current?.focus();
+
+      return () => {
+        previousFocus?.focus();
+      };
+    }
+  }, [apiPanelOpen]);
 
   async function copyToClipboard(text?: string) {
     if (!text) return;
@@ -110,8 +126,15 @@ export default function ApiDoc() {
     };
   };
 
+  function handleExecutionTime(ms: number) {
+    const seconds = ms / 1000;
+    setExecutionTime(Number(seconds.toFixed(2)));
+  }
+
   async function submitRequest(vals?: Record<string, unknown>) {
     setExecutionLoading(true);
+
+    console.log(vals);
 
     const extractedData = extractResources(vals);
     const resourceUrl = vals ? extractedData?.resourceUrl : selectedEndpoint?.path;
@@ -138,11 +161,13 @@ export default function ApiDoc() {
     if (response?.data?.success) {
       setExecutionError(undefined);
       setExecutionResponse(response.data);
+      handleExecutionTime(response.SwagsterexecutionTimeMs);
     } else {
       setExecutionError({
         ...response.error,
         SwagsterStatusCode: response.SwagsterStatusCode,
       });
+      handleExecutionTime(response.SwagsterexecutionTimeMs);
     }
 
     setExecutionLoading(false);
@@ -151,7 +176,7 @@ export default function ApiDoc() {
   const formattedError = () => {
     if (!executionError) return undefined;
 
-    const { SwagsterStatusCode, ...rest } = executionError;
+    const { SwagsterStatusCode, SwagsterexecutionTimeMs, ...rest } = executionError;
     return rest;
   };
 
@@ -252,6 +277,8 @@ export default function ApiDoc() {
       {apiPanelOpen && (
         <div
           className={`fixed inset-0 hidden h-screen w-screen bg-black/30 ${apiPanelOpen ? 'flex-center' : 'hidden'}`}
+          ref={modalRef}
+          tabIndex={-1}
           onClick={() => {
             setApiPanelOpen(false);
             setFormValues(undefined);
@@ -296,7 +323,7 @@ export default function ApiDoc() {
                         <div className="bg-muted flex-between mt-2 rounded-md border border-gray-200 px-4 py-2 text-black">
                           <div className="flex gap-4">
                             <div
-                              className={`w-fit rounded-md px-3 py-1 text-xs text-white! ${methodColorMap[selectedEndpoint?.method as HttpMethod].custom}`}
+                              className={`w-fit rounded-md px-3 py-1 text-xs text-white! ${methodColorMap[selectedEndpoint?.method as HttpMethod].solid}`}
                             >
                               {selectedEndpoint?.method}
                             </div>
@@ -309,6 +336,7 @@ export default function ApiDoc() {
                           <Button
                             onClick={() => copyToClipboard(selectedEndpoint?.path)}
                             size={'icon-sm'}
+                            tabIndex={showSecondPanel ? -1 : 0}
                             className="text-primary rounded-md! border-gray-400! bg-white! p-3! hover:bg-white/20!"
                           >
                             <Copy />
@@ -356,6 +384,7 @@ export default function ApiDoc() {
                         size={'icon-lg'}
                         onClick={decideFirstPanelAction}
                         loading={executionLoading}
+                        tabIndex={showSecondPanel ? -1 : 0}
                         className="mt-10 font-semibold lg:mt-auto"
                       >
                         Send Request <SendHorizontal />
@@ -363,28 +392,33 @@ export default function ApiDoc() {
                     </div>
                   </div>
 
-                  <div className="col bg-muted h-full w-full shrink-0 p-5 lg:overflow-y-auto">
-                    <Button
-                      size={'icon-lg'}
-                      className="mb-4 flex w-fit gap-2 bg-transparent! pl-0! text-sm text-black transition-all! duration-100 hover:gap-3"
-                      onClick={() => setShowSecondPanel(false)}
+                  {showRequestForm() && (
+                    <div
+                      tabIndex={-1}
+                      className="col bg-muted h-full w-full shrink-0 p-5 lg:overflow-y-auto"
                     >
-                      <MoveLeft /> Back
-                    </Button>
+                      <Button
+                        size={'icon-lg'}
+                        className={`mb-4 flex w-fit gap-2 bg-transparent! pl-0! text-sm text-black transition-all! duration-100 hover:gap-3 ${!showSecondPanel ? 'pointer-events-none' : ''}`}
+                        tabIndex={showSecondPanel ? 0 : -1}
+                        onClick={() => setShowSecondPanel(false)}
+                      >
+                        <MoveLeft /> Back
+                      </Button>
 
-                    {showRequestForm() && (
                       <FormBuilder
                         formConfig={formattedFormConfig()}
+                        disableForm={!showSecondPanel}
                         onSubmit={(vals) => submitRequest(vals)}
                         returnValues={(vals) => setFormValues(retriveBodyFields(vals))}
                       />
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div
-                className={`max-h-[calc(35rem-74.4px)] flex-1 bg-[#0f172a] py-5 lg:min-h-0 lg:max-w-1/2 ${executionLoading && 'col-full-center'}`}
+                className={`relative max-h-[calc(35rem-74.4px)] flex-1 bg-[#0f172a] pt-5 pb-13 lg:min-h-0 lg:max-w-1/2 ${executionLoading && 'col-full-center'}`}
               >
                 {!executionLoading && (
                   <div className="flex-between px-7">
@@ -412,7 +446,7 @@ export default function ApiDoc() {
                           className={`align-center flex w-fit gap-2 rounded-full py-1.5 text-xs/snug ${executionError ? 'bg-destructive/40' : 'bg-[#10b981]/40'} px-3 text-white!`}
                         >
                           <div
-                            className={`size-1.5 animate-pulse rounded-full ${executionError ? 'bg-destructive' : 'bg-[#10b981]'}`}
+                            className={`size-1.5 animate-pulse rounded-full ${executionError ? 'bg-destructive' : 'bg-[#30a36c]'}`}
                           ></div>
 
                           {executionError
@@ -461,7 +495,9 @@ export default function ApiDoc() {
 
                 <div className={`rounded-md ${executionLoading && 'flex-center bg-transparent'}`}>
                   {executionLoading ? (
-                    <Loader2 size={35} className="text-primary! animate-spin" />
+                    <div className="flex-center h-84">
+                      <Loader2 size={35} className="text-primary! animate-spin" />
+                    </div>
                   ) : (
                     <div>
                       <SyntaxHighlighter
@@ -473,7 +509,7 @@ export default function ApiDoc() {
                           padding: '1rem 1.75rem ',
                           marginTop: '1rem',
                           overflow: 'auto',
-                          minHeight: '18.75rem',
+                          minHeight: '21rem',
                           maxHeight: 'calc(34.98rem - 11.9rem)',
                           fontSize: '13px',
                           colorScheme: 'dark',
@@ -503,6 +539,28 @@ export default function ApiDoc() {
                       </SyntaxHighlighter>
                     </div>
                   )}
+                </div>
+
+                <div className="absolute bottom-0 left-0 w-full p-3 px-5 text-xs font-bold">
+                  <div className="bg-muted pointer-events-none absolute bottom-0 left-0 z-0 h-13 w-full"></div>
+
+                  <div className="text-primary relative z-20 flex justify-end gap-5">
+                    {!executionLoading && (executionResponse || executionError) && (
+                      <div className="mt-1.25 flex items-center gap-1">
+                        <Timer strokeWidth="2.5" size={13} className="mb-0.75" /> {executionTime}s
+                      </div>
+                    )}
+                    <Button
+                      onClick={() => {
+                        setExecutionResponse(undefined);
+                        setExecutionError(undefined);
+                      }}
+                      className="transition-all! duration-100"
+                      disabled={(!executionError && !executionResponse) || executionLoading}
+                    >
+                      Clear <BrushCleaning />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>

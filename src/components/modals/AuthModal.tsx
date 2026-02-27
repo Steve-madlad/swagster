@@ -1,5 +1,7 @@
-import registry from '@/api-data/registry.json';
+import registry from '@/api-data/registry';
+import { executeHttpRequest } from '@/lib/axios';
 import { isTokenExpired } from '@/lib/utils';
+import type { HttpMethod } from '@/models/types';
 import {
   AlertTriangle,
   BadgeCheck,
@@ -14,8 +16,6 @@ import { Alert } from '../custom/Alert';
 import Modal from '../custom/Modal';
 import FormBuilder, { type FieldProps } from '../form/FormBuilder';
 import { Button } from '../ui/button';
-import type { HttpMethod } from '@/models/types';
-import { executeHttpRequest } from '@/lib/axios';
 
 export default function AuthModal() {
   const [open, setOpen] = useState(false);
@@ -50,7 +50,14 @@ export default function AuthModal() {
   async function submitAuthRequest(vals: Record<string, unknown>) {
     if (!api) return;
 
-    const authEndpoint = api?.resources[0].endpoints?.[0];
+    const authEndpoint = api?.resources
+      .find((resource) => resource.groupName === 'Authentication')
+      ?.endpoints.find((endpoint) => 'isLogin' in endpoint && endpoint.isLogin === true);
+
+    if (!authEndpoint) {
+      toast.error('Authentication endpoint not found');
+      return;
+    }
 
     const response = await executeHttpRequest({
       url: api.baseUrl + authEndpoint.path,
@@ -91,13 +98,13 @@ export default function AuthModal() {
         : {
             icon: BadgeCheck,
             title: 'Authorized',
-            message: 'API Is Authorized',
+            message: 'API is authorized',
             variant: 'success' as const,
-            className: 'bg-[#10b981]/20',
+            className: 'bg-[#30a36c]/40',
           };
 
       return (
-        <div className="w-full space-y-4">
+        <div className="w-full space-y-4 p-7">
           <Alert {...alertConfig}>{alertConfig.message}</Alert>
 
           <Button
@@ -111,15 +118,17 @@ export default function AuthModal() {
       );
     } else {
       return (
-        <FormBuilder
-          formConfig={api?.resources[0].endpoints?.[0].request.body as FieldProps[]}
-          onSubmit={submitAuthRequest}
-          alertText={authError}
-          buttonStyles="mt-auto text-md text-base!"
-          buttonText="Authorize"
-          buttonIcon={<KeySquare />}
-          disableGroupuing
-        />
+        <div className="w-full p-7">
+          <FormBuilder
+            formConfig={api?.resources[0].endpoints?.[0].request.body as FieldProps[]}
+            onSubmit={submitAuthRequest}
+            alertText={authError}
+            buttonStyles="mt-auto text-md text-base!"
+            buttonText="Authorize"
+            buttonIcon={<KeySquare />}
+            disableGroupuing
+          />
+        </div>
       );
     }
   };

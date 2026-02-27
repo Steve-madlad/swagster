@@ -55,8 +55,9 @@ export interface ApiDefinition {
   shortDescription: string;
   description: string;
   version: string;
+  icon?: string;
   baseUrl: string;
-  isExampleApi: boolean;
+  isExampleApi?: boolean;
   rateLimit: RateLimit;
   resources: ApiResourceGroup[];
   authentication: AuthenticationConfig;

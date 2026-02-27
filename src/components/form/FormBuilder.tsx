@@ -32,14 +32,15 @@ const generateZodSchema = (config: FieldProps[]) => {
     const key = field.name;
     let validator: z.ZodTypeAny;
 
-    // 1️⃣ Base Type
     if (field.type === 'number') {
-      validator = z.coerce.number().pipe(z.number({ message: `${key} must be a number` }));
+      validator = z.preprocess(
+        (v) => (v === '' ? undefined : v),
+        z.coerce.number({ message: `${key} must be a number` }),
+      );
     } else {
       validator = z.string();
     }
 
-    // 2️⃣ Enum (override string validator if enum exists)
     if (field.type === 'string' && field.enum?.length) {
       const enumValidator = z.enum(field.enum, {
         message: `Please select a valid ${key}`,
@@ -52,14 +53,12 @@ const generateZodSchema = (config: FieldProps[]) => {
       }
     }
 
-    // 3️⃣ Email inference (only apply if NOT enum)
     if (field.type === 'string' && !field.enum && key.toLowerCase().includes('email')) {
       validator = z.email({
         message: 'Please enter a valid email address',
       });
     }
 
-    // 4️⃣ Required vs Optional
     if (field.required) {
       if (field.type === 'string' && !field.enum) {
         validator = (validator as z.ZodString).min(1, {
@@ -83,6 +82,7 @@ interface FormBuilderProps {
   returnValues?: (vals: Record<string, unknown>) => void;
   alertText?: string | Record<string, unknown>;
   disableGroupuing?: boolean;
+  disableForm?: boolean;
   buttonStyles?: string;
   buttonText?: string;
   buttonIcon?: ReactNode;
@@ -94,6 +94,7 @@ export default function FormBuilder({
   isLoading,
   returnValues,
   disableGroupuing = false,
+  disableForm = false,
   alertText,
   buttonStyles,
   buttonText,
@@ -154,41 +155,41 @@ export default function FormBuilder({
   }, {});
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="col w-full grow space-y-6">
-      {!disableGroupuing ? (
-        Object.entries(groupedData).map(([source, fields]) => (
-          <section key={source} className="mb-8 space-y-4">
-            <h3 className="mb-4 text-sm font-semibold capitalize">{source} Parameters</h3>
-            <Fields fields={fields} errors={errors} control={control} register={register} />
-          </section>
-        ))
-      ) : (
-        <Fields fields={formConfig} errors={errors} control={control} register={register} />
-      )}
-
-      {alertText && (
-        <Alert
-          variant="destructive"
-          className="border-destructive bg-destructive/10 overflow-x-auto"
-          title={'Authorization Failed'}
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <fieldset disabled={disableForm} className="col w-full grow space-y-6">
+        {!disableGroupuing ? (
+          Object.entries(groupedData).map(([source, fields]) => (
+            <section key={source} className="mb-8 space-y-4">
+              <h3 className="mb-4 text-sm font-semibold capitalize">{source} Parameters</h3>
+              <Fields fields={fields} errors={errors} control={control} register={register} />
+            </section>
+          ))
+        ) : (
+          <Fields fields={formConfig} errors={errors} control={control} register={register} />
+        )}
+        {alertText && (
+          <Alert
+            variant="destructive"
+            className="border-destructive bg-destructive/10 overflow-x-auto"
+            title={'Authorization Failed'}
+          >
+            {typeof alertText === 'string' ? (
+              alertText
+            ) : (
+              <pre>{JSON.stringify(alertText, null, 2)}</pre>
+            )}
+          </Alert>
+        )}
+        <PrimaryButton
+          type="submit"
+          size={'icon-lg'}
+          className={cn(buttonStyles, 'mt-auto py-4.5! font-semibold')}
+          loading={isSubmitting}
         >
-          {typeof alertText === 'string' ? (
-            alertText
-          ) : (
-            <pre>{JSON.stringify(alertText, null, 2)}</pre>
-          )}
-        </Alert>
-      )}
-
-      <PrimaryButton
-        type="submit"
-        size={'icon-lg'}
-        className={cn(buttonStyles, 'mt-auto py-4.5! font-semibold')}
-        loading={isSubmitting}
-      >
-        {buttonText || 'Send Request'}
-        {buttonIcon ?? <SendHorizontal />}
-      </PrimaryButton>
+          {buttonText || 'Send Request'}
+          {buttonIcon ?? <SendHorizontal />}
+        </PrimaryButton>
+      </fieldset>
     </form>
   );
 }
@@ -236,7 +237,6 @@ export const Fields = ({ fields, errors, control, register }: FieldsProps) => {
             }
             placeholder={field.description}
             id={field.name}
-            step={field.type === 'number' ? '0.01' : undefined}
             {...register(field.name as never)}
             className={`${hasError ? 'border-red-500 focus-visible:ring-red-500' : ''} pl-4 text-xs!`}
           />

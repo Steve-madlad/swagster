@@ -1,4 +1,4 @@
-import registry from '@/api-data/registry.json';
+import registry from '@/api-data/registry';
 import * as LucideIcons from 'lucide-react';
 import { ChevronRight, Search, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
