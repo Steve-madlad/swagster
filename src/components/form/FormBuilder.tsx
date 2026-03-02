@@ -33,9 +33,13 @@ const generateZodSchema = (config: FieldProps[]) => {
     let validator: z.ZodTypeAny;
 
     if (field.type === 'number') {
+      const baseNumber = z.coerce.number({
+        message: `${key} must be a number`,
+      });
+
       validator = z.preprocess(
         (v) => (v === '' ? undefined : v),
-        z.coerce.number({ message: `${key} must be a number` }),
+        field.required ? baseNumber : baseNumber.optional(),
       );
     } else {
       validator = z.string();
@@ -65,7 +69,7 @@ const generateZodSchema = (config: FieldProps[]) => {
           message: `${key} is required`,
         });
       }
-    } else {
+    } else if (field.type !== 'number') {
       validator = validator.optional();
     }
 

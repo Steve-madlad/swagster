@@ -221,6 +221,9 @@ button {
   .xy-center {
     @apply items-center justify-center;
   }
+  .size-screen {
+    @apply h-screen w-screen;
+  }
   .cursor {
     @apply cursor-pointer;
   }

@@ -16,7 +16,7 @@ import {
   SendHorizontal,
   Server,
   ShieldCheck,
-  Timer,
+  Timer
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
@@ -29,6 +29,26 @@ import { Button } from '../components/ui/button';
 export default function ApiDoc() {
   const params = useParams();
   const api = registry.apis.find((api) => api.id === params.name);
+
+  if (!api) {
+    return (
+      <div className="col h-screen">
+        <Navbar />
+        <div className="flex-center col-center text-primary grow text-center text-3xl font-medium">
+          <p className="from-primary bg-linear-to-r to-violet-400 bg-clip-text text-[12rem] font-bold text-transparent">
+            404
+          </p>
+          Sorry we counldn't find that API :(
+          <Link
+            className="align-center bg-primary mt-12 gap-3 rounded-full px-6 py-1 text-xl text-white!"
+            to="/"
+          >
+            Go Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const [apiPanelOpen, setApiPanelOpen] = useState(false);
   const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint>();
@@ -258,7 +278,7 @@ export default function ApiDoc() {
           </Link>
 
           {api?.isExampleApi && (
-            <div className="bg-tropic-blue/40 before:bg-primary relative mt-5 w-120 overflow-hidden rounded-md px-5 py-2 text-sm font-semibold before:absolute before:top-0 before:left-0 before:h-full before:w-1">
+            <div className="bg-tropic-blue/40 before:bg-primary relative mt-5 w-full overflow-hidden rounded-md px-5 py-2 text-sm font-semibold before:absolute before:top-0 before:left-0 before:h-full before:w-1 sm:w-120">
               <p className="flex gap-2">
                 This is an example API. It is not intended for real use. <br />
                 Check The Subscription API for testing.
@@ -276,7 +296,7 @@ export default function ApiDoc() {
 
       {apiPanelOpen && (
         <div
-          className={`fixed inset-0 hidden h-screen w-screen bg-black/30 ${apiPanelOpen ? 'flex-center' : 'hidden'}`}
+          className={`size-screen fixed inset-0 hidden bg-black/30 ${apiPanelOpen ? 'flex-center' : 'hidden'}`}
           ref={modalRef}
           tabIndex={-1}
           onClick={() => {
