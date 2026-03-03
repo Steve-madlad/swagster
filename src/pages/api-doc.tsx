@@ -16,7 +16,7 @@ import {
   SendHorizontal,
   Server,
   ShieldCheck,
-  Timer
+  Timer,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
@@ -31,6 +31,10 @@ export default function ApiDoc() {
   const api = registry.apis.find((api) => api.id === params.name);
 
   if (!api) {
+    useEffect(() => {
+      document.title = 'API not found';
+    }, []);
+
     return (
       <div className="col h-screen">
         <Navbar />
@@ -49,6 +53,10 @@ export default function ApiDoc() {
       </div>
     );
   }
+
+  useEffect(() => {
+    document.title = `${api.name} docs`;
+  }, [api.name]);
 
   const [apiPanelOpen, setApiPanelOpen] = useState(false);
   const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint>();
@@ -259,7 +267,7 @@ export default function ApiDoc() {
     <div className="min-h-screen">
       <Navbar />
 
-      <div>
+      <main>
         <div className="p-6 px-6 md:px-12">
           <div className="mb-3 flex gap-2">
             <h1 className="text-4xl!">{api?.name}</h1>
@@ -292,7 +300,7 @@ export default function ApiDoc() {
           setSelectedEndpoint={setSelectedEndpoint}
           setApiPanelOpen={setApiPanelOpen}
         />
-      </div>
+      </main>
 
       {apiPanelOpen && (
         <div

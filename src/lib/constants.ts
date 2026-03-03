@@ -30,3 +30,7 @@ export const methodColorMap = {
     hoverLight: 'hover:bg-tropic-red/60 focus-visible:bg-tropic-red/60',
   },
 } as const;
+
+export const routeConfig: Record<string, string> = {
+  '/about': 'Aboout Us',
+};
