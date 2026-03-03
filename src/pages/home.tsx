@@ -14,8 +14,7 @@ export default function Home() {
         <AnimatedGridPattern
           numSquares={40}
           maxOpacity={0.5}
-          duration={6}
-          repeatDelay={3}
+          duration={2}
           className={cn(
             'mask-[radial-gradient(900px_circle_at_center,white,transparent)]',
             'inset-x-0 inset-y-[-30%] h-[200%] skew-y-12',

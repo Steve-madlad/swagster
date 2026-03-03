@@ -120,6 +120,7 @@ export function AnimatedGridPattern({
               repeat: 1,
               delay: index * 0.1,
               repeatType: 'reverse',
+              repeatDelay: repeatDelay
             }}
             onAnimationComplete={() => updateSquarePosition(id)}
             key={`${x}-${y}-${index}`}
