@@ -9,7 +9,7 @@ export default function Home() {
   const [panelOpen, setPanelOpen] = useState(false);
 
   return (
-    <div className="min-size-screen col-full-center gap-3">
+    <main className="min-size-screen col-full-center gap-3">
       <div className="relative flex h-screen w-screen items-center justify-center overflow-hidden rounded-lg p-20">
         <AnimatedGridPattern
           numSquares={40}
@@ -24,7 +24,7 @@ export default function Home() {
       </div>
 
       <div className="col-center absolute z-0 px-5">
-        <img src="/logo.png" width={97.5} className="bobbing-animation mb-3" alt="swagster logo" />
+        <img src="/logo.webp" width={98} height={105} className="bobbing-animation mb-3" alt="swagster logo" />
         <span
           key="latest-docs"
           className="flex-center from-primary w-fit gap-3 rounded-full bg-linear-to-r to-violet-400 px-7 py-1 text-xs text-white shadow-md"
@@ -61,6 +61,6 @@ export default function Home() {
       </div>
 
       <ApiSearch open={panelOpen} onClose={() => setPanelOpen(false)} />
-    </div>
+    </main>
   );
 }

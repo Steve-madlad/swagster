@@ -5,7 +5,7 @@ export default function Navbar() {
   return (
     <nav className="flex bg-black px-6 py-3 text-white md:px-12">
       <div className="align-center gap-3">
-        <img src="/logo.png" width={40} alt="swagster logo" />
+        <img src="/logo.webp" width={40} height={40} alt="swagster logo" />
         <div className="col">
           <Link to={'/'} className="text-lg font-medium text-white!">
             Swagster
