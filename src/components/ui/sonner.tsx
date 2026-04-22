@@ -1,4 +1,3 @@
-import { useTheme } from 'next-themes';
 import { Toaster as Sonner, type ToasterProps } from 'sonner';
 import {
   RiCheckboxCircleLine,
@@ -9,7 +8,7 @@ import {
 } from '@remixicon/react';
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = 'system' } = useTheme();
+  const theme = 'system';
 
   return (
     <Sonner
