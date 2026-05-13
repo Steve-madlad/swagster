@@ -1242,6 +1242,99 @@ const registry = {
         headerName: 'Authorization',
       },
     },
+    {
+      id: 'bank-co-api',
+      name: 'Bank Co Game Coordinator',
+      shortDescription: "Handles matchmaking and game state for Bank Co's online game.",
+      description:
+        "The real-time game coordinator for Bank Co's online multiplayer game. It manages player matchmaking, game state synchronization, and turn-based logic. This API serves as the backbone for the game's online experience, ensuring smooth gameplay and real-time updates for players.",
+      version: '1.0',
+      icon: 'Gamepad2',
+      baseUrl: 'https://bank-co-coordinator.vercel.app/api/v1',
+      rateLimit: {
+        limit: 15,
+        window: 'minute',
+      },
+      resources: [
+        {
+          groupName: 'Matchmaking',
+          endpoints: [
+            {
+              description: 'Find Match',
+              path: '/tables/find-match',
+              method: 'POST',
+              authenticated: false,
+              isLogin: false,
+              request: {
+                queryParams: null,
+                pathParams: null,
+                headers: null,
+                body: [
+                  {
+                    name: 'playerName',
+                    type: 'string',
+                    required: true,
+                    description: 'The Player Name',
+                  },
+                ],
+              },
+              responseSample: {
+                success: true,
+                message: 'Match Found',
+                data: {
+                  tableId: 'tbl-OsX0Kxvr2K6xi3qk3ez',
+                  status: 'waiting',
+                  createdAt: 1778687235506,
+                  updatedAt: 1778687235506,
+                  roundContributions: 200,
+                  pot: 0,
+                  currentRound: 0,
+                  currentTurn: null,
+                  phase: 'waiting',
+                  _meta: {
+                    totalPlayers: 1,
+                    maxPlayers: 4,
+                  },
+                  players: {
+                    'plr-OsX0KxwGC525OcOwhXL': {
+                      uid: 'plr-OsX0KxwGC525OcOwhXL',
+                      displayName: 'Satenaw',
+                      seat: 0,
+                      chips: 1000,
+                      isEliminated: false,
+                      betAmount: null,
+                      decision: null,
+                      lastActionAt: null,
+                      hand: null,
+                      wonLastRound: null,
+                      lostLastRound: null,
+                    },
+                  },
+                  roundHistory: {},
+                  playerData: {
+                    uid: 'plr-OsX0KxwGC525OcOwhXL',
+                    displayName: 'Satenaw',
+                    seat: 0,
+                    chips: 1000,
+                    isEliminated: false,
+                    betAmount: null,
+                    decision: null,
+                    lastActionAt: null,
+                    hand: null,
+                    wonLastRound: null,
+                    lostLastRound: null,
+                  },
+                },
+              },
+            },
+          ],
+        },
+      ],
+      authentication: {
+        type: 'Bearer',
+        headerName: 'Authorization',
+      },
+    },
   ],
 } satisfies { apis: ApiDefinition[] };
 
