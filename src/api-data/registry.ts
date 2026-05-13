@@ -1279,8 +1279,6 @@ const registry = {
                 ],
               },
               responseSample: {
-                success: true,
-                message: 'Match Found',
                 data: {
                   tableId: 'tbl-OsX0Kxvr2K6xi3qk3ez',
                   status: 'waiting',
@@ -1325,6 +1323,8 @@ const registry = {
                     lostLastRound: null,
                   },
                 },
+                success: true,
+                message: 'Match Found',
               },
             },
           ],
