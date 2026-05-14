@@ -58,9 +58,9 @@ export interface ApiDefinition {
   icon?: string;
   baseUrl: string;
   isExampleApi?: boolean;
-  rateLimit: RateLimit;
+  rateLimit: RateLimit | null;
   resources: ApiResourceGroup[];
-  authentication: AuthenticationConfig;
+  authentication: AuthenticationConfig | null;
 }
 
 export interface ModalProps {

@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import PrimaryButton from '@/components/PrimaryButton';
 import { executeHttpRequest, generateCurl, type ExecuteHttpRequestProps } from '@/lib/axios';
 import { methodColorMap } from '@/lib/constants';
+import { cn } from '@/lib/utils';
 import { type ApiDefinition, type Endpoint, type HttpMethod } from '@/models/types';
 import {
   BrushCleaning,
@@ -171,7 +172,7 @@ export default function ApiDoc() {
       url: api?.baseUrl + resourceUrl,
       method: selectedEndpoint?.method,
       auth: {
-        headerName: api?.authentication.headerName || '',
+        headerName: api?.authentication?.headerName || '',
         token: localStorage.getItem('auth-' + api?.name) || '',
       },
     };
@@ -336,10 +337,15 @@ export default function ApiDoc() {
               </div>
             </div>
 
-            <div className="col min-h-0 gap-5 overflow-x-hidden overflow-y-auto lg:flex! lg:grow lg:flex-row! lg:gap-0 lg:overflow-y-visible">
-              <div className="relative flex-1 gap-5 lg:max-h-[calc(35rem-74.4px)] lg:min-h-0 lg:gap-0 lg:overflow-x-hidden">
+            <div
+              className={cn(
+                { 'bg-white': !showSecondPanel, 'bg-muted': showSecondPanel },
+                'col min-h-0 gap-5 overflow-x-hidden overflow-y-auto duration-500 lg:flex! lg:grow lg:flex-row! lg:gap-0 lg:overflow-y-visible',
+              )}
+            >
+              <div className="bg-muted relative flex-1 gap-5 lg:max-h-[calc(35rem-74.4px)] lg:min-h-0 lg:gap-0 lg:overflow-x-hidden">
                 <div
-                  className={`flex h-auto transition-transform duration-500 ease-in-out lg:h-full ${
+                  className={`flex h-auto bg-white transition-transform duration-500 ease-in-out lg:h-full ${
                     showSecondPanel ? '-translate-x-full' : 'translate-x-0'
                   }`}
                 >
@@ -388,7 +394,7 @@ export default function ApiDoc() {
                             <p className="pl-6 text-xs">
                               {selectedEndpoint?.authenticated ? 'Required ' : 'Not Required'}
 
-                              {selectedEndpoint?.authenticated && `(${api?.authentication.type})`}
+                              {selectedEndpoint?.authenticated && `(${api?.authentication?.type})`}
                             </p>
                           </div>
 
@@ -570,7 +576,7 @@ export default function ApiDoc() {
                 </div>
 
                 <div className="absolute bottom-0 left-0 w-full p-3 px-5 text-xs font-bold">
-                  <div className="bg-muted pointer-events-none absolute bottom-0 left-0 z-0 h-13 w-full"></div>
+                  <div className="bg-input pointer-events-none absolute bottom-0 left-0 z-0 h-13 w-full"></div>
 
                   <div className="text-primary relative z-20 flex justify-end gap-5">
                     {!executionLoading && (executionResponse || executionError) && (

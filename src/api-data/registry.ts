@@ -1251,16 +1251,13 @@ const registry = {
       version: '1.0',
       icon: 'Gamepad2',
       baseUrl: 'https://bank-co-coordinator.vercel.app/api/v1',
-      rateLimit: {
-        limit: 15,
-        window: 'minute',
-      },
+      rateLimit: null,
       resources: [
         {
           groupName: 'Matchmaking',
           endpoints: [
             {
-              description: 'Find Match',
+              description: 'Find Game',
               path: '/tables/find-match',
               method: 'POST',
               authenticated: false,
@@ -1330,10 +1327,7 @@ const registry = {
           ],
         },
       ],
-      authentication: {
-        type: 'Bearer',
-        headerName: 'Authorization',
-      },
+      authentication: null,
     },
   ],
 } satisfies { apis: ApiDefinition[] };
