@@ -1326,6 +1326,31 @@ const registry = {
             },
           ],
         },
+        {
+          groupName: 'Dummy Table Data',
+          endpoints: [
+            {
+              description: 'Add Dummy Table',
+              path: '/tables/create-game',
+              method: 'POST',
+              authenticated: false,
+              isLogin: false,
+              request: {
+                queryParams: null,
+                pathParams: null,
+                headers: null,
+                body: null,
+              },
+              responseSample: {
+                data: {
+                  gameId: 'tbl-OsgS9_zoA_GOGYT08RV',
+                },
+                success: true,
+                message: 'Table Created',
+              },
+            },
+          ],
+        },
       ],
       authentication: null,
     },
