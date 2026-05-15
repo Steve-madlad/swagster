@@ -254,10 +254,11 @@ export default function ApiDoc() {
   };
 
   const decideFirstPanelAction = () => {
+    const noParams =
+      !selectedEndpoint?.request?.queryParams && !selectedEndpoint?.request?.pathParams;
     if (
-      selectedEndpoint?.method === 'GET' &&
-      !selectedEndpoint?.request?.queryParams &&
-      !selectedEndpoint?.request?.pathParams
+      (selectedEndpoint?.method === 'GET' && noParams) ||
+      (noParams && !selectedEndpoint?.request.body)
     ) {
       submitRequest();
       setExecutionLoading(true);
