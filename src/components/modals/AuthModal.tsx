@@ -64,7 +64,7 @@ export default function AuthModal() {
       method: authEndpoint?.method as HttpMethod,
       body: vals,
       auth: {
-        headerName: api?.authentication.headerName || '',
+        headerName: api?.authentication?.headerName || '',
         token: localStorage.getItem('auth-' + api?.name) || '',
       },
     });
