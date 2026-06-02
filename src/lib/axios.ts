@@ -9,7 +9,7 @@ export const httpClient = axios.create({
 });
 
 type AuthProps = {
-  type?: string;
+  type: string;
   headerName: string;
   token: string;
 };
@@ -41,12 +41,12 @@ export async function executeHttpRequest({
     ...headers,
   } as Record<string, any>;
 
-  if (auth?.type === 'Bearer' || auth?.token) {
+  if (auth?.type === 'Bearer') {
     finalHeaders[auth.headerName || 'Authorization'] =
       `${auth?.type === 'Bearer' ? 'Bearer ' : ''}${auth.token}`;
   }
 
-  if (auth?.type === 'API_KEY' && auth?.token) {
+  if (auth?.type === 'API_KEY') {
     finalHeaders[auth.headerName || 'X-Api-Key'] = auth.token;
   }
 
@@ -107,9 +107,6 @@ export async function executeHttpRequest({
 }
 
 export function generateCurl({ url, method, body, headers, queryParams }: RequestProps) {
-  console.log({ body });
-
-  // Only accept queryParams as string
   let finalUrl = url;
   if (queryParams && typeof queryParams === 'string') {
     finalUrl +=

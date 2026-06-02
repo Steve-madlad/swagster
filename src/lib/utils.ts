@@ -6,9 +6,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 import { jwtDecode } from 'jwt-decode';
+import type { FieldProps } from '@/components/form/FormBuilder';
 
 type JwtPayload = {
-  exp?: number; // expiration timestamp (seconds)
+  exp?: number;
 };
 
 /**
@@ -19,22 +20,30 @@ type JwtPayload = {
 export function isTokenExpired(storageKey: string): boolean {
   try {
     const token = localStorage.getItem(storageKey);
-
     if (!token) {
-      return true; // No token = treated as expired
+      return true;
     }
 
     const decoded = jwtDecode<JwtPayload>(token);
-
     if (!decoded.exp) {
-      return true; // No expiration claim = treat as invalid
+      return true;
     }
 
-    const currentTime = Date.now() / 1000; // convert ms → seconds
-
+    const currentTime = Date.now() / 1000;
     return decoded.exp < currentTime;
   } catch (error) {
-    // If decoding fails, treat token as invalid/expired
     return true;
   }
 }
+
+export const manualTokenField = (inputDescription?: string, defaultValue?: string): FieldProps => ({
+  name: 'Access Token',
+  type: 'string',
+  required: true,
+  censored: true,
+  defaultValue,
+  description: 'The authentication token. Accepts standard Bearer JWTs, UUIDs, or opaque API keys.',
+  inputDescription:
+    inputDescription ||
+    'Obtain your token from your API provider and paste it here to authenticate your requests.',
+});

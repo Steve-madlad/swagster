@@ -222,8 +222,14 @@ button {
   .bg-dark {
     @apply bg-[#333];
   }
-  .abs-center {
+  .abs-x-center {
     @apply absolute left-1/2 -translate-x-1/2;
+  }
+  .abs-y-center {
+    @apply absolute top-1/2 -translate-y-1/2;
+  }
+  .abs-center {
+    @apply absolute left-1/2 right-1/2 -translate-1/2;
   }
   .size-screen {
     @apply h-screen w-screen;

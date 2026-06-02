@@ -1,8 +1,15 @@
-import { cn } from '@/lib/utils';
 import { Select } from '@/components/form/Select';
+import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SendHorizontal } from 'lucide-react';
-import { useEffect, useMemo, type Dispatch, type ReactNode, type SetStateAction } from 'react';
+import { Eye, EyeOff, SendHorizontal } from 'lucide-react';
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+} from 'react';
 import {
   Controller,
   useForm,
@@ -13,6 +20,8 @@ import {
 import * as z from 'zod';
 import { Alert } from '../custom/Alert';
 import PrimaryButton from '../PrimaryButton';
+import { Button } from '../ui/button';
+import { FieldDescription } from '../ui/field';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
@@ -20,8 +29,11 @@ export interface FieldProps {
   name: string;
   type: 'string' | 'number';
   required: boolean;
-  enum?: string[];
+  censored?: boolean;
   description: string;
+  defaultValue?: string;
+  inputDescription?: string;
+  enum?: string[];
   source?: string;
 }
 
@@ -84,6 +96,7 @@ interface FormBuilderProps {
   onSubmit: (data: Record<string, any>) => void;
   isLoading?: Dispatch<SetStateAction<boolean>>;
   returnValues?: (vals: Record<string, unknown>) => void;
+  alertTitle?: string;
   alertText?: string | Record<string, unknown>;
   disableGroupuing?: boolean;
   disableForm?: boolean;
@@ -99,6 +112,7 @@ export default function FormBuilder({
   returnValues,
   disableGroupuing = false,
   disableForm = false,
+  alertTitle,
   alertText,
   buttonStyles,
   buttonText,
@@ -117,7 +131,7 @@ export default function FormBuilder({
     resolver: zodResolver(schema),
     defaultValues: formConfig.reduce(
       (acc, field) => {
-        acc[field.name] = '';
+        acc[field.name] = field.defaultValue || '';
         return acc;
       },
       {} as Record<string, any>,
@@ -139,9 +153,6 @@ export default function FormBuilder({
   useEffect(() => {
     isLoading && isLoading(isSubmitting);
   }, [isSubmitting]);
-
-  // console.log(formConfig);
-  // console.log(watch());
 
   const groupedData = formConfig.reduce((acc: Record<string, FieldProps[]>, field) => {
     if (!field.source) {
@@ -175,7 +186,7 @@ export default function FormBuilder({
           <Alert
             variant="destructive"
             className="border-destructive bg-destructive/10 overflow-x-auto"
-            title={'Authorization Failed'}
+            title={alertTitle || 'Authorization Failed'}
           >
             {typeof alertText === 'string' ? (
               alertText
@@ -185,15 +196,17 @@ export default function FormBuilder({
           </Alert>
         )}
 
-        <PrimaryButton
-          type="submit"
-          size={'icon-lg'}
-          className={cn(buttonStyles, 'mt-auto py-4.5! font-semibold')}
-          loading={isSubmitting}
-        >
-          {buttonText || 'Send Request'}
-          {buttonIcon ?? <SendHorizontal />}
-        </PrimaryButton>
+        {formConfig.length > 0 && (
+          <PrimaryButton
+            type="submit"
+            size={'icon-lg'}
+            className={cn(buttonStyles, 'mt-auto py-4.5! font-semibold')}
+            loading={isSubmitting}
+          >
+            {buttonText || 'Send Request'}
+            {buttonIcon ?? <SendHorizontal />}
+          </PrimaryButton>
+        )}
       </fieldset>
     </form>
   );
@@ -207,7 +220,7 @@ interface FieldsProps {
 }
 
 export const Fields = ({ fields, errors, control, register }: FieldsProps) => {
-  return fields.map((field: any) => {
+  return fields.map((field: FieldProps) => {
     const hasError = !!errors[field.name];
     const fieldOptions = field?.enum;
     const options = field.enum
@@ -228,23 +241,16 @@ export const Fields = ({ fields, errors, control, register }: FieldsProps) => {
             name={field.name}
             control={control}
             render={({ field: controlField }) => (
-              <Select {...controlField} placeholder={`Select ${field.name}`} options={options} />
+              <>
+                <Select {...controlField} placeholder={`Select ${field.name}`} options={options} />
+                {field.inputDescription && (
+                  <FieldDescription>{field.inputDescription}</FieldDescription>
+                )}
+              </>
             )}
           />
         ) : (
-          <Input
-            type={
-              field.name.includes('password')
-                ? 'password'
-                : field.type === 'number'
-                  ? 'number'
-                  : 'text'
-            }
-            placeholder={field.description}
-            id={field.name}
-            {...register(field.name as never)}
-            className={`${hasError ? 'border-red-500 focus-visible:ring-red-500' : ''} pl-4 text-xs!`}
-          />
+          <InputField field={field} register={register} hasError={hasError} />
         )}
 
         {hasError && (
@@ -256,3 +262,49 @@ export const Fields = ({ fields, errors, control, register }: FieldsProps) => {
     );
   });
 };
+
+export function InputField({
+  field,
+  register,
+  hasError,
+}: {
+  field: FieldProps;
+  register: UseFormRegister<Record<string, any>>;
+  hasError: boolean;
+}) {
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+
+  return (
+    <>
+      <div className="relative">
+        <Input
+          type={
+            field.name.includes('password') || field.censored
+              ? isVisible
+                ? 'text'
+                : 'password'
+              : field.type === 'number'
+                ? 'number'
+                : 'text'
+          }
+          placeholder={field.description}
+          id={field.name}
+          defaultValue={field.defaultValue}
+          {...register(field.name as never)}
+          className={`${hasError ? 'border-red-500 focus-visible:ring-red-500' : ''} ${field.name.includes('password') || field.censored ? 'pr-10' : ''} pl-4 text-xs!`}
+        />
+        {(field.name.includes('password') || field.censored) && (
+          <Button
+            className="abs-y-center right-2 size-auto rounded-full! p-1.5!"
+            variant="ghost"
+            type="button"
+            onClick={() => setIsVisible((prev) => !prev)}
+          >
+            {isVisible ? <Eye /> : <EyeOff />}
+          </Button>
+        )}
+      </div>
+      {field.inputDescription && <FieldDescription className='mt-1.5! pl-2'>{field.inputDescription}</FieldDescription>}
+    </>
+  );
+}

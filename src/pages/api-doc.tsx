@@ -163,18 +163,21 @@ export default function ApiDoc() {
   async function submitRequest(vals?: Record<string, unknown>) {
     setExecutionLoading(true);
 
-    console.log(vals);
-
     const extractedData = extractResources(vals);
     const resourceUrl = vals ? extractedData?.resourceUrl : selectedEndpoint?.path;
 
     const props: ExecuteHttpRequestProps = {
       url: api?.baseUrl + resourceUrl,
       method: selectedEndpoint?.method,
-      auth: {
-        headerName: api?.authentication?.headerName || '',
-        token: localStorage.getItem('auth-' + api?.name) || '',
-      },
+      ...(api?.authentication
+        ? {
+            auth: {
+              headerName: api?.authentication?.headerName || '',
+              token: localStorage.getItem('auth-' + api?.name)?.replace(/^Bearer /, '') || '',
+              type: api?.authentication.type || '',
+            },
+          }
+        : {}),
     };
 
     if (extractedData?.queryParams) {

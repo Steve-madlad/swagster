@@ -11,8 +11,10 @@ export interface RateLimit {
 }
 
 export interface AuthenticationConfig {
-  type: 'Bearer' | string;
+  type: 'Bearer' | 'API_KEY';
   headerName: string;
+  strategy?: 'manual-token';
+  instruction?: string;
 }
 
 export interface RequestField {

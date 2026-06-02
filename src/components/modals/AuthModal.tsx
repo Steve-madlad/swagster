@@ -1,7 +1,7 @@
 import registry from '@/api-data/registry';
 import { executeHttpRequest } from '@/lib/axios';
-import { isTokenExpired } from '@/lib/utils';
-import type { HttpMethod } from '@/models/types';
+import { isTokenExpired, manualTokenField } from '@/lib/utils';
+import type { ApiDefinition, HttpMethod } from '@/models/types';
 import {
   AlertTriangle,
   BadgeCheck,
@@ -22,7 +22,11 @@ export default function AuthModal() {
   const onClose = () => setOpen(false);
 
   const params = useParams();
-  const api = registry.apis.find((api) => api.id === params.name);
+  const api: ApiDefinition | undefined = registry.apis.find((api) => api.id === params.name);
+
+  const authEndpoint = api?.resources
+    .find((resource) => resource.groupName === 'Authentication')
+    ?.endpoints.find((endpoint) => 'isLogin' in endpoint && endpoint.isLogin === true);
 
   const [authError, setAuthError] = useState<string | Record<string, unknown> | undefined>();
   const [authToken, setAuthToken] = useState<string | null>(null);
@@ -47,26 +51,36 @@ export default function AuthModal() {
   const hasToken = !!authToken;
   const expired = hasToken && isTokenExpired(`auth-${api?.name}`);
 
+  useEffect(() => {
+    if (!authEndpoint && api?.authentication?.strategy !== 'manual-token') {
+      setAuthError('Authentication endpoint not found in API definition');
+    }
+
+    if (!open) {
+      setAuthError(undefined);
+    }
+  }, [authEndpoint, open]);
+
   async function submitAuthRequest(vals: Record<string, unknown>) {
     if (!api) return;
 
-    const authEndpoint = api?.resources
-      .find((resource) => resource.groupName === 'Authentication')
-      ?.endpoints.find((endpoint) => 'isLogin' in endpoint && endpoint.isLogin === true);
-
-    if (!authEndpoint) {
+    if (!authEndpoint && api.authentication?.strategy !== 'manual-token') {
       toast.error('Authentication endpoint not found');
       return;
     }
 
+    if (api.authentication?.strategy === 'manual-token') {
+      const token = vals['Access Token'] as string;
+      localStorage.setItem('auth-' + api?.name, token);
+      setOpen(false);
+      setAuthToken(token);
+      return toast.success('Token applied successfully!');
+    }
+
     const response = await executeHttpRequest({
-      url: api.baseUrl + authEndpoint.path,
+      url: api.baseUrl + authEndpoint?.path,
       method: authEndpoint?.method as HttpMethod,
       body: vals,
-      auth: {
-        headerName: api?.authentication?.headerName || '',
-        token: localStorage.getItem('auth-' + api?.name) || '',
-      },
     });
 
     if (response.data?.success) {
@@ -86,7 +100,7 @@ export default function AuthModal() {
   }
 
   const RenderAuthContent = () => {
-    if (hasToken) {
+    if (hasToken && api?.authentication?.strategy !== 'manual-token') {
       const alertConfig = expired
         ? {
             icon: AlertTriangle,
@@ -120,8 +134,15 @@ export default function AuthModal() {
       return (
         <div className="w-full p-7">
           <FormBuilder
-            formConfig={api?.resources[0].endpoints?.[0].request.body as FieldProps[]}
+            formConfig={
+              authEndpoint
+                ? (api?.resources[0].endpoints?.[0].request.body as FieldProps[])
+                : api?.authentication?.strategy === 'manual-token'
+                  ? [manualTokenField(api.authentication.instruction || '', authToken || undefined)]
+                  : []
+            }
             onSubmit={submitAuthRequest}
+            alertTitle={!authEndpoint ? 'Can Not Authorize' : undefined}
             alertText={authError}
             buttonStyles="mt-auto text-md text-base!"
             buttonText="Authorize"
@@ -145,7 +166,7 @@ export default function AuthModal() {
         <Button
           size={'icon-lg'}
           onClick={() => setOpen(true)}
-          className="bg-primary align-center fixed right-4 md:right-7 bottom-4 z-1 w-fit gap-3 rounded-full! px-6! py-5! text-sm text-white hover:scale-110 hover:scale-3d lg:bottom-7"
+          className="bg-primary align-center fixed right-4 bottom-4 z-1 w-fit gap-3 rounded-full! px-6! py-5! text-sm text-white hover:scale-110 hover:scale-3d md:right-7 lg:bottom-7"
         >
           Authorize <KeySquare size={50} />
         </Button>
