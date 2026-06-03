@@ -54,7 +54,7 @@ const generateZodSchema = (config: FieldProps[]) => {
         field.required ? baseNumber : baseNumber.optional(),
       );
     } else {
-      validator = z.string();
+      validator = z.string().trim();
     }
 
     if (field.type === 'string' && field.enum?.length) {
@@ -222,9 +222,8 @@ interface FieldsProps {
 export const Fields = ({ fields, errors, control, register }: FieldsProps) => {
   return fields.map((field: FieldProps) => {
     const hasError = !!errors[field.name];
-    const fieldOptions = field?.enum;
     const options = field.enum
-      ? fieldOptions?.map((option: any) => ({
+      ? field?.enum?.map((option: any) => ({
           label: option,
           value: option,
         }))
@@ -240,9 +239,17 @@ export const Fields = ({ fields, errors, control, register }: FieldsProps) => {
           <Controller
             name={field.name}
             control={control}
-            render={({ field: controlField }) => (
+            render={({ field: controlField, fieldState }) => (
               <>
-                <Select {...controlField} placeholder={`Select ${field.name}`} options={options} />
+                <Select
+                  {...controlField}
+                  className={cn({
+                    'border-red-500! focus-visible:ring-2 focus-visible:ring-red-500':
+                      fieldState.error,
+                  })}
+                  placeholder={`Select ${field.name}`}
+                  options={options}
+                />
                 {field.inputDescription && (
                   <FieldDescription>{field.inputDescription}</FieldDescription>
                 )}
@@ -304,7 +311,10 @@ export function InputField({
           </Button>
         )}
       </div>
-      {field.inputDescription && <FieldDescription className='mt-1.5! pl-2'>{field.inputDescription}</FieldDescription>}
+      
+      {field.inputDescription && (
+        <FieldDescription className="mt-1.5! pl-2">{field.inputDescription}</FieldDescription>
+      )}
     </>
   );
 }

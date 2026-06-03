@@ -3,11 +3,14 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import App from './App.tsx';
+import { TooltipProvider } from './components/ui/tooltip.tsx';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
   <Router>
-    <App />
+    <TooltipProvider>
+      <App />
+    </TooltipProvider>
     <Analytics />
     <Toaster
       toastOptions={{
@@ -17,5 +20,5 @@ createRoot(document.getElementById('root')!).render(
         },
       }}
     />
-  </Router>
+  </Router>,
 );

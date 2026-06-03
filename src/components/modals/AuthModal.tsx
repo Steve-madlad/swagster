@@ -14,8 +14,10 @@ import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Alert } from '../custom/Alert';
 import Modal from '../custom/Modal';
+import ToolTip from '../custom/ToolTip';
 import FormBuilder, { type FieldProps } from '../form/FormBuilder';
 import { Button } from '../ui/button';
+import { Kbd, KbdGroup } from '../ui/kbd';
 
 export default function AuthModal() {
   const [open, setOpen] = useState(false);
@@ -42,6 +44,14 @@ export default function AuthModal() {
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
   }, [api?.name]);
+
+  useEffect(() => {
+    function handleShortcut(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.altKey && e.key.toLowerCase() === 'a') setOpen(true);
+    }
+    window.addEventListener('keydown', handleShortcut);
+    return () => window.removeEventListener('keydown', handleShortcut);
+  }, []);
 
   const clearAuth = () => {
     localStorage.removeItem('auth-' + api?.name);
@@ -163,13 +173,25 @@ export default function AuthModal() {
       headerIcon={FingerprintPattern}
       onClose={onClose}
       triggerElement={
-        <Button
-          size={'icon-lg'}
-          onClick={() => setOpen(true)}
-          className="bg-primary align-center fixed right-4 bottom-4 z-1 w-fit gap-3 rounded-full! px-6! py-5! text-sm text-white hover:scale-110 hover:scale-3d md:right-7 lg:bottom-7"
+        <ToolTip
+          tip={
+            <KbdGroup>
+              <Kbd>⌘</Kbd>
+              <span>+</span>
+              <Kbd>ALT</Kbd>
+              <span>+</span>
+              <Kbd>A</Kbd>
+            </KbdGroup>
+          }
         >
-          Authorize <KeySquare size={50} />
-        </Button>
+          <Button
+            size={'icon-lg'}
+            onClick={() => setOpen(true)}
+            className="bg-primary align-center fixed right-4 bottom-4 z-1 w-fit gap-3 rounded-full! px-6! py-5! text-sm text-white hover:scale-110 focus-visible:bg-primary/80! hover:scale-3d focus-visible:scale-110 focus-visible:scale-3d md:right-7 lg:bottom-7"
+          >
+            Authorize <KeySquare size={50} />
+          </Button>
+        </ToolTip>
       }
     >
       <RenderAuthContent />
