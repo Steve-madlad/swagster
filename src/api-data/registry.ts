@@ -1421,7 +1421,7 @@ const registry = {
             },
             {
               description: 'Join Selected Game',
-              path: '/games/join/{id}',
+              path: '/games/join/{gameId}',
               method: 'POST',
               authenticated: true,
               isLogin: false,
@@ -1429,7 +1429,7 @@ const registry = {
                 queryParams: null,
                 pathParams: [
                   {
-                    name: 'id',
+                    name: 'gameId',
                     type: 'string',
                     required: true,
                     description: 'The Game Id',
@@ -1560,6 +1560,30 @@ const registry = {
                   status: 'waiting',
                   updatedAt: 1780490003093,
                 },
+              },
+            },
+            {
+              description: 'Vote to start a game',
+              path: '/games/{gameId}/vote/start',
+              method: 'POST',
+              authenticated: true,
+              isLogin: false,
+              request: {
+                queryParams: null,
+                pathParams: [
+                  {
+                    name: 'gameId',
+                    type: 'string',
+                    required: true,
+                    description: 'The Game Id',
+                  },
+                ],
+                headers: null,
+                body: null,
+              },
+              responseSample: {
+                success: true,
+                message: 'You have voted to start',
               },
             },
           ],
