@@ -1562,6 +1562,11 @@ const registry = {
                 },
               },
             },
+          ],
+        },
+        {
+          groupName: 'Game Management',
+          endpoints: [
             {
               description: 'Vote to start a game',
               path: '/games/{gameId}/vote/start',
