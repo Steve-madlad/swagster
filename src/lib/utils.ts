@@ -5,8 +5,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-import { jwtDecode } from 'jwt-decode';
 import type { FieldProps } from '@/components/form/FormBuilder';
+import { jwtDecode } from 'jwt-decode';
+import { toast } from 'sonner';
 
 type JwtPayload = {
   exp?: number;
@@ -34,6 +35,20 @@ export function isTokenExpired(storageKey: string): boolean {
   } catch (error) {
     return true;
   }
+}
+
+export function copyToClipboard(text?: string) {
+  if (!text) return;
+
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      toast.success('Copied to clipboard!');
+    })
+    .catch((err) => {
+      toast.error('Failed to copy');
+      console.error('Failed to copy:', err);
+    });
 }
 
 export const manualTokenField = (inputDescription?: string, defaultValue?: string): FieldProps => ({

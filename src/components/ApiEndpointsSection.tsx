@@ -1,7 +1,9 @@
 import { methodColorMap } from '@/lib/constants';
+import { cn, copyToClipboard } from '@/lib/utils';
 import type { ApiDefinition, ApiEndpoint, Endpoint, HttpMethod } from '@/models/types';
-import { Link, ShieldCheck } from 'lucide-react';
-import type { Dispatch, SetStateAction } from 'react';
+import { Copy, Link, ShieldCheck } from 'lucide-react';
+import { useState, type Dispatch, type SetStateAction } from 'react';
+import ToolTip from './custom/ToolTip';
 
 function getMethodClasses(
   method: HttpMethod,
@@ -46,7 +48,8 @@ export default function ApiEndpointsSection({
               <div className="col w-full space-y-4">
                 {group.endpoints.map((endpoint: ApiEndpoint) => (
                   <button
-                    className={`flex-between cursor relative w-full gap-4 overflow-hidden px-4 py-2! sm:min-w-xl ${getMethodClasses(endpoint.method, { variant: 'light', hover: true })} after:bg-primary after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:transition-all after:duration-100 after:content-[''] hover:after:h-1 focus-visible:after:h-1`}
+                    key={endpoint.path}
+                    className={`flex-between group cursor relative w-full gap-4 overflow-hidden px-4 py-2! sm:min-w-xl ${getMethodClasses(endpoint.method, { variant: 'light', hover: true })} after:bg-primary after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:transition-all after:duration-100 after:content-[''] hover:after:h-1 focus-visible:after:h-1`}
                     onClick={() => {
                       setApiPanelOpen(true);
                       setSelectedEndpoint({
@@ -66,9 +69,11 @@ export default function ApiEndpointsSection({
                         <span className="text-start text-sm">{endpoint.description}</span>
                       </div>
                     </div>
-                    {endpoint.authenticated && (
-                      <ShieldCheck size={20} className="fill-primary/70 text-black/70" />
-                    )}
+
+                    <EndpointActions
+                      authenticated={endpoint.authenticated}
+                      endpointUrl={api.baseUrl + endpoint.path}
+                    />
                   </button>
                 ))}
               </div>
@@ -76,6 +81,52 @@ export default function ApiEndpointsSection({
           );
         })}
       </div>
+    </div>
+  );
+}
+
+export function EndpointActions({
+  authenticated,
+  endpointUrl,
+}: {
+  authenticated: boolean;
+  endpointUrl: string;
+}) {
+  const [btnFocused, setBtnFocused] = useState<boolean>(false);
+
+  return (
+    <div className="flex-center-gp">
+      {authenticated && (
+        <ShieldCheck
+          size={22}
+          className={cn(
+            'fill-primary/70 text-black/70 duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0 sm:translate-x-8',
+            { 'translate-x-0!': btnFocused },
+          )}
+        />
+      )}
+      <ToolTip tip="Copy full URL">
+        <div
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation();
+              e.preventDefault();
+              copyToClipboard(endpointUrl);
+            }
+          }}
+          onFocus={() => setBtnFocused(true)}
+          onBlur={() => setBtnFocused(false)}
+          onClick={(e) => {
+            e.stopPropagation();
+            copyToClipboard(endpointUrl);
+          }}
+          className="bg-primary/70 hover:bg-accent hover:text-primary focus-visible:bg-accent focus-visible:text-primary flex-center size-4.75 rounded-sm! border border-black! text-white ring-1 ring-black/75! transition-all! duration-300 ease-in-out outline-none! group-hover:translate-x-0 group-hover:delay-100 group-focus-visible:translate-x-0 group-focus-visible:delay-100 hover:translate-x-0 focus:translate-x-0 focus-visible:translate-x-0 sm:translate-x-10"
+        >
+          <Copy className="size-2.5" />
+        </div>
+      </ToolTip>
     </div>
   );
 }

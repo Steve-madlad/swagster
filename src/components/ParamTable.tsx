@@ -31,8 +31,8 @@ export default function ParamTable({
       </thead>
 
       <tbody>
-        {tableData.rows.map((row) => (
-          <tr>
+        {tableData.rows.map((row, index) => (
+          <tr key={index}>
             {returnRowValues(row)
               .filter((row) => row !== undefined)
               .map((data) => (

@@ -4,9 +4,10 @@ import FormBuilder from '@/components/form/FormBuilder';
 import AuthModal from '@/components/modals/AuthModal';
 import Navbar from '@/components/Navbar';
 import PrimaryButton from '@/components/PrimaryButton';
+import { Button } from '@/components/ui/button';
 import { executeHttpRequest, generateCurl, type ExecuteHttpRequestProps } from '@/lib/axios';
 import { methodColorMap } from '@/lib/constants';
-import { cn } from '@/lib/utils';
+import { cn, copyToClipboard } from '@/lib/utils';
 import { type ApiDefinition, type Endpoint, type HttpMethod } from '@/models/types';
 import {
   BrushCleaning,
@@ -23,9 +24,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { nightOwl } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { toast } from 'sonner';
 import registry from '../api-data/registry';
-import { Button } from '../components/ui/button';
 
 export default function ApiDoc() {
   const params = useParams();
@@ -79,6 +78,15 @@ export default function ApiDoc() {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setApiPanelOpen(false);
+    setFormValues(undefined);
+    setSelectedTab('response');
+    setExecutionResponse(undefined);
+    setExecutionError(undefined);
+    setShowSecondPanel(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
     if (apiPanelOpen) {
       const previousFocus = document.activeElement as HTMLElement;
       modalRef.current?.focus();
@@ -88,17 +96,6 @@ export default function ApiDoc() {
       };
     }
   }, [apiPanelOpen]);
-
-  async function copyToClipboard(text?: string) {
-    if (!text) return;
-    try {
-      await navigator.clipboard.writeText(text);
-      toast.success('Copied to clipboard!');
-    } catch (err) {
-      toast.success('Failed to copy');
-      console.error('Failed to copy:', err);
-    }
-  }
 
   const extractResources = (vals: any) => {
     if (!vals && selectedEndpoint?.method !== 'GET') return;
@@ -282,13 +279,23 @@ export default function ApiDoc() {
           </div>
 
           <p className="mb-2 max-w-6xl text-sm">{api?.description}</p>
-          <Link
-            to={api?.baseUrl as string}
-            target="_blank"
-            className="text-sm text-black! hover:text-blue-500! hover:underline!"
-          >
-            {api?.baseUrl}
-          </Link>
+
+          <div className="group flex-center-gp w-fit">
+            <Link
+              to={api?.baseUrl as string}
+              target="_blank"
+              className="text-sm text-black! hover:text-blue-500! hover:underline!"
+            >
+              {api?.baseUrl}
+            </Link>
+
+            <Button
+              onClick={() => copyToClipboard(api?.baseUrl)}
+              className="bg-accent text-primary hover:bg-accent/20 focus-visible:bg-accent/20 size-6 rounded-md! border border-gray-400 p-3! opacity-0 transition-all! duration-300 group-focus-within:opacity-100 group-hover:opacity-100 focus-visible:opacity-100"
+            >
+              <Copy className="size-3" />
+            </Button>
+          </div>
 
           {api?.isExampleApi && (
             <div className="bg-tropic-blue/40 before:bg-primary relative mt-5 w-full overflow-hidden rounded-md px-5 py-2 text-sm font-semibold before:absolute before:top-0 before:left-0 before:h-full before:w-1 sm:w-120">
