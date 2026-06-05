@@ -1257,7 +1257,7 @@ const registry = {
           groupName: 'Matchmaking',
           endpoints: [
             {
-              description: 'Find Game',
+              description: 'Create Game',
               path: '/games/create',
               method: 'POST',
               authenticated: true,

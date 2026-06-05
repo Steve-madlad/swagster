@@ -42,7 +42,10 @@ export default function ApiEndpointsSection({
                 className="group hover:text-primary focus-visible:text-primary align-center cursor gap-3 text-lg"
               >
                 {group.groupName}
-                <Link size={17} className={`opacity-0 duration-300 group-focus-visible:opacity-100 group-hover:opacity-100`} />
+                <Link
+                  size={17}
+                  className={`opacity-0 duration-300 group-hover:opacity-100 group-focus-visible:opacity-100`}
+                />
               </a>
 
               <div className="col w-full space-y-4">
@@ -85,6 +88,52 @@ export default function ApiEndpointsSection({
   );
 }
 
+// export function EndpointActions({
+//   authenticated,
+//   endpointUrl,
+// }: {
+//   authenticated: boolean;
+//   endpointUrl: string;
+// }) {
+//   const [btnFocused, setBtnFocused] = useState<boolean>(false);
+
+//   return (
+//     <div className="flex-center-gp">
+//       {authenticated && (
+//         <ShieldCheck
+//           size={22}
+//           className={cn(
+//             'fill-primary/70 text-black/70 duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0 sm:translate-x-8',
+//             { 'translate-x-0!': btnFocused },
+//           )}
+//         />
+//       )}
+//       <ToolTip tip="Copy full URL">
+//         <div
+//           role="button"
+//           tabIndex={0}
+//           onKeyDown={(e) => {
+//             if (e.key === 'Enter' || e.key === ' ') {
+//               e.stopPropagation();
+//               e.preventDefault();
+//               copyToClipboard(endpointUrl);
+//             }
+//           }}
+//           onFocus={() => setBtnFocused(true)}
+//           onBlur={() => setBtnFocused(false)}
+//           onClick={(e) => {
+//             e.stopPropagation();
+//             copyToClipboard(endpointUrl);
+//           }}
+//           className="bg-primary/70 hover:bg-accent hover:text-primary focus-visible:bg-accent focus-visible:text-primary flex-center size-4.75 rounded-sm! border-2 border-black! text-white transition-all! duration-300 ease-in-out outline-none! group-hover:translate-x-0 group-hover:delay-100 group-focus-visible:translate-x-0 group-focus-visible:delay-100 hover:translate-x-0 focus:translate-x-0 focus-visible:translate-x-0 sm:translate-x-10"
+//         >
+//           <Copy className="size-2.5" />
+//         </div>
+//       </ToolTip>
+//     </div>
+//   );
+// }
+
 export function EndpointActions({
   authenticated,
   endpointUrl,
@@ -93,22 +142,32 @@ export function EndpointActions({
   endpointUrl: string;
 }) {
   const [btnFocused, setBtnFocused] = useState<boolean>(false);
-
   return (
-    <div className="flex-center-gp">
+    <div className="flex-between relative h-full min-w-12">
       {authenticated && (
         <ShieldCheck
           size={22}
           className={cn(
-            'fill-primary/70 text-black/70 duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0 sm:translate-x-8',
-            { 'translate-x-0!': btnFocused },
+            'fill-primary/70 text-black/70 transition-transform duration-300 ease-in-out',
+
+            'translate-x-7',
+
+            'group-hover:-translate-x-1',
+            'group-focus-visible:-translate-x-1',
+            'focus-within:-translate-x-1',
+            {
+              '-translate-x-1 opacity-100': btnFocused,
+            },
           )}
         />
       )}
+
       <ToolTip tip="Copy full URL">
         <div
           role="button"
           tabIndex={0}
+          onFocus={() => setBtnFocused(true)}
+          onBlur={() => setBtnFocused(false)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.stopPropagation();
@@ -116,13 +175,23 @@ export function EndpointActions({
               copyToClipboard(endpointUrl);
             }
           }}
-          onFocus={() => setBtnFocused(true)}
-          onBlur={() => setBtnFocused(false)}
           onClick={(e) => {
             e.stopPropagation();
             copyToClipboard(endpointUrl);
           }}
-          className="bg-primary/70 hover:bg-accent hover:text-primary focus-visible:bg-accent focus-visible:text-primary flex-center size-4.75 rounded-sm! border-2 border-black! text-white transition-all! duration-300 ease-in-out outline-none! group-hover:translate-x-0 group-hover:delay-100 group-focus-visible:translate-x-0 group-focus-visible:delay-100 hover:translate-x-0 focus:translate-x-0 focus-visible:translate-x-0 sm:translate-x-10"
+          className={cn(
+            'bg-primary/70 hover:bg-accent hover:text-primary focus-visible:bg-accent focus-visible:text-primary',
+            'flex-center size-4.75 rounded-sm! border-2 border-black! text-white transition-all! duration-300 ease-in-out outline-none! group-hover:delay-100 hover:delay-100',
+
+            'absolute right-0',
+
+            'pointer-events-none translate-x-4 opacity-0',
+
+            'group-hover:pointer-events-auto group-hover:translate-x-0 group-hover:opacity-100',
+            'group-focus-visible:pointer-events-auto group-focus-visible:translate-x-0 group-focus-visible:opacity-100',
+            'focus-visible:pointer-events-auto focus-visible:translate-x-0 focus-visible:opacity-100',
+            'focus:pointer-events-auto focus:translate-x-0 focus:opacity-100',
+          )}
         >
           <Copy className="size-2.5" />
         </div>
