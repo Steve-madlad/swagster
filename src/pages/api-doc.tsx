@@ -12,7 +12,6 @@ import { cn, copyToClipboard } from '@/lib/utils';
 import { type ApiDefinition, type Endpoint, type HttpMethod } from '@/models/types';
 import {
   BrushCleaning,
-  Computer,
   Copy,
   Loader2,
   MoveLeft,
