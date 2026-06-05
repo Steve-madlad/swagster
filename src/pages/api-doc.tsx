@@ -7,6 +7,7 @@ import PrimaryButton from '@/components/PrimaryButton';
 import { Button } from '@/components/ui/button';
 import { executeHttpRequest, generateCurl, type ExecuteHttpRequestProps } from '@/lib/axios';
 import { methodColorMap } from '@/lib/constants';
+import { apiIcons, getIcon } from '@/lib/icons';
 import { cn, copyToClipboard } from '@/lib/utils';
 import { type ApiDefinition, type Endpoint, type HttpMethod } from '@/models/types';
 import {
@@ -265,6 +266,8 @@ export default function ApiDoc() {
     } else setShowSecondPanel(true);
   };
 
+  const Icon = getIcon(api.icon as keyof typeof apiIcons);
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -284,7 +287,7 @@ export default function ApiDoc() {
             <Link
               to={api?.baseUrl as string}
               target="_blank"
-              className="text-sm text-black! hover:text-blue-500! hover:underline!"
+              className="text-sm text-black! hover:text-blue-500! hover:underline! focus-visible:text-blue-500!"
             >
               {api?.baseUrl}
             </Link>
@@ -334,7 +337,7 @@ export default function ApiDoc() {
           >
             <div className="align-center gap-3 border-b-3 border-gray-200 px-7 py-3">
               <div className="bg-primary/15 text-primary flex-center rounded-lg p-2">
-                <Computer size={27} />
+                <Icon size={27} />
               </div>
 
               <div>

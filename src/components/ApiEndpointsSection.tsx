@@ -39,10 +39,10 @@ export default function ApiEndpointsSection({
               <a
                 href={`#${group.groupName.toLowerCase()}`}
                 id={group.groupName.toLowerCase()}
-                className="group hover:text-primary align-center cursor gap-3 text-lg"
+                className="group hover:text-primary focus-visible:text-primary align-center cursor gap-3 text-lg"
               >
                 {group.groupName}
-                <Link size={17} className={`opacity-0 duration-300 group-hover:opacity-100`} />
+                <Link size={17} className={`opacity-0 duration-300 group-focus-visible:opacity-100 group-hover:opacity-100`} />
               </a>
 
               <div className="col w-full space-y-4">
@@ -122,7 +122,7 @@ export function EndpointActions({
             e.stopPropagation();
             copyToClipboard(endpointUrl);
           }}
-          className="bg-primary/70 hover:bg-accent hover:text-primary focus-visible:bg-accent focus-visible:text-primary flex-center size-4.75 rounded-sm! border border-black! text-white ring-1 ring-black/75! transition-all! duration-300 ease-in-out outline-none! group-hover:translate-x-0 group-hover:delay-100 group-focus-visible:translate-x-0 group-focus-visible:delay-100 hover:translate-x-0 focus:translate-x-0 focus-visible:translate-x-0 sm:translate-x-10"
+          className="bg-primary/70 hover:bg-accent hover:text-primary focus-visible:bg-accent focus-visible:text-primary flex-center size-4.75 rounded-sm! border-2 border-black! text-white transition-all! duration-300 ease-in-out outline-none! group-hover:translate-x-0 group-hover:delay-100 group-focus-visible:translate-x-0 group-focus-visible:delay-100 hover:translate-x-0 focus:translate-x-0 focus-visible:translate-x-0 sm:translate-x-10"
         >
           <Copy className="size-2.5" />
         </div>

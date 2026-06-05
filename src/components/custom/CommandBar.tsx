@@ -13,7 +13,7 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from '@/components/ui/command';
-import * as LucideIcons from 'lucide-react';
+import { apiIcons, getIcon } from '@/lib/icons';
 import { HomeIcon, Info, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -51,9 +51,9 @@ export function CommandBar() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [open, navigate]);
 
-  const getIcon = (iconName?: string) => {
-    return (LucideIcons as any)[iconName || ''] || LucideIcons.Bot;
-  };
+  // const getIcon = (iconName?: string) => {
+  //   return (LucideIcons as any)[iconName || ''] || LucideIcons.Bot;
+  // };
 
   return (
     <div>
@@ -111,7 +111,7 @@ export function CommandBar() {
             <CommandSeparator />
             <CommandGroup heading="APIs">
               {registry.apis.map((api) => {
-                const Icon = getIcon(api.icon);
+                const Icon = getIcon(api.icon as keyof typeof apiIcons);
 
                 return (
                   <CommandItem

@@ -1617,6 +1617,48 @@ const registry = {
             },
           ],
         },
+        {
+          groupName: 'Gameplay',
+          endpoints: [
+            {
+              description: 'Accepts player decision',
+              path: '/games/{gameId}/action',
+              method: 'POST',
+              authenticated: true,
+              isLogin: false,
+              request: {
+                queryParams: null,
+                pathParams: [
+                  {
+                    name: 'gameId',
+                    type: 'string',
+                    required: true,
+                    description: 'The Game Id',
+                  },
+                ],
+                headers: null,
+                body: [
+                  {
+                    name: 'action',
+                    type: 'string',
+                    required: true,
+                    description: 'The player decision',
+                  },
+                  {
+                    name: 'betAmount',
+                    type: 'number',
+                    required: false,
+                    description: 'The bet amount',
+                  },
+                ],
+              },
+              responseSample: {
+                success: true,
+                message: 'Decision made successfully',
+              },
+            },
+          ],
+        },
       ],
       authentication: {
         type: 'Bearer',
