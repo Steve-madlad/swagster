@@ -247,6 +247,7 @@ export const Fields = ({ fields, errors, control, register }: FieldsProps) => {
                     'border-red-500! focus-visible:ring-2 focus-visible:ring-red-500':
                       fieldState.error,
                   })}
+                  id={field.name}
                   placeholder={`Select ${field.name}`}
                   options={options}
                 />

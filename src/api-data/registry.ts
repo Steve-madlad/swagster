@@ -1641,6 +1641,7 @@ const registry = {
                   {
                     name: 'actionType',
                     type: 'string',
+                    enum: ['pass', 'for less', 'bank co'],
                     required: true,
                     description: 'The player decision',
                   },
