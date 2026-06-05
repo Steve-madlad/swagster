@@ -1639,7 +1639,7 @@ const registry = {
                 headers: null,
                 body: [
                   {
-                    name: 'action',
+                    name: 'actionType',
                     type: 'string',
                     required: true,
                     description: 'The player decision',
