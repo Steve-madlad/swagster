@@ -161,8 +161,11 @@ export default function ApiDoc() {
     setExecutionLoading(true);
 
     const extractedData = extractResources(vals);
-    const resourceUrl = vals ? extractedData?.resourceUrl : selectedEndpoint?.path;
-
+    let resourceUrl = vals ? extractedData?.resourceUrl : selectedEndpoint?.path;
+    if (!String(resourceUrl).startsWith('/')) {
+      resourceUrl = '/' + resourceUrl;
+    }
+    
     const props: ExecuteHttpRequestProps = {
       url: api?.baseUrl + resourceUrl,
       method: selectedEndpoint?.method,
