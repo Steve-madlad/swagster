@@ -148,7 +148,7 @@ export default function AuthModal() {
               authEndpoint
                 ? (api?.resources[0].endpoints?.[0].request.body as FieldProps[])
                 : api?.authentication?.strategy === 'manual-token'
-                  ? [manualTokenField(api.authentication.instruction || '', authToken || undefined)]
+                  ? [manualTokenField(api.authentication.instruction, authToken || undefined)]
                   : []
             }
             onSubmit={submitAuthRequest}

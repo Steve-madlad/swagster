@@ -240,25 +240,23 @@ export const Fields = ({ fields, errors, control, register }: FieldsProps) => {
             name={field.name}
             control={control}
             render={({ field: controlField, fieldState }) => (
-              <>
-                <Select
-                  {...controlField}
-                  className={cn({
-                    'border-red-500! focus-visible:ring-2 focus-visible:ring-red-500':
-                      fieldState.error,
-                  })}
-                  id={field.name}
-                  placeholder={`Select ${field.name}`}
-                  options={options}
-                />
-                {field.inputDescription && (
-                  <FieldDescription>{field.inputDescription}</FieldDescription>
-                )}
-              </>
+              <Select
+                {...controlField}
+                className={cn({
+                  'border-red-500! focus-visible:ring-2 focus-visible:ring-red-500':
+                    fieldState.error,
+                })}
+                id={field.name}
+                placeholder={`Select ${field.name}`}
+                options={options}
+              />
             )}
           />
         ) : (
           <InputField field={field} register={register} hasError={hasError} />
+        )}
+        {field.inputDescription && (
+          <FieldDescription className="mt-1.5! pl-2">{field.inputDescription}</FieldDescription>
         )}
 
         {hasError && (
@@ -312,10 +310,6 @@ export function InputField({
           </Button>
         )}
       </div>
-      
-      {field.inputDescription && (
-        <FieldDescription className="mt-1.5! pl-2">{field.inputDescription}</FieldDescription>
-      )}
     </>
   );
 }

@@ -1658,6 +1658,37 @@ const registry = {
                 message: 'Decision made successfully',
               },
             },
+            {
+              description: 'Skips idle player',
+              path: 'games/{gameId}/action/skip',
+              method: 'POST',
+              authenticated: true,
+              isLogin: false,
+              request: {
+                queryParams: null,
+                pathParams: [
+                  {
+                    name: 'gameId',
+                    type: 'string',
+                    required: true,
+                    description: 'The Game Id',
+                  },
+                ],
+                headers: null,
+                body: [
+                  {
+                    name: 'targetPlayerId',
+                    type: 'string',
+                    required: true,
+                    description: 'The target player id',
+                  }
+                ],
+              },
+              responseSample: {
+                success: true,
+                message: 'Target player skipped',
+              },
+            },
           ],
         },
       ],
