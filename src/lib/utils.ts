@@ -51,6 +51,13 @@ export function copyToClipboard(text?: string) {
     });
 }
 
+export function formatPath(path: string) {
+  if (!path.startsWith('/')) {
+    return '/' + path;
+  }
+  return path;
+}
+
 export const manualTokenField = (inputDescription?: string, defaultValue?: string): FieldProps => ({
   name: 'Access Token',
   type: 'string',

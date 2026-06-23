@@ -1660,7 +1660,7 @@ const registry = {
             },
             {
               description: 'Skips idle player',
-              path: 'games/{gameId}/action/skip',
+              path: '/games/{gameId}/action/skip',
               method: 'POST',
               authenticated: true,
               isLogin: false,

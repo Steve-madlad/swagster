@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { executeHttpRequest, generateCurl, type ExecuteHttpRequestProps } from '@/lib/axios';
 import { methodColorMap } from '@/lib/constants';
 import { apiIcons, getIcon } from '@/lib/icons';
-import { cn, copyToClipboard } from '@/lib/utils';
+import { cn, copyToClipboard, formatPath } from '@/lib/utils';
 import { type ApiDefinition, type Endpoint, type HttpMethod } from '@/models/types';
 import {
   BrushCleaning,
@@ -162,12 +162,9 @@ export default function ApiDoc() {
 
     const extractedData = extractResources(vals);
     let resourceUrl = vals ? extractedData?.resourceUrl : selectedEndpoint?.path;
-    if (!String(resourceUrl).startsWith('/')) {
-      resourceUrl = '/' + resourceUrl;
-    }
-    
+
     const props: ExecuteHttpRequestProps = {
-      url: api?.baseUrl + resourceUrl,
+      url: api?.baseUrl + formatPath(resourceUrl),
       method: selectedEndpoint?.method,
       ...(api?.authentication
         ? {
@@ -379,7 +376,7 @@ export default function ApiDoc() {
                             </div>
 
                             <p className="align-center gap-2 text-sm font-medium">
-                              {selectedEndpoint?.path}
+                              {selectedEndpoint && formatPath(selectedEndpoint.path)}
                             </p>
                           </div>
 

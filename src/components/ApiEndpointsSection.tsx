@@ -1,5 +1,5 @@
 import { methodColorMap } from '@/lib/constants';
-import { cn, copyToClipboard } from '@/lib/utils';
+import { cn, copyToClipboard, formatPath } from '@/lib/utils';
 import type { ApiDefinition, ApiEndpoint, Endpoint, HttpMethod } from '@/models/types';
 import { Copy, Link, ShieldCheck } from 'lucide-react';
 import { useState, type Dispatch, type SetStateAction } from 'react';
@@ -68,14 +68,16 @@ export default function ApiEndpointsSection({
                         {endpoint.method}
                       </span>
                       <div className="col-start md:align-center gap-1 md:flex-row! md:gap-4">
-                        <span className="text-start text-sm font-semibold">{endpoint.path}</span>
+                        <span className="text-start text-sm font-semibold">
+                          {formatPath(endpoint.path)}
+                        </span>
                         <span className="text-start text-sm">{endpoint.description}</span>
                       </div>
                     </div>
 
                     <EndpointActions
                       authenticated={endpoint.authenticated}
-                      endpointUrl={api.baseUrl + endpoint.path}
+                      endpointUrl={api.baseUrl + formatPath(endpoint.path)}
                     />
                   </button>
                 ))}
@@ -87,52 +89,6 @@ export default function ApiEndpointsSection({
     </div>
   );
 }
-
-// export function EndpointActions({
-//   authenticated,
-//   endpointUrl,
-// }: {
-//   authenticated: boolean;
-//   endpointUrl: string;
-// }) {
-//   const [btnFocused, setBtnFocused] = useState<boolean>(false);
-
-//   return (
-//     <div className="flex-center-gp">
-//       {authenticated && (
-//         <ShieldCheck
-//           size={22}
-//           className={cn(
-//             'fill-primary/70 text-black/70 duration-300 ease-in-out group-hover:translate-x-0 group-focus-visible:translate-x-0 sm:translate-x-8',
-//             { 'translate-x-0!': btnFocused },
-//           )}
-//         />
-//       )}
-//       <ToolTip tip="Copy full URL">
-//         <div
-//           role="button"
-//           tabIndex={0}
-//           onKeyDown={(e) => {
-//             if (e.key === 'Enter' || e.key === ' ') {
-//               e.stopPropagation();
-//               e.preventDefault();
-//               copyToClipboard(endpointUrl);
-//             }
-//           }}
-//           onFocus={() => setBtnFocused(true)}
-//           onBlur={() => setBtnFocused(false)}
-//           onClick={(e) => {
-//             e.stopPropagation();
-//             copyToClipboard(endpointUrl);
-//           }}
-//           className="bg-primary/70 hover:bg-accent hover:text-primary focus-visible:bg-accent focus-visible:text-primary flex-center size-4.75 rounded-sm! border-2 border-black! text-white transition-all! duration-300 ease-in-out outline-none! group-hover:translate-x-0 group-hover:delay-100 group-focus-visible:translate-x-0 group-focus-visible:delay-100 hover:translate-x-0 focus:translate-x-0 focus-visible:translate-x-0 sm:translate-x-10"
-//         >
-//           <Copy className="size-2.5" />
-//         </div>
-//       </ToolTip>
-//     </div>
-//   );
-// }
 
 export function EndpointActions({
   authenticated,
