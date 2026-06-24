@@ -1592,6 +1592,30 @@ const registry = {
               },
             },
             {
+              description: 'Vote to restart a game',
+              path: '/games/{gameId}/vote/restart',
+              method: 'POST',
+              authenticated: true,
+              isLogin: false,
+              request: {
+                queryParams: null,
+                pathParams: [
+                  {
+                    name: 'gameId',
+                    type: 'string',
+                    required: true,
+                    description: 'The Game Id',
+                  },
+                ],
+                headers: null,
+                body: null,
+              },
+              responseSample: {
+                success: true,
+                message: 'You have voted to restart the game',
+              },
+            },
+            {
               description: 'Leave game',
               path: '/games/{gameId}/leave',
               method: 'POST',
