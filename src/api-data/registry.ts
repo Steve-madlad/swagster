@@ -1254,6 +1254,41 @@ const registry = {
       rateLimit: null,
       resources: [
         {
+          groupName: 'Session Management',
+          endpoints: [
+            {
+              description: 'Create session',
+              path: '/auth/session',
+              method: 'POST',
+              authenticated: false,
+              isLogin: false,
+              request: {
+                queryParams: null,
+                pathParams: null,
+                headers: null,
+                body: [
+                  {
+                    name: 'token',
+                    type: 'string',
+                    required: true,
+                    description: 'The user token',
+                  },
+                ],
+              },
+              responseSample: {
+                success: true,
+                message: 'Session created successfully',
+                data: {
+                  token:
+                    'eyJhbGciOiJSUzI1NiIsImtpsdfasdfardfgygjasdfhjksrHZyJ9.eyJpc3MiOiJodHRwczovL3Nlcasdjksdfurjsdfkjasdfgjkasdfkjajk234YXVkIjoiYmFuay1jby02MWQ4NiIsImF1dGhfdGltZSI6MTc4MjM5NTQ1NSwidXNlcl9pZCI6Ik9vQVFzNzRzc2poc2hNTFM1dG9KWURqUnpDdzEiLCJzdWIiOiJPb0FRczc0c3NqaHNoTUxTNXRvSllEalJ6Q3cxIiwiaWF0IjoxNzgyMzk1NjYxLCJleHAiOjE3ODMwMDA0NjEsImVtYWlsIjoidGVmZnNhdWNlQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJ0ZWZmc2F1Y2VAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.pEtf6ZSoQZ87rxPXTrhD7m1jlMOdvffrikwTs-nnNGUGvQZQmFlsgnxxiNVhcZzIPvrA-jfkujaslkrudfknwrlekufdmjaluasdkjmfrmkl32jr89sd,sfd89-vvcUupAMD7pLmB_P_c1pBYhwi2fSNFat9nzgW-40PC6G5E_Qzr8EdLwJg6E_GQg7B51pqaFmz6FYrh-yWTkfuq6F2e5of4McbvBvVOywmv5YXOiODrlfBtZUZv5tz2RXTgW4vQ2vBOZot0A',
+                  user_id: 'SFUSskfuklk2451232501LLlsImLLMSduendk',
+                  exp: 1783000461,
+                },
+              },
+            },
+          ],
+        },
+        {
           groupName: 'Matchmaking',
           endpoints: [
             {
@@ -1705,7 +1740,7 @@ const registry = {
                     type: 'string',
                     required: true,
                     description: 'The target player id',
-                  }
+                  },
                 ],
               },
               responseSample: {
