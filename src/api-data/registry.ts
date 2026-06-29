@@ -1289,6 +1289,28 @@ const registry = {
           ],
         },
         {
+          groupName: 'Account Management',
+          endpoints: [
+            {
+              description: 'Delete Account',
+              path: 'user/account/delete',
+              method: 'DELETE',
+              authenticated: true,
+              isLogin: false,
+              request: {
+                queryParams: null,
+                pathParams: null,
+                headers: null,
+                body: null,
+              },
+              responseSample: {
+                success: true,
+                message: 'Account deleted successfully',
+              },
+            },
+          ],
+        },
+        {
           groupName: 'Matchmaking',
           endpoints: [
             {
