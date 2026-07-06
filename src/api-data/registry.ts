@@ -1778,7 +1778,7 @@ const registry = {
         headerName: 'Authorization',
         strategy: 'manual-token',
         instruction:
-          'Obtain your JWT from your Bank Co account and paste it directly into the authorization field.',
+          'Obtain your JWT from your firebase and paste it directly into the authorization field.',
       },
     },
   ],
